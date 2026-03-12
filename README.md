@@ -1,136 +1,99 @@
 # 🌍 Wayora — Travel Beyond Maps, Explore Beyond Limits
 
-**Wayora** is an AI-powered, all-in-one travel platform designed to solve fragmented trip planning and poor budget management. It provides a personalized, gamified ecosystem that balances traveler needs with local economic support.
+**Wayora** is an AI-powered, all-in-one travel platform built with **React Native (Expo)**. It provides personalized trip planning, smart budgeting, safety tools, and gamified exploration.
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![React Native](https://img.shields.io/badge/React_Native-Expo_55-61DAFB?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-4-38B2AC?logo=tailwind-css)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 ## ✨ Features
 
 | Feature | Description |
 |---------|-------------|
-| 🤖 **AI Itinerary Planner** | Generates personalized day-wise itineraries based on budget, interests, group type, and duration |
-| 💰 **Smart Budget Tracker** | Real-time expense tracking with OCR bill scanning and visual category breakdowns |
-| 🛡️ **Safety & Logistics** | Nearby emergency finder (hospitals, ATMs, pharmacies), weather forecasts, and live alerts |
-| 🏆 **Wandrix & Puthir** | Gamified exploration — earn digital collectibles and badges for visiting sites |
-| 🗺️ **Explore Destinations** | Browse and filter 12+ handpicked destinations by category |
-| 🔐 **Authentication** | Email/password and Google sign-in with Firebase |
-| 🎨 **Artisan Support** | Platform for local artisans to showcase products to travelers |
-| 📊 **Crowd Intelligence** | ML-powered crowd density prediction for popular attractions |
+| 🏠 **Home Dashboard** | Upcoming trips with budget progress, quick actions, trending destinations |
+| 🤖 **AI Itinerary Planner** | Personalized day-wise itineraries by budget, interests, group type |
+| 💰 **Smart Budget Tracker** | Real-time expense tracking with category breakdowns and OCR scan |
+| 🗺️ **Explore Destinations** | Browse 10+ destinations with search & category filters |
+| 🏆 **Wandrix Badges** | Gamified badges earned by visiting sites and completing goals |
+| 👤 **User Profile** | Stats, trip history, settings, and badge showcase |
 
 ## 🎨 Design
 
-Wayora uses a premium, modern design system:
-
-- **Brand Accent:** Coral (#E8637A) → Orange (#F28C38) gradient
-- **Active States:** Orange for bottom nav active icons
-- **Emergency:** Soft Red for high-visibility emergency actions
-- **Status:** Green for active trip indicators
-- **Cards:** White backgrounds with subtle shadows and glassmorphism
-- **Typography:** Inter (body) + Outfit (headings) from Google Fonts
+- **Brand:** Coral `#E8637A` → Orange `#F28C38` gradient
+- **Active Nav:** Orange for tab bar active icons
+- **Emergency:** Soft Red `#E85D6F` for critical UI
+- **Status:** Green `#3CB371` for active indicators
+- **Typography:** System fonts with 800-weight headings
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js** 18+ 
-- **npm** 9+
-
-### Installation
-
 ```bash
-# Clone the repository
+# Clone
 git clone https://github.com/charulekha-06/WAYORA-.git
 cd WAYORA-
 
-# Install dependencies
+# Install
 npm install
 
-# Start development server
-npm run dev
+# Run
+npx expo start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Production Build
-
-```bash
-npm run build
-npm start
-```
+Then scan the QR code with **Expo Go** (iOS/Android), or press:
+- `i` for iOS Simulator
+- `a` for Android Emulator  
+- `w` for Web
 
 ## 📁 Project Structure
 
 ```
 wayora/
-├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── layout.tsx          # Root layout (Header + Footer)
-│   │   ├── page.tsx            # Landing page (Hero, Features, Destinations)
-│   │   ├── explore/page.tsx    # Destination explorer with filters
-│   │   ├── planner/page.tsx    # AI Itinerary Planner
-│   │   ├── budget/page.tsx     # Smart Budget Tracker
-│   │   ├── safety/page.tsx     # Safety & Logistics
-│   │   ├── profile/page.tsx    # User Profile & Wandrix Badges
-│   │   ├── auth/page.tsx       # Login / Sign Up
-│   │   └── globals.css         # Design system & Wayora palette
-│   └── components/
-│       └── layout/
-│           ├── Header.tsx      # Responsive header + mobile tab bar
-│           └── Footer.tsx      # Footer with links & socials
-├── public/                     # Static assets
-├── package.json
-└── tsconfig.json
+├── app/
+│   ├── (tabs)/
+│   │   ├── _layout.tsx     # Tab navigation (5 tabs)
+│   │   ├── index.tsx       # Home screen
+│   │   ├── explore.tsx     # Explore destinations
+│   │   ├── planner.tsx     # AI Itinerary Planner
+│   │   ├── budget.tsx      # Smart Budget Tracker
+│   │   └── profile.tsx     # User Profile & Badges
+│   ├── _layout.tsx         # Root layout
+│   └── +not-found.tsx      # 404 screen
+├── constants/
+│   └── Colors.ts           # Wayora brand color palette
+├── components/             # Shared components
+├── assets/                 # Images, fonts
+├── app.json                # Expo config
+└── package.json
 ```
-
-## 🛣️ Roadmap
-
-### Phase 1: Core Platform (Current)
-- [x] AI Itinerary Planner UI
-- [x] Smart Budget Tracker
-- [x] Safety & Emergency Finder
-- [x] Explore Destinations
-- [x] Authentication UI
-- [x] Wandrix Badge System UI
-- [ ] Firebase Auth integration
-- [ ] OpenAI GPT API integration
-- [ ] Google Places API integration
-
-### Phase 2: Ecosystem Expansion
-- [ ] Artisan marketplace
-- [ ] Booking integration (hotels, transport)
-- [ ] Crowd density analysis (ML)
-- [ ] OCR bill scanning
-- [ ] 24/7 AI safety chatbot
-
-### Phase 3: Global Expansion
-- [ ] Multi-currency support
-- [ ] Offline AI modes
-- [ ] Tourism analytics dashboard (B2G)
-- [ ] React Native mobile app
-- [ ] Government partnership integrations
 
 ## 🛠️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| **Frontend** | Next.js 16, React 19, TypeScript |
-| **Styling** | TailwindCSS 4, CSS Variables |
-| **Icons** | Lucide React |
-| **Animations** | Framer Motion, CSS Keyframes |
-| **Charts** | Recharts |
-| **Auth** | Firebase (planned) |
-| **AI** | OpenAI GPT API (planned) |
-| **Maps** | Google Places API (planned) |
+| **Framework** | React Native (Expo SDK 55) |
+| **Navigation** | Expo Router (file-based) |
+| **UI** | React Native StyleSheet, LinearGradient |
+| **Icons** | @expo/vector-icons (Ionicons) |
+| **Language** | TypeScript |
+
+## 🛣️ Roadmap
+
+- [x] Home Dashboard
+- [x] Explore Destinations
+- [x] AI Itinerary Planner
+- [x] Smart Budget Tracker
+- [x] User Profile & Wandrix Badges
+- [ ] Firebase Authentication
+- [ ] OpenAI GPT Itinerary API
+- [ ] Google Places Emergency Finder
+- [ ] OCR Bill Scanning
+- [ ] Artisan Marketplace
+- [ ] Crowd Density Analysis
 
 ## 📝 License
 
-This project is licensed under the MIT License.
+MIT License
 
 ---
 
-<p align="center">
-  Made with ❤️ for travelers worldwide<br/>
-  <strong>Wayora</strong> — Travel, Reimagined.
-</p>
+<p align="center">Made with ❤️ for travelers worldwide<br/><strong>Wayora</strong> — Travel, Reimagined.</p>
