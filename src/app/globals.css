@@ -1,0 +1,257 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* Wayora Brand Colors */
+  --wayora-coral: #E8637A;
+  --wayora-coral-light: #F4A5B3;
+  --wayora-coral-dark: #C44D63;
+  --wayora-orange: #F28C38;
+  --wayora-orange-light: #F5A85C;
+  --wayora-orange-dark: #D97518;
+  --wayora-lavender: #B8C4F0;
+  --wayora-lavender-light: #E0E5F8;
+  --wayora-blue: #4A90D9;
+  --wayora-blue-light: #7CB3EA;
+  --wayora-green: #3CB371;
+  --wayora-green-light: #A8E6C3;
+  --wayora-red: #E85D6F;
+  --wayora-red-light: #F5A0AB;
+
+  /* Neutrals */
+  --wayora-black: #1A1A2E;
+  --wayora-dark-gray: #4A4A5A;
+  --wayora-gray: #8A8A9A;
+  --wayora-light-gray: #E8E8EE;
+  --wayora-off-white: #F8F8FC;
+  --wayora-white: #FFFFFF;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(26, 26, 46, 0.06);
+  --shadow-md: 0 4px 12px rgba(26, 26, 46, 0.08);
+  --shadow-lg: 0 8px 30px rgba(26, 26, 46, 0.12);
+  --shadow-xl: 0 20px 60px rgba(26, 26, 46, 0.15);
+  --shadow-card: 0 2px 8px rgba(26, 26, 46, 0.06), 0 0 1px rgba(26, 26, 46, 0.08);
+
+  --background: #F8F8FC;
+  --foreground: #1A1A2E;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-coral: var(--wayora-coral);
+  --color-coral-light: var(--wayora-coral-light);
+  --color-coral-dark: var(--wayora-coral-dark);
+  --color-wayora-orange: var(--wayora-orange);
+  --color-orange-light: var(--wayora-orange-light);
+  --color-lavender: var(--wayora-lavender);
+  --color-lavender-light: var(--wayora-lavender-light);
+  --color-wayora-blue: var(--wayora-blue);
+  --color-blue-light: var(--wayora-blue-light);
+  --color-wayora-green: var(--wayora-green);
+  --color-green-light: var(--wayora-green-light);
+  --color-wayora-red: var(--wayora-red);
+  --color-red-light: var(--wayora-red-light);
+  --color-dark: var(--wayora-black);
+  --color-dark-gray: var(--wayora-dark-gray);
+  --color-medium-gray: var(--wayora-gray);
+  --color-light-gray: var(--wayora-light-gray);
+  --color-off-white: var(--wayora-off-white);
+  --font-sans: 'Inter', sans-serif;
+  --font-display: 'Outfit', sans-serif;
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--wayora-off-white);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--wayora-light-gray);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--wayora-gray);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(232, 99, 122, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(232, 99, 122, 0.6);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.5s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Stagger children animations */
+.stagger-children > * {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-dark {
+  background: rgba(26, 26, 46, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Card Hover Effect */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--wayora-coral), var(--wayora-orange));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Button base */
+.btn-primary {
+  background: linear-gradient(135deg, var(--wayora-coral), var(--wayora-orange));
+  color: white;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(232, 99, 122, 0.35);
+}
+
+.btn-secondary {
+  background: var(--wayora-white);
+  color: var(--wayora-black);
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  border: 1.5px solid var(--wayora-light-gray);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-secondary:hover {
+  border-color: var(--wayora-coral);
+  color: var(--wayora-coral);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
