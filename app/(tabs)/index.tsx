@@ -19,9 +19,13 @@ const features = [
 
 const quickActions = [
   { icon: 'map-outline' as const, label: 'Trip Atlas', color: WayoraColors.blue, bg: WayoraColors.lavenderLight },
-  { icon: 'create-outline' as const, label: 'Post Generator', color: WayoraColors.blue, bg: WayoraColors.lavenderLight },
+  { icon: 'create-outline' as const, label: 'Post Gen', color: WayoraColors.blue, bg: WayoraColors.lavenderLight },
   { icon: 'alert-circle-outline' as const, label: 'Emergency', color: WayoraColors.red, bg: WayoraColors.redLight },
   { icon: 'book-outline' as const, label: 'Bookings', color: WayoraColors.green, bg: WayoraColors.greenLight },
+  { icon: 'chatbubble-ellipses-outline' as const, label: 'AI Chat', color: WayoraColors.coral, bg: '#FDF2F4' },
+  { icon: 'language-outline' as const, label: 'Translate', color: WayoraColors.orange, bg: '#FEF3EA' },
+  { icon: 'people-outline' as const, label: 'Artisans', color: WayoraColors.purple, bg: '#F8F0F7' },
+  { icon: 'cloudy-outline' as const, label: 'Weather', color: WayoraColors.blue, bg: '#F0F4FF' },
 ];
 
 const destinations = [
@@ -98,14 +102,16 @@ export default function HomeScreen() {
         {/* Quick Actions */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <View style={styles.quickGrid}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
             {quickActions.map((action) => (
-              <TouchableOpacity key={action.label} style={[styles.quickAction, { backgroundColor: action.bg }]}>
-                <Ionicons name={action.icon} size={22} color={action.color} />
-                <Text style={[styles.quickLabel, { color: action.color }]}>{action.label}</Text>
+              <TouchableOpacity key={action.label} style={styles.quickAction} activeOpacity={0.7}>
+                <View style={[styles.quickIconWrap, { backgroundColor: action.bg }]}>
+                  <Ionicons name={action.icon} size={24} color={action.color} />
+                </View>
+                <Text style={styles.quickLabel}>{action.label}</Text>
               </TouchableOpacity>
             ))}
-          </View>
+          </ScrollView>
         </View>
 
         {/* Features */}
@@ -179,9 +185,9 @@ const styles = StyleSheet.create({
   progressBg: { height: 6, backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 3, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: WayoraColors.black, borderRadius: 3 },
   progressText: { fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 6, textAlign: 'right' },
-  quickGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  quickAction: { width: (width - 50) / 2, paddingVertical: 16, paddingHorizontal: 14, borderRadius: 16, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  quickLabel: { fontSize: 13, fontWeight: '600' },
+  quickAction: { alignItems: 'center', width: 72 },
+  quickIconWrap: { width: 56, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', marginBottom: 8, shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 6, elevation: 3 },
+  quickLabel: { fontSize: 11, fontWeight: '600', color: WayoraColors.darkGray, textAlign: 'center' },
   featureCard: { width: 130, paddingVertical: 20, paddingHorizontal: 14, borderRadius: 18, marginRight: 10, alignItems: 'flex-start' },
   featureTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.black, marginTop: 10 },
   featureDesc: { fontSize: 11, color: WayoraColors.gray, marginTop: 4 },
