@@ -88,21 +88,33 @@ export default function PlannerScreen() {
 
         {step === 'form' && (
           <View style={styles.form}>
-            <Text style={styles.label}>📍 Where do you want to go?</Text>
+            <View style={styles.labelRow}>
+              <Ionicons name="location-outline" size={15} color={WayoraColors.coral} />
+              <Text style={styles.label}>Where do you want to go?</Text>
+            </View>
             <TextInput style={styles.input} placeholder="e.g., Tokyo, Japan" placeholderTextColor={WayoraColors.gray} value={dest} onChangeText={setDest} />
 
             <View style={styles.row}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.label}>📅 Days</Text>
+                <View style={styles.labelRow}>
+                  <Ionicons name="calendar-outline" size={15} color={WayoraColors.blue} />
+                  <Text style={styles.label}>Days</Text>
+                </View>
                 <TextInput style={styles.input} keyboardType="numeric" value={days} onChangeText={setDays} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.label}>💰 Budget ($)</Text>
+                <View style={styles.labelRow}>
+                  <Ionicons name="wallet-outline" size={15} color={WayoraColors.orange} />
+                  <Text style={styles.label}>Budget ($)</Text>
+                </View>
                 <TextInput style={styles.input} keyboardType="numeric" value={budget} onChangeText={setBudget} />
               </View>
             </View>
 
-            <Text style={styles.label}>👥 Group Type</Text>
+            <View style={styles.labelRow}>
+              <Ionicons name="people-outline" size={15} color={WayoraColors.purple} />
+              <Text style={styles.label}>Group Type</Text>
+            </View>
             <View style={styles.chipRow}>
               {groupTypes.map(g => (
                 <TouchableOpacity key={g} onPress={() => setGroup(g)}
@@ -112,15 +124,19 @@ export default function PlannerScreen() {
               ))}
             </View>
 
-            <Text style={styles.label}>❤️ Interests</Text>
+            <View style={styles.labelRow}>
+              <Ionicons name="heart-outline" size={15} color={WayoraColors.coral} />
+              <Text style={styles.label}>Interests</Text>
+            </View>
             <View style={styles.interestGrid}>
               {interests.map(i => (
                 <TouchableOpacity key={i.id} onPress={() => toggleInterest(i.id)}
                   style={[styles.interestChip, selected.includes(i.id) && styles.interestActive]}>
-                  <Text style={styles.interestEmoji}>{i.emoji}</Text>
+                  <Ionicons name={i.icon} size={16} color={selected.includes(i.id) ? WayoraColors.coral : i.color} />
                   <Text style={[styles.interestLabel, selected.includes(i.id) && { color: WayoraColors.coral }]}>{i.label}</Text>
                 </TouchableOpacity>
               ))}
+            </View>
             </View>
 
             <TouchableOpacity onPress={generate}>
@@ -144,11 +160,20 @@ export default function PlannerScreen() {
           <View style={styles.resultContainer}>
             <LinearGradient colors={[WayoraColors.coral, WayoraColors.orange]} style={styles.resultHeader} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
               <Text style={styles.resultSubtitle}>Your AI-Generated Itinerary</Text>
-              <Text style={styles.resultTitle}>{dest || 'Tokyo, Japan'} ✨</Text>
+              <Text style={styles.resultTitle}>{dest || 'Tokyo, Japan'}</Text>
               <View style={styles.resultStats}>
-                <Text style={styles.resultStat}>📅 {days} days</Text>
-                <Text style={styles.resultStat}>💰 ${budget}</Text>
-                <Text style={styles.resultStat}>👤 {group}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Ionicons name="calendar-outline" size={12} color="rgba(255,255,255,0.9)" />
+                  <Text style={styles.resultStat}>{days} days</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Ionicons name="wallet-outline" size={12} color="rgba(255,255,255,0.9)" />
+                  <Text style={styles.resultStat}>${budget}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <Ionicons name="person-outline" size={12} color="rgba(255,255,255,0.9)" />
+                  <Text style={styles.resultStat}>{group}</Text>
+                </View>
               </View>
             </LinearGradient>
 
@@ -217,8 +242,8 @@ const styles = StyleSheet.create({
   interestGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   interestChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 10, borderRadius: 12, backgroundColor: WayoraColors.offWhite, borderWidth: 1, borderColor: WayoraColors.lightGray },
   interestActive: { borderColor: WayoraColors.coral, backgroundColor: 'rgba(232,99,122,0.06)' },
-  interestEmoji: { fontSize: 16 },
   interestLabel: { fontSize: 12, fontWeight: '600', color: WayoraColors.darkGray },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 16, marginBottom: 8 },
   generateBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 16, borderRadius: 16, marginTop: 24 },
   generateText: { fontSize: 15, fontWeight: '700', color: '#fff' },
   loadingBox: { alignItems: 'center', justifyContent: 'center', padding: 60 },

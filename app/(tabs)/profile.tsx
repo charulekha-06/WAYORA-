@@ -8,20 +8,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { WayoraColors } from '@/constants/Colors';
 
 const badges = [
-  { name: 'Explorer I', emoji: '🗺️', earned: true },
-  { name: 'Culture Buff', emoji: '🏛️', earned: true },
-  { name: 'Foodie', emoji: '🍜', earned: true },
-  { name: 'Budget Pro', emoji: '💰', earned: true },
-  { name: 'Adventurer', emoji: '🧗', earned: false },
-  { name: 'Wandrix Elite', emoji: '⭐', earned: false },
-  { name: 'Puthir Master', emoji: '🧩', earned: false },
-  { name: 'Globe Trotter', emoji: '🌍', earned: false },
+  { name: 'Explorer I', icon: 'compass-outline' as const, color: WayoraColors.blue, earned: true },
+  { name: 'Culture Buff', icon: 'business-outline' as const, color: WayoraColors.coral, earned: true },
+  { name: 'Foodie', icon: 'restaurant-outline' as const, color: WayoraColors.orange, earned: true },
+  { name: 'Budget Pro', icon: 'wallet-outline' as const, color: WayoraColors.green, earned: true },
+  { name: 'Adventurer', icon: 'trail-sign-outline' as const, color: WayoraColors.green, earned: false },
+  { name: 'Wandrix Elite', icon: 'star-outline' as const, color: WayoraColors.orange, earned: false },
+  { name: 'Puthir Master', icon: 'extension-puzzle-outline' as const, color: WayoraColors.purple, earned: false },
+  { name: 'Globe Trotter', icon: 'globe-outline' as const, color: WayoraColors.blue, earned: false },
 ];
 
 const trips = [
-  { dest: 'Tokyo, Japan', dates: 'Mar 10-15, 2026', status: 'Active', emoji: '🏯', daysLeft: 12 },
-  { dest: 'Bali, Indonesia', dates: 'Jan 5-15, 2026', status: 'Completed', emoji: '🌴' },
-  { dest: 'Paris, France', dates: 'Nov 20-27, 2025', status: 'Completed', emoji: '🗼' },
+  { dest: 'Tokyo, Japan', dates: 'Mar 10-15, 2026', status: 'Active', icon: 'business-outline' as const, iconColor: WayoraColors.coral, daysLeft: 12 },
+  { dest: 'Bali, Indonesia', dates: 'Jan 5-15, 2026', status: 'Completed', icon: 'leaf-outline' as const, iconColor: WayoraColors.green },
+  { dest: 'Paris, France', dates: 'Nov 20-27, 2025', status: 'Completed', icon: 'diamond-outline' as const, iconColor: WayoraColors.blue },
 ];
 
 const menu = [
@@ -39,7 +39,7 @@ export default function ProfileScreen() {
         {/* Profile Header */}
         <LinearGradient colors={[WayoraColors.coral, WayoraColors.orange]} style={styles.header}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>🧑‍💼</Text>
+            <Ionicons name="person" size={36} color="rgba(255,255,255,0.9)" />
           </View>
           <Text style={styles.userName}>Alex Traveler</Text>
           <Text style={styles.userLevel}>Wandrix Level: Explorer II · 750 pts</Text>
@@ -72,7 +72,9 @@ export default function ProfileScreen() {
           <View style={styles.badgeGrid}>
             {badges.map(b => (
               <View key={b.name} style={[styles.badgeItem, !b.earned && { opacity: 0.4 }]}>
-                <Text style={styles.badgeEmoji}>{b.emoji}</Text>
+                <View style={[styles.badgeIconWrap, { backgroundColor: b.color + '15' }]}>
+                  <Ionicons name={b.icon} size={20} color={b.color} />
+                </View>
                 <Text style={styles.badgeName}>{b.name}</Text>
               </View>
             ))}
@@ -86,7 +88,9 @@ export default function ProfileScreen() {
           </Text>
           {trips.map(trip => (
             <View key={trip.dest} style={styles.tripItem}>
-              <Text style={styles.tripEmoji}>{trip.emoji}</Text>
+              <View style={[styles.tripIconWrap, { backgroundColor: trip.iconColor + '12' }]}>
+                <Ionicons name={trip.icon} size={20} color={trip.iconColor} />
+              </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.tripDest}>{trip.dest}</Text>
                 <Text style={styles.tripDates}>{trip.dates}</Text>
@@ -148,10 +152,10 @@ const styles = StyleSheet.create({
   cardSubtitle: { fontSize: 11, color: WayoraColors.gray, fontWeight: '500' },
   badgeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   badgeItem: { width: '22%', alignItems: 'center', paddingVertical: 10, borderRadius: 12, backgroundColor: 'rgba(242,140,56,0.06)' },
-  badgeEmoji: { fontSize: 24, marginBottom: 4 },
+  badgeIconWrap: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
   badgeName: { fontSize: 9, fontWeight: '700', color: WayoraColors.black, textAlign: 'center' },
   tripItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: WayoraColors.lightGray },
-  tripEmoji: { fontSize: 28 },
+  tripIconWrap: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   tripDest: { fontSize: 14, fontWeight: '600', color: WayoraColors.black },
   tripDates: { fontSize: 11, color: WayoraColors.gray, marginTop: 2 },
   activeBadge: { backgroundColor: 'rgba(60,179,113,0.08)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8 },

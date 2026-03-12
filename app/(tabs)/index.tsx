@@ -29,9 +29,9 @@ const quickActions = [
 ];
 
 const destinations = [
-  { name: 'Tokyo', country: 'Japan', emoji: '🏯', rating: 4.9, price: '$1,200' },
-  { name: 'Santorini', country: 'Greece', emoji: '🏛️', rating: 4.8, price: '$1,800' },
-  { name: 'Bali', country: 'Indonesia', emoji: '🌴', rating: 4.7, price: '$900' },
+  { name: 'Tokyo', country: 'Japan', icon: 'business-outline' as const, iconColor: WayoraColors.coral, iconBg: '#FDF2F4', rating: 4.9, price: '$1,200' },
+  { name: 'Santorini', country: 'Greece', icon: 'sunny-outline' as const, iconColor: WayoraColors.orange, iconBg: '#FEF3EA', rating: 4.8, price: '$1,800' },
+  { name: 'Bali', country: 'Indonesia', icon: 'leaf-outline' as const, iconColor: WayoraColors.green, iconBg: '#F2FFF6', rating: 4.7, price: '$900' },
 ];
 
 export default function HomeScreen() {
@@ -45,7 +45,7 @@ export default function HomeScreen() {
         <LinearGradient colors={['#FDF2F4', '#FEF3EA', '#F0F4FF']} style={styles.header}>
           <View style={styles.headerTop}>
             <View>
-              <Text style={styles.greeting}>Welcome back! 👋</Text>
+              <Text style={styles.greeting}>Welcome back! </Text>
               <Text style={styles.userName}>Alex Traveler</Text>
             </View>
             <TouchableOpacity style={styles.notifBtn}>
@@ -70,7 +70,10 @@ export default function HomeScreen() {
           <LinearGradient colors={[WayoraColors.coral, WayoraColors.orange]} style={styles.tripCard} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
             <View style={styles.tripTop}>
               <View>
-                <Text style={styles.tripDest}>Tokyo, Japan 🏯</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Ionicons name="business-outline" size={18} color="white" />
+                  <Text style={styles.tripDest}>Tokyo, Japan</Text>
+                </View>
                 <Text style={styles.tripDates}>Mar 15 - Mar 22, 2026</Text>
               </View>
               <View style={styles.daysLeft}>
@@ -138,7 +141,9 @@ export default function HomeScreen() {
           </View>
           {destinations.map((dest) => (
             <TouchableOpacity key={dest.name} style={styles.destCard} onPress={() => router.push('/planner' as any)}>
-              <Text style={styles.destEmoji}>{dest.emoji}</Text>
+              <View style={[styles.destIconWrap, { backgroundColor: dest.iconBg }]}>
+                <Ionicons name={dest.icon} size={22} color={dest.iconColor} />
+              </View>
               <View style={styles.destInfo}>
                 <Text style={styles.destName}>{dest.name}</Text>
                 <Text style={styles.destCountry}>{dest.country}</Text>
@@ -192,7 +197,7 @@ const styles = StyleSheet.create({
   featureTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.black, marginTop: 10 },
   featureDesc: { fontSize: 11, color: WayoraColors.gray, marginTop: 4 },
   destCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: WayoraColors.white, padding: 14, borderRadius: 16, marginBottom: 10, shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 2 },
-  destEmoji: { fontSize: 36, marginRight: 12 },
+  destIconWrap: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   destInfo: { flex: 1 },
   destName: { fontSize: 15, fontWeight: '700', color: WayoraColors.black },
   destCountry: { fontSize: 12, color: WayoraColors.gray, marginTop: 2 },

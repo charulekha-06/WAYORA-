@@ -20,16 +20,16 @@ const categories = [
 ];
 
 const destinations = [
-  { name: 'Tokyo', country: 'Japan', emoji: '🏯', rating: 4.9, price: '$1,200', category: 'Cultural', duration: '7 days', desc: 'Ancient temples meet neon-lit streets.' },
-  { name: 'Santorini', country: 'Greece', emoji: '🏛️', rating: 4.8, price: '$1,800', category: 'Beach', duration: '5 days', desc: 'White-washed buildings on volcanic cliffs.' },
-  { name: 'Bali', country: 'Indonesia', emoji: '🌴', rating: 4.7, price: '$900', category: 'Wellness', duration: '10 days', desc: 'Rice terraces, temples, and serenity.' },
-  { name: 'Paris', country: 'France', emoji: '🗼', rating: 4.9, price: '$2,100', category: 'Cultural', duration: '6 days', desc: 'The city of light, love, and art.' },
-  { name: 'Machu Picchu', country: 'Peru', emoji: '🏔️', rating: 4.8, price: '$1,500', category: 'Adventure', duration: '8 days', desc: 'Lost city of the Incas in the Andes.' },
-  { name: 'Maldives', country: 'Maldives', emoji: '🏝️', rating: 4.9, price: '$2,500', category: 'Beach', duration: '5 days', desc: 'Crystal waters and overwater bungalows.' },
-  { name: 'Kyoto', country: 'Japan', emoji: '⛩️', rating: 4.8, price: '$1,100', category: 'Cultural', duration: '5 days', desc: 'Bamboo forests and 2,000 temples.' },
-  { name: 'Marrakech', country: 'Morocco', emoji: '🕌', rating: 4.6, price: '$800', category: 'Cultural', duration: '6 days', desc: 'Vibrant souks and stunning riads.' },
-  { name: 'Bangkok', country: 'Thailand', emoji: '🛕', rating: 4.6, price: '$600', category: 'Food', duration: '5 days', desc: 'Street food capital of the world.' },
-  { name: 'Swiss Alps', country: 'Switzerland', emoji: '🏔️', rating: 4.9, price: '$2,800', category: 'Nature', duration: '7 days', desc: 'Snow-capped peaks and alpine meadows.' },
+  { name: 'Tokyo', country: 'Japan', icon: 'business-outline' as const, iconColor: WayoraColors.coral, rating: 4.9, price: '$1,200', category: 'Cultural', duration: '7 days', desc: 'Ancient temples meet neon-lit streets.' },
+  { name: 'Santorini', country: 'Greece', icon: 'sunny-outline' as const, iconColor: WayoraColors.orange, rating: 4.8, price: '$1,800', category: 'Beach', duration: '5 days', desc: 'White-washed buildings on volcanic cliffs.' },
+  { name: 'Bali', country: 'Indonesia', icon: 'leaf-outline' as const, iconColor: WayoraColors.green, rating: 4.7, price: '$900', category: 'Wellness', duration: '10 days', desc: 'Rice terraces, temples, and serenity.' },
+  { name: 'Paris', country: 'France', icon: 'diamond-outline' as const, iconColor: WayoraColors.blue, rating: 4.9, price: '$2,100', category: 'Cultural', duration: '6 days', desc: 'The city of light, love, and art.' },
+  { name: 'Machu Picchu', country: 'Peru', icon: 'trail-sign-outline' as const, iconColor: WayoraColors.green, rating: 4.8, price: '$1,500', category: 'Adventure', duration: '8 days', desc: 'Lost city of the Incas in the Andes.' },
+  { name: 'Maldives', country: 'Maldives', icon: 'water-outline' as const, iconColor: WayoraColors.blue, rating: 4.9, price: '$2,500', category: 'Beach', duration: '5 days', desc: 'Crystal waters and overwater bungalows.' },
+  { name: 'Kyoto', country: 'Japan', icon: 'flower-outline' as const, iconColor: WayoraColors.coral, rating: 4.8, price: '$1,100', category: 'Cultural', duration: '5 days', desc: 'Bamboo forests and 2,000 temples.' },
+  { name: 'Marrakech', country: 'Morocco', icon: 'storefront-outline' as const, iconColor: WayoraColors.orange, rating: 4.6, price: '$800', category: 'Cultural', duration: '6 days', desc: 'Vibrant souks and stunning riads.' },
+  { name: 'Bangkok', country: 'Thailand', icon: 'restaurant-outline' as const, iconColor: WayoraColors.red, rating: 4.6, price: '$600', category: 'Food', duration: '5 days', desc: 'Street food capital of the world.' },
+  { name: 'Swiss Alps', country: 'Switzerland', icon: 'snow-outline' as const, iconColor: WayoraColors.blue, rating: 4.9, price: '$2,800', category: 'Nature', duration: '7 days', desc: 'Snow-capped peaks and alpine meadows.' },
 ];
 
 export default function ExploreScreen() {
@@ -82,7 +82,9 @@ export default function ExploreScreen() {
         {filtered.map((dest, idx) => (
           <TouchableOpacity key={dest.name} style={styles.card} onPress={() => router.push('/planner' as any)}>
             <View style={[styles.cardImage, { backgroundColor: idx % 3 === 0 ? '#FDF2F4' : idx % 3 === 1 ? '#F0F4FF' : '#F2FFF6' }]}>
-              <Text style={styles.cardEmoji}>{dest.emoji}</Text>
+              <View style={[styles.cardIconWrap, { backgroundColor: dest.iconColor + '18' }]}>
+                <Ionicons name={dest.icon} size={36} color={dest.iconColor} />
+              </View>
               <View style={styles.ratingBadge}>
                 <Ionicons name="star" size={10} color={WayoraColors.orange} />
                 <Text style={styles.ratingText}>{dest.rating}</Text>
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
   resultCount: { fontSize: 12, color: WayoraColors.gray, fontWeight: '500', marginBottom: 12 },
   card: { backgroundColor: WayoraColors.white, borderRadius: 18, marginBottom: 14, overflow: 'hidden', shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
   cardImage: { height: 140, alignItems: 'center', justifyContent: 'center', position: 'relative' },
-  cardEmoji: { fontSize: 56 },
+  cardIconWrap: { width: 72, height: 72, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   ratingBadge: { position: 'absolute', top: 10, right: 10, flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: 'rgba(255,255,255,0.9)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
   ratingText: { fontSize: 11, fontWeight: '700', color: WayoraColors.black },
   durationBadge: { position: 'absolute', top: 10, left: 10, backgroundColor: 'rgba(0,0,0,0.5)', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
