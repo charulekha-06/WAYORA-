@@ -68,10 +68,10 @@ export default function TabLayout() {
       <Tabs.Screen
         name="booking"
         options={{
-          title: 'Booking',
+          title: 'Trips',
           headerShown: false,
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'bed' : 'bed-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'map' : 'map-outline'} size={24} color={color} />
           ),
         }}
       />

@@ -9,24 +9,47 @@ export default function BookingScreen() {
       <StatusBar barStyle="dark-content" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <Text style={styles.title}>Bookings</Text>
+          <Text style={styles.title}>Trips</Text>
         </View>
 
-        <View style={styles.grid}>
+        <View style={styles.listContainer}>
+          {/* Stay & Food Picks */}
           <TouchableOpacity style={styles.card}>
-            <View style={styles.iconCircle}>
-              <Ionicons name="home-outline" size={24} color={WayoraColors.black} />
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconCircle, { backgroundColor: '#FFF0ED' }]}>
+                <Ionicons name="restaurant" size={24} color={WayoraColors.orange} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Stay & Food Picks</Text>
+                <Text style={styles.cardSubtitle}>Smart recommendations filtered by price, ratings, and availability.</Text>
+              </View>
             </View>
-            <Text style={styles.cardTitle}>Find Stays</Text>
-            <Text style={styles.cardSubtitle}>Budget to luxury options</Text>
           </TouchableOpacity>
 
+          {/* Artisan Support */}
           <TouchableOpacity style={styles.card}>
-            <View style={styles.iconCircle}>
-              <Ionicons name="restaurant-outline" size={24} color={WayoraColors.black} />
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconCircle, { backgroundColor: '#F4EBFA' }]}>
+                <Ionicons name="color-palette" size={24} color={WayoraColors.purple} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Artisan Support</Text>
+                <Text style={styles.cardSubtitle}>Platform for local artisans to showcase products and sell directly to travellers.</Text>
+              </View>
             </View>
-            <Text style={styles.cardTitle}>Food</Text>
-            <Text style={styles.cardSubtitle}>Local dining spots</Text>
+          </TouchableOpacity>
+
+          {/* Cultural Engagement */}
+          <TouchableOpacity style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.iconCircle, { backgroundColor: '#EBF4FF' }]}>
+                <Ionicons name="library" size={24} color={WayoraColors.blue} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cardTitle}>Cultural Engagement</Text>
+                <Text style={styles.cardSubtitle}>Interactive stories and guides for cultural and heritage sites.</Text>
+              </View>
+            </View>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -49,17 +72,15 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: WayoraColors.black,
   },
-  grid: {
-    flexDirection: 'row',
+  listContainer: {
     paddingHorizontal: 20,
     gap: 16,
+    paddingBottom: 40,
   },
   card: {
-    flex: 1,
     backgroundColor: WayoraColors.white,
     borderRadius: 20,
-    padding: 24,
-    alignItems: 'center',
+    padding: 20,
     borderWidth: 1,
     borderColor: '#ECECEC',
     shadowColor: '#000',
@@ -68,25 +89,27 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
   iconCircle: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#F8F9FA',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
   cardTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: WayoraColors.black,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   cardSubtitle: {
-    fontSize: 12,
+    fontSize: 13,
     color: WayoraColors.gray,
-    textAlign: 'center',
-    lineHeight: 16,
+    lineHeight: 18,
   },
 });
