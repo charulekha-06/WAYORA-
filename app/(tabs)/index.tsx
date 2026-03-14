@@ -42,7 +42,7 @@ export default function HomeScreen() {
   const [newTripProps, setNewTripProps] = useState({ name: '', date: '' });
   const [upcomingTrips, setUpcomingTrips] = useState([
     { id: '1', name: 'Tokyo, Japan', date: 'Jan 10-20, 2025', status: 'Planning', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=150&q=80' },
-    { id: '2', name: 'Swiss Alps', date: 'Mar 5-12, 2025', status: 'Saved', image: 'https://images.unsplash.com/photo-1531366936010-27c57f526084?auto=format&fit=crop&w=150&q=80' },
+    { id: '2', name: 'Swiss Alps', date: 'Mar 5-12, 2025', status: 'Saved', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=150&q=80' },
   ]);
 
   const handleAddTrip = () => {
