@@ -140,7 +140,7 @@ export default function BudgetScreen() {
           {expenses.map(item => (
             <View key={item.id} style={styles.txCard}>
               <View style={styles.txIconBg}>
-                <Ionicons name="document-text" size={22} color="#B0B3BA" />
+                <Ionicons name="document" size={18} color="#B0B3BA" />
               </View>
               <View style={styles.txInfo}>
                 <Text style={styles.txName}>{item.name}</Text>
