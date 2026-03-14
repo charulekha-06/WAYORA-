@@ -16,7 +16,7 @@ const features = [
   { icon: 'list' as const, title: 'To Do List', desc: 'Stay organized', color: WayoraColors.orange, bg: '#FEF3EA' },
   { icon: 'image' as const, title: 'Souvenir Album', desc: 'Capture memories', color: WayoraColors.purple, bg: '#F8F0F7' },
   { icon: 'flash' as const, title: 'Post Generator', desc: 'Share your trip', color: WayoraColors.green, bg: '#F2FFF6' },
-  { icon: 'cash' as const, title: 'Currency', desc: 'Quick conversion', color: '#14B8A6', bg: '#E6FFFA' },
+  { icon: 'cash' as const, title: 'Currency Converter', desc: 'Quick conversion', color: '#14B8A6', bg: '#E6FFFA' },
 ];
 
 const quickActions = [
@@ -124,7 +124,7 @@ export default function HomeScreen() {
         {/* Explore Features */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Explore Features</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}>
+          <View style={styles.featuresGrid}>
             {features.map((f) => (
               <TouchableOpacity key={f.title} style={[styles.featureCard, { backgroundColor: f.bg }]}>
                 <Ionicons name={f.icon} size={24} color={f.color} />
@@ -134,7 +134,7 @@ export default function HomeScreen() {
                 </View>
               </TouchableOpacity>
             ))}
-          </ScrollView>
+          </View>
         </View>
 
         {/* Upcoming Trips Section */}
@@ -224,9 +224,10 @@ const styles = StyleSheet.create({
   progressBg: { height: 8, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 4, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: '#2D3436', borderRadius: 4 },
   
-  featureCard: { width: 140, padding: 16, borderRadius: 20, alignItems: 'flex-start' },
-  featureTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.black },
-  featureDesc: { fontSize: 11, color: WayoraColors.gray, marginTop: 4 },
+  featuresGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 },
+  featureCard: { width: '48%', padding: 16, borderRadius: 20, alignItems: 'flex-start', marginBottom: 2 },
+  featureTitle: { fontSize: 13, fontWeight: '700', color: WayoraColors.black },
+  featureDesc: { fontSize: 10, color: WayoraColors.gray, marginTop: 4 },
 
   addTripBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   upcomingCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: WayoraColors.white, padding: 12, borderRadius: 18, marginBottom: 12, borderWidth: 1, borderColor: WayoraColors.lightGray },
