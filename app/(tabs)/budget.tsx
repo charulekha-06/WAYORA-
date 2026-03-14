@@ -17,13 +17,13 @@ const breakdownData = [
 ];
 
 const transactionData = [
-  { id: 1, name: 'Flight to Tokyo', amount: 450.00, date: 'Mar 10' },
-  { id: 2, name: 'Ryokan Check-in', amount: 120.00, date: 'Mar 10' },
-  { id: 3, name: 'Ramen & Sushi', amount: 35.00, date: 'Mar 10' },
-  { id: 4, name: 'Metro Day Pass', amount: 12.00, date: 'Mar 10' },
-  { id: 5, name: 'TeamLab Borderless', amount: 30.00, date: 'Mar 11' },
-  { id: 6, name: 'Akihabara Shopping', amount: 85.00, date: 'Mar 11' },
-  { id: 7, name: 'Izakaya Dinner', amount: 40.00, date: 'Mar 11' },
+  { id: 1, name: 'Hotel Le Marais', category: 'stay', amount: 120.00, date: 'Dec 10 at 14:30' },
+  { id: 2, name: 'Café de Flore', category: 'food', amount: 28.00, date: 'Dec 10 at 12:15' },
+  { id: 3, name: 'Metro Pass', category: 'transport', amount: 15.00, date: 'Dec 9 at 09:45' },
+  { id: 4, name: 'Louvre Museum', category: 'activities', amount: 17.00, date: 'Dec 9 at 10:30' },
+  { id: 5, name: 'Boulangerie Patisserie', category: 'food', amount: 12.00, date: 'Dec 8 at 08:20' },
+  { id: 6, name: 'Taxi to Airport', category: 'transport', amount: 35.00, date: 'Dec 8 at 06:00' },
+  { id: 7, name: 'Seine River Cruise', category: 'activities', amount: 25.00, date: 'Dec 7 at 16:00' },
 ];
 
 const chartData = [
@@ -45,7 +45,7 @@ export default function BudgetScreen() {
 
   const addExpense = () => {
     if (!newExp.name || !newExp.amount) return;
-    setExpenses([{ id: Date.now(), name: newExp.name, amount: Number(newExp.amount), date: 'Today' }, ...expenses]);
+    setExpenses([{ id: Date.now(), name: newExp.name, category: newExp.category, amount: Number(newExp.amount), date: 'Today' }, ...expenses]);
     setNewExp({ name: '', category: 'food', amount: '' });
     setShowAdd(false);
   };
@@ -137,18 +137,21 @@ export default function BudgetScreen() {
             </TouchableOpacity>
           </View>
           
-          {expenses.map(item => (
-            <View key={item.id} style={styles.txCard}>
-              <View style={styles.txIconBg}>
-                <Ionicons name="document" size={18} color="#B0B3BA" />
+          {expenses.map(item => {
+            const cat = breakdownData.find(c => c.id === item.category) || breakdownData[0];
+            return (
+              <View key={item.id} style={styles.txCard}>
+                <View style={[styles.txIconBg, { backgroundColor: cat.color + '10' }]}>
+                  <Ionicons name={cat.icon} size={18} color={cat.color} />
+                </View>
+                <View style={styles.txInfo}>
+                  <Text style={styles.txName}>{item.name}</Text>
+                  <Text style={styles.txDate}>{cat.label} • {item.date}</Text>
+                </View>
+                <Text style={styles.txAmount}>${item.amount.toFixed(0)}</Text>
               </View>
-              <View style={styles.txInfo}>
-                <Text style={styles.txName}>{item.name}</Text>
-                <Text style={styles.txDate}>{item.date}</Text>
-              </View>
-              <Text style={styles.txAmount}>${item.amount.toFixed(2)}</Text>
-            </View>
-          ))}
+            );
+          })}
         </View>
 
         {/* Spending Chart */}
