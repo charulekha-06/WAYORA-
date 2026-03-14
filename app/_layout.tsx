@@ -55,6 +55,7 @@ function RootLayoutNav() {
       <View style={{ flex: 1, paddingTop: 60 }}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="itinerary" options={{ headerShown: false }} />
         </Stack>
       </View>
       <FloatingChatbot />

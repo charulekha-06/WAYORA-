@@ -41,7 +41,7 @@ export default function ItineraryScreen() {
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color={WayoraColors.black} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Plan your <Text style={{ color: WayoraColors.coral }}>perfect trip</Text></Text>
+        <Text style={styles.headerTitle}>Itinerary Planner</Text>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formContainer}>
