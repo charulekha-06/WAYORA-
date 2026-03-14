@@ -55,10 +55,6 @@ export default function BudgetScreen() {
       <StatusBar barStyle="dark-content" />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.header}>
-          <View style={styles.badge}>
-            <Ionicons name="wallet-outline" size={14} color={WayoraColors.orange} />
-            <Text style={[styles.badgeText, { color: WayoraColors.orange }]}>Smart Budget</Text>
-          </View>
           <Text style={styles.title}>Track your <Text style={{ color: WayoraColors.coral }}>spending</Text></Text>
         </View>
 

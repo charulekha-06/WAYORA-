@@ -19,25 +19,31 @@ export default function GlobalHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#FAF5ED', // Off-white/cream background matching the image
+    backgroundColor: '#FFF9F2', // Warm cream background
     paddingHorizontal: 20,
-    paddingBottom: 10,
+    paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0,0,0,0.05)',
+    borderBottomColor: 'rgba(0,0,0,0.03)',
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    zIndex: 100,
+    zIndex: 1000,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.02,
+    shadowRadius: 2,
+    elevation: 2,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#6B52A3', // Purple-ish color matching the image
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#7C5CC4', // Vibrant purple from logo
+    letterSpacing: -0.5,
   },
 });

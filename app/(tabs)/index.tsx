@@ -11,10 +11,12 @@ import { WayoraColors } from '@/constants/Colors';
 const { width } = Dimensions.get('window');
 
 const features = [
-  { icon: 'sparkles' as const, title: 'AI Planner', desc: 'Smart itineraries', color: WayoraColors.coral, bg: '#FDF2F4' },
-  { icon: 'wallet-outline' as const, title: '', desc: 'Track spending', color: WayoraColors.orange, bg: '#FEF3EA' },
-  { icon: 'shield-checkmark-outline' as const, title: 'Safety', desc: 'Stay protected', color: WayoraColors.blue, bg: '#F0F4FF' },
-  { icon: 'trophy-outline' as const, title: 'Wandrix', desc: 'Earn badges', color: WayoraColors.green, bg: '#F2FFF6' },
+  { icon: 'map' as const, title: 'Itinerary Planner', desc: 'Smart itineraries', color: WayoraColors.coral, bg: '#FDF2F4' },
+  { icon: 'medkit' as const, title: 'Emergency Finder', desc: 'Find help fast', color: WayoraColors.blue, bg: '#F0F4FF' },
+  { icon: 'list' as const, title: 'To Do List', desc: 'Stay organized', color: WayoraColors.orange, bg: '#FEF3EA' },
+  { icon: 'image' as const, title: 'Souvenir Album', desc: 'Capture memories', color: WayoraColors.purple, bg: '#F8F0F7' },
+  { icon: 'flash' as const, title: 'AI Post Gen', desc: 'Share your trip', color: WayoraColors.green, bg: '#F2FFF6' },
+  { icon: 'cash' as const, title: 'Currency', desc: 'Quick conversion', color: '#14B8A6', bg: '#E6FFFA' },
 ];
 
 const quickActions = [
@@ -64,99 +66,87 @@ export default function HomeScreen() {
         {/* Current Trip Card */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Upcoming Trip</Text>
-            <Text style={styles.seeAll}>See all</Text>
+            <Text style={styles.sectionTitle}>Current Trip</Text>
           </View>
-          <LinearGradient colors={[WayoraColors.coral, WayoraColors.orange]} style={styles.tripCard} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-            <View style={styles.tripTop}>
-              <View>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <Ionicons name="business-outline" size={18} color="white" />
-                  <Text style={styles.tripDest}>Tokyo, Japan</Text>
+          <View style={styles.currentTripCard}>
+            <View style={styles.tripImagePart}>
+              {/* Using a placeholder gradient for the image as requested by design */}
+              <LinearGradient colors={['#A0522D', '#5D4037']} style={styles.tripImageOverlay}>
+                <View style={styles.tripTopInfo}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Ionicons name="location" size={18} color="white" />
+                    <Text style={styles.tripDest}>Paris, France</Text>
+                  </View>
+                  <Text style={styles.tripDates}>Dec 15-22, 2024</Text>
+                  <Text style={styles.daysLeftText}>12 days to go!</Text>
                 </View>
-                <Text style={styles.tripDates}>Mar 15 - Mar 22, 2026</Text>
+              </LinearGradient>
+            </View>
+            <View style={styles.tripProgressPart}>
+              <View style={styles.progressHeader}>
+                <Text style={styles.progressLabel}>Budget Progress</Text>
+                <Text style={styles.progressValue}>$450 / $2500</Text>
               </View>
-              <View style={styles.daysLeft}>
-                <Text style={styles.daysLeftText}>12 days left</Text>
+              <View style={styles.progressBg}>
+                <View style={[styles.progressFill, { width: '18%' }]} />
               </View>
             </View>
-            <View style={styles.tripBottom}>
-              <View style={styles.tripStat}>
-                <Text style={styles.tripStatLabel}>Budget</Text>
-                <Text style={styles.tripStatValue}>$2,500</Text>
-              </View>
-              <View style={styles.tripStat}>
-                <Text style={styles.tripStatLabel}>Spent</Text>
-                <Text style={styles.tripStatValue}>$450</Text>
-              </View>
-              <View style={styles.tripStat}>
-                <Text style={styles.tripStatLabel}>Activities</Text>
-                <Text style={styles.tripStatValue}>18</Text>
-              </View>
-            </View>
-            {/* Budget Progress */}
-            <View style={styles.progressBg}>
-              <View style={[styles.progressFill, { width: '18%' }]} />
-            </View>
-            <Text style={styles.progressText}>$450 / $2,500</Text>
-          </LinearGradient>
+          </View>
         </View>
 
-        {/* Quick Actions */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Actions</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ paddingHorizontal: 20, gap: 14 }}>
-            {quickActions.map((action) => (
-              <TouchableOpacity key={action.label} style={styles.quickAction} activeOpacity={0.7}>
-                <View style={[styles.quickIconWrap, { backgroundColor: action.bg }]}>
-                  <Ionicons name={action.icon} size={24} color={action.color} />
-                </View>
-                <Text style={styles.quickLabel}>{action.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Features */}
+        {/* Explore Features */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Explore Features</Text>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ paddingHorizontal: 20 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -20 }} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }}>
             {features.map((f) => (
               <TouchableOpacity key={f.title} style={[styles.featureCard, { backgroundColor: f.bg }]}>
-                <Ionicons name={f.icon} size={28} color={f.color} />
-                <Text style={styles.featureTitle}>{f.title}</Text>
-                <Text style={styles.featureDesc}>{f.desc}</Text>
+                <Ionicons name={f.icon} size={24} color={f.color} />
+                <View style={{ marginTop: 12 }}>
+                  <Text style={styles.featureTitle}>{f.title}</Text>
+                  <Text style={styles.featureDesc}>{f.desc}</Text>
+                </View>
               </TouchableOpacity>
             ))}
           </ScrollView>
         </View>
 
-        {/* Trending */}
+        {/* Upcoming Trips Section */}
         <View style={[styles.section, { marginBottom: 30 }]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Trending Destinations</Text>
-            <TouchableOpacity onPress={() => router.push('/explore' as any)}>
-              <Text style={styles.seeAll}>See all</Text>
+            <Text style={styles.sectionTitle}>Upcoming Trips</Text>
+            <TouchableOpacity style={styles.addTripBtn}>
+              <Ionicons name="add" size={18} color={WayoraColors.blue} />
+              <Text style={[styles.seeAll, { color: WayoraColors.blue }]}>Add Trip</Text>
             </TouchableOpacity>
           </View>
-          {destinations.map((dest) => (
-            <TouchableOpacity key={dest.name} style={styles.destCard} onPress={() => router.push('/planner' as any)}>
-              <View style={[styles.destIconWrap, { backgroundColor: dest.iconBg }]}>
-                <Ionicons name={dest.icon} size={22} color={dest.iconColor} />
-              </View>
-              <View style={styles.destInfo}>
-                <Text style={styles.destName}>{dest.name}</Text>
-                <Text style={styles.destCountry}>{dest.country}</Text>
-              </View>
-              <View style={styles.destRight}>
-                <View style={styles.ratingBadge}>
-                  <Ionicons name="star" size={12} color={WayoraColors.orange} />
-                  <Text style={styles.ratingText}>{dest.rating}</Text>
-                </View>
-                <Text style={styles.destPrice}>{dest.price}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
+          
+          <TouchableOpacity style={styles.upcomingCard}>
+            <View style={[styles.upcomingImg, { backgroundColor: '#FFDAB9' }]}>
+               <Ionicons name="image-outline" size={20} color="#8B4513" />
+            </View>
+            <View style={styles.upcomingInfo}>
+              <Text style={styles.upcomingName}>Tokyo, Japan</Text>
+              <Text style={styles.upcomingDate}>Jan 10-20, 2025</Text>
+            </View>
+            <View style={styles.upcomingBadge}>
+              <Text style={styles.upcomingBadgeText}>Planning</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={WayoraColors.gray} />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.upcomingCard}>
+            <View style={[styles.upcomingImg, { backgroundColor: '#E0F7FA' }]}>
+               <Ionicons name="sunny-outline" size={20} color="#00838F" />
+            </View>
+            <View style={styles.upcomingInfo}>
+              <Text style={styles.upcomingName}>Swiss Alps</Text>
+              <Text style={styles.upcomingDate}>Mar 5-12, 2025</Text>
+            </View>
+            <View style={[styles.upcomingBadge, { backgroundColor: '#F5F5F5' }]}>
+              <Text style={[styles.upcomingBadgeText, { color: '#666' }]}>Saved</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={18} color={WayoraColors.gray} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </View>
@@ -177,32 +167,30 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: WayoraColors.black, marginBottom: 12 },
   seeAll: { fontSize: 13, fontWeight: '600', color: WayoraColors.coral },
-  tripCard: { borderRadius: 20, padding: 20, shadowColor: WayoraColors.coral, shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.25, shadowRadius: 16, elevation: 8 },
-  tripTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
+  currentTripCard: { borderRadius: 20, backgroundColor: WayoraColors.white, overflow: 'hidden', borderWidth: 1, borderColor: WayoraColors.lightGray },
+  tripImagePart: { height: 160 },
+  tripImageOverlay: { flex: 1, padding: 20, justifyContent: 'flex-end' },
+  tripTopInfo: { gap: 4 },
   tripDest: { fontSize: 20, fontWeight: '800', color: 'white' },
-  tripDates: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
-  daysLeft: { backgroundColor: 'rgba(60,179,113,0.9)', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
-  daysLeftText: { fontSize: 11, fontWeight: '700', color: 'white' },
-  tripBottom: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
-  tripStat: {},
-  tripStatLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)' },
-  tripStatValue: { fontSize: 16, fontWeight: '700', color: 'white', marginTop: 2 },
-  progressBg: { height: 6, backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 3, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: WayoraColors.black, borderRadius: 3 },
-  progressText: { fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 6, textAlign: 'right' },
-  quickAction: { alignItems: 'center', width: 80 },
-  quickIconWrap: { width: 56, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', marginBottom: 8, shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 6, elevation: 3 },
-  quickLabel: { fontSize: 11, fontWeight: '600', color: WayoraColors.darkGray, textAlign: 'center', width: '100%' },
-  featureCard: { width: 130, paddingVertical: 20, paddingHorizontal: 14, borderRadius: 18, marginRight: 10, alignItems: 'flex-start' },
-  featureTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.black, marginTop: 10 },
+  tripDates: { fontSize: 13, color: 'rgba(255,255,255,0.9)', fontWeight: '500' },
+  daysLeftText: { fontSize: 13, color: 'rgba(255,255,255,0.8)', fontWeight: '500', marginTop: 2 },
+  tripProgressPart: { padding: 20, backgroundColor: '#F8FBFF' },
+  progressHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  progressLabel: { fontSize: 13, color: WayoraColors.gray, fontWeight: '600' },
+  progressValue: { fontSize: 13, color: WayoraColors.black, fontWeight: '700' },
+  progressBg: { height: 8, backgroundColor: 'rgba(0,0,0,0.05)', borderRadius: 4, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: '#2D3436', borderRadius: 4 },
+  
+  featureCard: { width: 140, padding: 16, borderRadius: 20, alignItems: 'flex-start' },
+  featureTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.black },
   featureDesc: { fontSize: 11, color: WayoraColors.gray, marginTop: 4 },
-  destCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: WayoraColors.white, padding: 14, borderRadius: 16, marginBottom: 10, shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 2 },
-  destIconWrap: { width: 44, height: 44, borderRadius: 14, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  destInfo: { flex: 1 },
-  destName: { fontSize: 15, fontWeight: '700', color: WayoraColors.black },
-  destCountry: { fontSize: 12, color: WayoraColors.gray, marginTop: 2 },
-  destRight: { alignItems: 'flex-end' },
-  ratingBadge: { flexDirection: 'row', alignItems: 'center', gap: 3, backgroundColor: 'rgba(242,140,56,0.08)', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 6 },
-  ratingText: { fontSize: 11, fontWeight: '700', color: WayoraColors.black },
-  destPrice: { fontSize: 14, fontWeight: '700', color: WayoraColors.coral, marginTop: 4 },
+
+  addTripBtn: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  upcomingCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: WayoraColors.white, padding: 12, borderRadius: 18, marginBottom: 12, borderWidth: 1, borderColor: WayoraColors.lightGray },
+  upcomingImg: { width: 50, height: 50, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  upcomingInfo: { flex: 1, marginLeft: 16 },
+  upcomingName: { fontSize: 16, fontWeight: '700', color: WayoraColors.black },
+  upcomingDate: { fontSize: 13, color: WayoraColors.gray, marginTop: 2 },
+  upcomingBadge: { backgroundColor: '#F0F4FF', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, marginRight: 10 },
+  upcomingBadgeText: { fontSize: 11, fontWeight: '700', color: WayoraColors.blue },
 });

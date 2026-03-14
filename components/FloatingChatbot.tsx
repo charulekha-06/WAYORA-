@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 export default function FloatingChatbot() {
   const [visible, setVisible] = useState(false);
   const [messages, setMessages] = useState([
-    { id: 1, text: "Hi! I'm your Wayora AI Guide. I offer 24/7 travel help, local tips, safety alerts, and recommendations. What can I help you with today?", isUser: false }
+    { id: 1, text: "Hi! I'm Tavi, your Wayora AI Guide. I offer 24/7 travel help, local tips, safety alerts, and recommendations. What can I help you with today?", isUser: false }
   ]);
   const [input, setInput] = useState('');
 
@@ -44,7 +44,7 @@ export default function FloatingChatbot() {
             <View style={styles.header}>
               <View style={styles.headerLeft}>
                 <Ionicons name="sparkles" size={20} color={WayoraColors.coral} />
-                <Text style={styles.headerTitle}>Wayora AI Guide</Text>
+                <Text style={styles.headerTitle}>Tavi</Text>
               </View>
               <TouchableOpacity onPress={() => setVisible(false)}>
                 <Ionicons name="close" size={24} color={WayoraColors.black} />
