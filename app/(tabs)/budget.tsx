@@ -4,6 +4,7 @@ import {
   TextInput, StatusBar, Modal, Dimensions, Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import Svg, { Circle } from 'react-native-svg';
 import { WayoraColors } from '@/constants/Colors';
 
 const { width } = Dimensions.get('window');
@@ -24,6 +25,18 @@ const transactionData = [
   { id: 6, name: 'Akihabara Shopping', amount: 85.00, date: 'Mar 11' },
   { id: 7, name: 'Izakaya Dinner', amount: 40.00, date: 'Mar 11' },
 ];
+
+const chartData = [
+  { id: '1', label: 'Accommodation', amount: 800, color: '#4285F4' },
+  { id: '2', label: 'Food', amount: 450, color: '#34A853' },
+  { id: '3', label: 'Transport', amount: 350, color: '#9b51e0' },
+  { id: '4', label: 'Shopping', amount: 200, color: '#f2994a' },
+  { id: '5', label: 'Activities', amount: 600, color: '#ed3b79' },
+];
+
+const totalSpending = chartData.reduce((sum, item) => sum + item.amount, 0);
+const radius = 65;
+const circleCircumference = 2 * Math.PI * radius;
 
 export default function BudgetScreen() {
   const [expenses, setExpenses] = useState(transactionData);
@@ -127,7 +140,7 @@ export default function BudgetScreen() {
           {expenses.map(item => (
             <View key={item.id} style={styles.txCard}>
               <View style={styles.txIconBg}>
-                <Ionicons name="receipt" size={20} color="#8E8E93" />
+                <Ionicons name="document-text" size={20} color="#AEB0B7" />
               </View>
               <View style={styles.txInfo}>
                 <Text style={styles.txName}>{item.name}</Text>
@@ -136,6 +149,51 @@ export default function BudgetScreen() {
               <Text style={styles.txAmount}>${item.amount.toFixed(2)}</Text>
             </View>
           ))}
+        </View>
+
+        {/* Spending Chart */}
+        <View style={styles.chartSection}>
+          <Text style={styles.sectionHeaderTitle}>Spending by Category</Text>
+          <View style={styles.chartCard}>
+            <View style={styles.chartContainer}>
+              <Svg width={160} height={160} viewBox="-80 -80 160 160">
+                {chartData.map((slice, index) => {
+                  const slicePct = slice.amount / totalSpending;
+                  const sliceLength = slicePct * circleCircumference;
+                  // Calculate start offset
+                  const prevSlices = chartData.slice(0, index);
+                  const prevTotal = prevSlices.reduce((sum, s) => sum + s.amount, 0);
+                  const prevPct = prevTotal / totalSpending;
+                  const rot = -90 + (prevPct * 360);
+
+                  return (
+                    <Circle
+                      key={slice.id}
+                      cx="0"
+                      cy="0"
+                      r={radius}
+                      stroke={slice.color}
+                      strokeWidth={25}
+                      fill="transparent"
+                      strokeDasharray={`${sliceLength} ${circleCircumference}`}
+                      transform={`rotate(${rot})`}
+                    />
+                  );
+                })}
+              </Svg>
+            </View>
+            <View style={styles.chartLegend}>
+              {chartData.map(item => (
+                <View key={item.id} style={styles.legendRow}>
+                  <View style={styles.legendLeft}>
+                    <View style={[styles.legendDot, { backgroundColor: item.color }]} />
+                    <Text style={styles.legendLabel}>{item.label}</Text>
+                  </View>
+                  <Text style={styles.legendAmount}>${item.amount}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
         </View>
       </ScrollView>
 
@@ -229,13 +287,23 @@ const styles = StyleSheet.create({
   bdFill: { height: '100%', borderRadius: 3 },
   
   listHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  viewAllText: { fontSize: 12, fontWeight: '600', color: '#555' },
-  txCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 16, borderRadius: 16, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4, elevation: 1 },
-  txIconBg: { width: 44, height: 44, borderRadius: 22, backgroundColor: '#F0F2F5', alignItems: 'center', justifyContent: 'center', marginRight: 16 },
+  viewAllText: { fontSize: 13, fontWeight: '600', color: '#555' },
+  txCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 18, borderRadius: 20, marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.03, shadowRadius: 6, elevation: 1 },
+  txIconBg: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#F2F4F7', alignItems: 'center', justifyContent: 'center', marginRight: 16 },
   txInfo: { flex: 1 },
   txName: { fontSize: 15, fontWeight: '600', color: '#1B1B2F' },
-  txDate: { fontSize: 12, color: '#8E8E93', marginTop: 4 },
-  txAmount: { fontSize: 15, fontWeight: '800', color: '#1B1B2F' },
+  txDate: { fontSize: 13, color: '#8E8E93', marginTop: 4 },
+  txAmount: { fontSize: 16, fontWeight: '800', color: '#1B1B2F' },
+
+  chartSection: { paddingHorizontal: 20, marginBottom: 40 },
+  chartCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 20, borderRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2 },
+  chartContainer: { justifyContent: 'center', alignItems: 'center', marginRight: 10 },
+  chartLegend: { flex: 1, paddingLeft: 10 },
+  legendRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  legendLeft: { flexDirection: 'row', alignItems: 'center' },
+  legendDot: { width: 8, height: 8, borderRadius: 4, marginRight: 8 },
+  legendLabel: { fontSize: 13, color: '#444' },
+  legendAmount: { fontSize: 13, color: '#8E8E93' },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modal: { backgroundColor: '#FFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 },
