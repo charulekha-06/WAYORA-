@@ -54,12 +54,8 @@ export default function BudgetScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Budget Tracker</Text>
-        </View>
-
         {/* Paris Budget Card */}
-        <View style={styles.overviewCard}>
+        <View style={[styles.overviewCard, { marginTop: 24 }]}>
           <Text style={styles.overviewCardTitle}>Paris Trip Budget</Text>
           
           <View style={styles.metricsRow}>
