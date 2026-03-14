@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, Dimensions,
+  StatusBar, Dimensions, ImageBackground, Image, Modal, TextInput
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +15,7 @@ const features = [
   { icon: 'medkit' as const, title: 'Emergency Finder', desc: 'Find help fast', color: WayoraColors.blue, bg: '#F0F4FF' },
   { icon: 'list' as const, title: 'To Do List', desc: 'Stay organized', color: WayoraColors.orange, bg: '#FEF3EA' },
   { icon: 'image' as const, title: 'Souvenir Album', desc: 'Capture memories', color: WayoraColors.purple, bg: '#F8F0F7' },
-  { icon: 'flash' as const, title: 'AI Post Gen', desc: 'Share your trip', color: WayoraColors.green, bg: '#F2FFF6' },
+  { icon: 'flash' as const, title: 'Post Generator', desc: 'Share your trip', color: WayoraColors.green, bg: '#F2FFF6' },
   { icon: 'cash' as const, title: 'Currency', desc: 'Quick conversion', color: '#14B8A6', bg: '#E6FFFA' },
 ];
 
@@ -38,6 +38,29 @@ const destinations = [
 
 export default function HomeScreen() {
   const router = useRouter();
+  const [showAddTrip, setShowAddTrip] = useState(false);
+  const [newTripProps, setNewTripProps] = useState({ name: '', date: '' });
+  const [upcomingTrips, setUpcomingTrips] = useState([
+    { id: '1', name: 'Tokyo, Japan', date: 'Jan 10-20, 2025', status: 'Planning', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=150&q=80' },
+    { id: '2', name: 'Swiss Alps', date: 'Mar 5-12, 2025', status: 'Saved', image: 'https://images.unsplash.com/photo-1531366936010-27c57f526084?auto=format&fit=crop&w=150&q=80' },
+  ]);
+
+  const handleAddTrip = () => {
+    if (newTripProps.name && newTripProps.date) {
+      setUpcomingTrips([
+        ...upcomingTrips,
+        {
+          id: Date.now().toString(),
+          name: newTripProps.name,
+          date: newTripProps.date,
+          status: 'Planning',
+          image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=150&q=80' // default travel plane image
+        }
+      ]);
+      setNewTripProps({ name: '', date: '' });
+      setShowAddTrip(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -70,9 +93,13 @@ export default function HomeScreen() {
           </View>
           <View style={styles.currentTripCard}>
             <View style={styles.tripImagePart}>
-              {/* Using a placeholder gradient for the image as requested by design */}
-              <LinearGradient colors={['#A0522D', '#5D4037']} style={styles.tripImageOverlay}>
-                <View style={styles.tripTopInfo}>
+              <ImageBackground 
+                source={{ uri: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80' }} 
+                style={styles.tripImageOverlay}
+                resizeMode="cover"
+              >
+                <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={StyleSheet.absoluteFillObject} />
+                <View style={[styles.tripTopInfo, { zIndex: 1 }]}>
                   <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                     <Ionicons name="location" size={18} color="white" />
                     <Text style={styles.tripDest}>Paris, France</Text>
@@ -80,7 +107,7 @@ export default function HomeScreen() {
                   <Text style={styles.tripDates}>Dec 15-22, 2024</Text>
                   <Text style={styles.daysLeftText}>12 days to go!</Text>
                 </View>
-              </LinearGradient>
+              </ImageBackground>
             </View>
             <View style={styles.tripProgressPart}>
               <View style={styles.progressHeader}>
@@ -114,41 +141,57 @@ export default function HomeScreen() {
         <View style={[styles.section, { marginBottom: 30 }]}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Upcoming Trips</Text>
-            <TouchableOpacity style={styles.addTripBtn}>
+            <TouchableOpacity style={styles.addTripBtn} onPress={() => setShowAddTrip(true)}>
               <Ionicons name="add" size={18} color={WayoraColors.blue} />
               <Text style={[styles.seeAll, { color: WayoraColors.blue }]}>Add Trip</Text>
             </TouchableOpacity>
           </View>
           
-          <TouchableOpacity style={styles.upcomingCard}>
-            <View style={[styles.upcomingImg, { backgroundColor: '#FFDAB9' }]}>
-               <Ionicons name="image-outline" size={20} color="#8B4513" />
-            </View>
-            <View style={styles.upcomingInfo}>
-              <Text style={styles.upcomingName}>Tokyo, Japan</Text>
-              <Text style={styles.upcomingDate}>Jan 10-20, 2025</Text>
-            </View>
-            <View style={styles.upcomingBadge}>
-              <Text style={styles.upcomingBadgeText}>Planning</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={WayoraColors.gray} />
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.upcomingCard}>
-            <View style={[styles.upcomingImg, { backgroundColor: '#E0F7FA' }]}>
-               <Ionicons name="sunny-outline" size={20} color="#00838F" />
-            </View>
-            <View style={styles.upcomingInfo}>
-              <Text style={styles.upcomingName}>Swiss Alps</Text>
-              <Text style={styles.upcomingDate}>Mar 5-12, 2025</Text>
-            </View>
-            <View style={[styles.upcomingBadge, { backgroundColor: '#F5F5F5' }]}>
-              <Text style={[styles.upcomingBadgeText, { color: '#666' }]}>Saved</Text>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={WayoraColors.gray} />
-          </TouchableOpacity>
+          {upcomingTrips.map(trip => (
+            <TouchableOpacity key={trip.id} style={styles.upcomingCard}>
+              <Image source={{ uri: trip.image }} style={styles.upcomingImg} />
+              <View style={styles.upcomingInfo}>
+                <Text style={styles.upcomingName}>{trip.name}</Text>
+                <Text style={styles.upcomingDate}>{trip.date}</Text>
+              </View>
+              <View style={[styles.upcomingBadge, trip.status === 'Saved' && { backgroundColor: '#F5F5F5' }]}>
+                <Text style={[styles.upcomingBadgeText, trip.status === 'Saved' && { color: '#666' }]}>{trip.status}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={WayoraColors.gray} />
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
+
+      {/* Add Trip Modal */}
+      <Modal visible={showAddTrip} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modal}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>New Trip</Text>
+              <TouchableOpacity onPress={() => setShowAddTrip(false)}>
+                <Ionicons name="close" size={24} color={WayoraColors.gray} />
+              </TouchableOpacity>
+            </View>
+            <TextInput 
+              style={styles.modalInput} 
+              placeholder="Destination (e.g., Rome, Italy)" 
+              value={newTripProps.name} 
+              onChangeText={t => setNewTripProps({ ...newTripProps, name: t })} 
+            />
+            <TextInput 
+              style={styles.modalInput} 
+              placeholder="Dates (e.g., Apr 1-10, 2025)" 
+              value={newTripProps.date} 
+              onChangeText={t => setNewTripProps({ ...newTripProps, date: t })} 
+            />
+            <TouchableOpacity style={styles.modalSubmit} onPress={handleAddTrip}>
+              <Text style={styles.modalSubmitText}>Add Trip</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
     </View>
   );
 }
@@ -193,4 +236,12 @@ const styles = StyleSheet.create({
   upcomingDate: { fontSize: 13, color: WayoraColors.gray, marginTop: 2 },
   upcomingBadge: { backgroundColor: '#F0F4FF', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, marginRight: 10 },
   upcomingBadgeText: { fontSize: 11, fontWeight: '700', color: WayoraColors.blue },
+
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
+  modal: { backgroundColor: WayoraColors.white, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, paddingBottom: 40 },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
+  modalTitle: { fontSize: 18, fontWeight: '700', color: WayoraColors.black },
+  modalInput: { backgroundColor: WayoraColors.offWhite, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, fontSize: 14, marginBottom: 16, borderWidth: 1, borderColor: WayoraColors.lightGray },
+  modalSubmit: { backgroundColor: WayoraColors.coral, paddingVertical: 14, borderRadius: 14, alignItems: 'center', marginTop: 10 },
+  modalSubmitText: { fontSize: 15, fontWeight: '700', color: '#fff' },
 });
