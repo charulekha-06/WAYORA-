@@ -125,15 +125,27 @@ export default function HomeScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Explore Features</Text>
           <View style={styles.featuresGrid}>
-            {features.map((f) => (
-              <TouchableOpacity key={f.title} style={[styles.featureCard, { backgroundColor: f.bg }]}>
-                <Ionicons name={f.icon} size={24} color={f.color} />
-                <View style={{ marginTop: 12 }}>
-                  <Text style={styles.featureTitle}>{f.title}</Text>
-                  <Text style={styles.featureDesc}>{f.desc}</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            {features.map((f) => {
+              const handlePress = () => {
+                if (f.title === 'Itinerary Planner') {
+                  router.push('/itinerary' as any);
+                }
+              };
+
+              return (
+                <TouchableOpacity 
+                  key={f.title} 
+                  style={[styles.featureCard, { backgroundColor: f.bg }]}
+                  onPress={handlePress}
+                >
+                  <Ionicons name={f.icon} size={24} color={f.color} />
+                  <View style={{ marginTop: 12 }}>
+                    <Text style={styles.featureTitle}>{f.title}</Text>
+                    <Text style={styles.featureDesc}>{f.desc}</Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
