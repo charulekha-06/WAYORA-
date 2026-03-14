@@ -12,20 +12,20 @@ const { width } = Dimensions.get('window');
 
 const features = [
   { icon: 'sparkles' as const, title: 'AI Planner', desc: 'Smart itineraries', color: WayoraColors.coral, bg: '#FDF2F4' },
-  { icon: 'wallet-outline' as const, title: 'Budget', desc: 'Track spending', color: WayoraColors.orange, bg: '#FEF3EA' },
+  { icon: 'wallet-outline' as const, title: '', desc: 'Track spending', color: WayoraColors.orange, bg: '#FEF3EA' },
   { icon: 'shield-checkmark-outline' as const, title: 'Safety', desc: 'Stay protected', color: WayoraColors.blue, bg: '#F0F4FF' },
   { icon: 'trophy-outline' as const, title: 'Wandrix', desc: 'Earn badges', color: WayoraColors.green, bg: '#F2FFF6' },
 ];
 
 const quickActions = [
-  { icon: 'map-outline' as const, label: 'Trip Atlas', color: WayoraColors.blue, bg: WayoraColors.lavenderLight },
-  { icon: 'create-outline' as const, label: 'Post Gen', color: WayoraColors.blue, bg: WayoraColors.lavenderLight },
-  { icon: 'alert-circle-outline' as const, label: 'Emergency', color: WayoraColors.red, bg: WayoraColors.redLight },
-  { icon: 'book-outline' as const, label: 'Bookings', color: WayoraColors.green, bg: WayoraColors.greenLight },
-  { icon: 'chatbubble-ellipses-outline' as const, label: 'AI Chat', color: WayoraColors.coral, bg: '#FDF2F4' },
-  { icon: 'language-outline' as const, label: 'Translate', color: WayoraColors.orange, bg: '#FEF3EA' },
-  { icon: 'people-outline' as const, label: 'Artisans', color: WayoraColors.purple, bg: '#F8F0F7' },
-  { icon: 'cloudy-outline' as const, label: 'Weather', color: WayoraColors.blue, bg: '#F0F4FF' },
+  { icon: 'map-outline' as const, label: 'Trip Atlas', color: '#fff', bg: '#86B5F0' },
+  { icon: 'pencil-outline' as const, label: 'Post Gen', color: '#fff', bg: '#D0A8E3' },
+  { icon: 'medkit-outline' as const, label: 'Emergency', color: '#fff', bg: '#F27471' },
+  { icon: 'book-outline' as const, label: 'Bookings', color: '#fff', bg: '#91D28C' },
+  { icon: 'chatbubble-ellipses-outline' as const, label: 'AI Chat', color: '#fff', bg: '#F5A89A' },
+  { icon: 'language-outline' as const, label: 'Translate', color: '#fff', bg: '#F5BE87' },
+  { icon: 'people-outline' as const, label: 'Artisans', color: '#fff', bg: '#D3A4CF' },
+  { icon: 'cloudy-outline' as const, label: 'Weather', color: '#fff', bg: '#A6C8F5' },
 ];
 
 const destinations = [

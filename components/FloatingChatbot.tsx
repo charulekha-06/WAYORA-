@@ -32,9 +32,9 @@ export default function FloatingChatbot() {
   return (
     <>
       <TouchableOpacity style={styles.floatingButton} onPress={() => setVisible(true)} activeOpacity={0.8}>
-        <LinearGradient colors={[WayoraColors.coral, WayoraColors.orange]} style={styles.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
-          <Ionicons name="chatbubbles-outline" size={28} color="#fff" />
-        </LinearGradient>
+        <View style={styles.circleButton}>
+          <Ionicons name="chatbubble-ellipses" size={26} color="#fff" />
+        </View>
       </TouchableOpacity>
 
       <Modal visible={visible} animationType="slide" transparent={true}>
@@ -84,22 +84,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 90, // Above the tab bar
     right: 20,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    shadowColor: WayoraColors.coral,
+    zIndex: 999,
+  },
+  circleButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F28C38', // Orange color matching provided image
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#F28C38',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
-    zIndex: 999,
-  },
-  gradient: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   modalContainer: {
     flex: 1,
