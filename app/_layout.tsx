@@ -4,6 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 
 import { useColorScheme } from '@/components/useColorScheme';
 
@@ -20,6 +21,7 @@ SplashScreen.preventAutoHideAsync();
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+    ...Ionicons.font,
   });
 
   useEffect(() => {
@@ -39,6 +41,8 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
+import FloatingChatbot from '@/components/FloatingChatbot';
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
@@ -47,6 +51,7 @@ function RootLayoutNav() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
+      <FloatingChatbot />
     </ThemeProvider>
   );
 }

@@ -8,14 +8,14 @@ import { Ionicons } from '@expo/vector-icons';
 import { WayoraColors } from '@/constants/Colors';
 
 const interests = [
-  { id: 'culture', label: 'Culture', emoji: '🏛️' },
-  { id: 'food', label: 'Food', emoji: '🍜' },
-  { id: 'adventure', label: 'Adventure', emoji: '🧗' },
-  { id: 'nature', label: 'Nature', emoji: '🌿' },
-  { id: 'shopping', label: 'Shopping', emoji: '🛍️' },
-  { id: 'nightlife', label: 'Nightlife', emoji: '🌙' },
-  { id: 'wellness', label: 'Wellness', emoji: '🧘' },
-  { id: 'photo', label: 'Photography', emoji: '📸' },
+  { id: 'culture', label: 'Culture', icon: 'business-outline' as const, color: WayoraColors.blue },
+  { id: 'food', label: 'Food', icon: 'restaurant-outline' as const, color: WayoraColors.orange },
+  { id: 'adventure', label: 'Adventure', icon: 'trail-sign-outline' as const, color: WayoraColors.green },
+  { id: 'nature', label: 'Nature', icon: 'leaf-outline' as const, color: WayoraColors.green },
+  { id: 'shopping', label: 'Shopping', icon: 'bag-handle-outline' as const, color: WayoraColors.purple },
+  { id: 'nightlife', label: 'Nightlife', icon: 'moon-outline' as const, color: '#8B5CF6' },
+  { id: 'wellness', label: 'Wellness', icon: 'heart-outline' as const, color: '#14B8A6' },
+  { id: 'photo', label: 'Photography', icon: 'camera-outline' as const, color: WayoraColors.coral },
 ];
 
 const groupTypes = ['Solo', 'Couple', 'Family', 'Friends'];
@@ -136,7 +136,6 @@ export default function PlannerScreen() {
                   <Text style={[styles.interestLabel, selected.includes(i.id) && { color: WayoraColors.coral }]}>{i.label}</Text>
                 </TouchableOpacity>
               ))}
-            </View>
             </View>
 
             <TouchableOpacity onPress={generate}>
