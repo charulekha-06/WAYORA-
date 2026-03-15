@@ -18,12 +18,12 @@ const MEMORIES = [
 ];
 
 const ACHIEVEMENTS = [
-  { id: '1', title: 'Paris Explorer', icon: 'map-outline', color: '#F59E0B', unlocked: true },
-  { id: '2', title: 'Art Connoisseur', icon: 'color-palette-outline', color: '#8B5CF6', unlocked: true },
-  { id: '3', title: 'Local Foodie', icon: 'restaurant-outline', color: '#EF4444', unlocked: true },
-  { id: '4', title: 'Global Nomad', icon: 'airplane-outline', color: '#3B82F6', unlocked: false },
-  { id: '5', title: 'Photo Master', icon: 'camera-outline', color: '#10B981', unlocked: false },
-  { id: '6', title: 'Hidden Gem Hunter', icon: 'search-outline', color: '#EC4899', unlocked: false },
+  { id: '1', title: 'Paris Explorer', icon: 'map-outline', unlocked: true },
+  { id: '2', title: 'Art Connoisseur', icon: 'color-palette-outline', unlocked: true },
+  { id: '3', title: 'Local Foodie', icon: 'restaurant-outline', unlocked: true },
+  { id: '4', title: 'Global Nomad', icon: 'airplane-outline', unlocked: false },
+  { id: '5', title: 'Photo Master', icon: 'camera-outline', unlocked: false },
+  { id: '6', title: 'Hidden Gem Hunter', icon: 'search-outline', unlocked: false },
 ];
 
 export default function SouvenirAlbumScreen() {
@@ -47,12 +47,14 @@ export default function SouvenirAlbumScreen() {
   );
 
   const renderAchievement = (item: typeof ACHIEVEMENTS[0]) => (
-    <View style={[styles.badgeCard, !item.unlocked && { opacity: 0.5 }]}>
-      <View style={[styles.badgeIcon, { backgroundColor: item.unlocked ? item.color : '#F1F5F9' }]}>
-        <Ionicons name={item.icon as any} size={28} color={item.unlocked ? 'white' : '#94A3B8'} />
+    <View style={[styles.badgeCard, !item.unlocked && { opacity: 0.4 }]}>
+      <View style={[styles.badgeIcon, !item.unlocked && styles.badgeLocked]}>
+        <View style={styles.badgeInner}>
+           <Ionicons name={item.icon as any} size={24} color={WayoraColors.black} />
+        </View>
       </View>
       <Text style={styles.badgeText}>{item.title}</Text>
-      {!item.unlocked && <Ionicons name="lock-closed" size={12} color="#94A3B8" style={styles.lockIcon} />}
+      {!item.unlocked && <Ionicons name="lock-closed" size={10} color={WayoraColors.gray} style={styles.lockIcon} />}
     </View>
   );
 
@@ -160,8 +162,24 @@ const styles = StyleSheet.create({
   badgeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 15 },
   badgeWrapper: { width: (width - 70) / 3 },
   badgeCard: { alignItems: 'center' },
-  badgeIcon: { width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', marginBottom: 10, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5, elevation: 3 },
-  badgeText: { fontSize: 11, fontWeight: '800', color: WayoraColors.black, textAlign: 'center' },
+  badgeIcon: { 
+    width: 68, height: 68, borderRadius: 34, 
+    borderWidth: 1.5, borderColor: '#000',
+    alignItems: 'center', justifyContent: 'center', 
+    marginBottom: 10,
+    backgroundColor: 'white'
+  },
+  badgeLocked: { 
+    borderColor: '#94A3B8', 
+    borderStyle: 'dashed',
+    backgroundColor: 'transparent'
+  },
+  badgeInner: { 
+    width: 60, height: 60, borderRadius: 30, 
+    borderWidth: 1, borderColor: '#E2E8F0',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  badgeText: { fontSize: 10, fontWeight: '800', color: WayoraColors.black, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 },
   lockIcon: { marginTop: 4 },
 
   statsBar: { 
