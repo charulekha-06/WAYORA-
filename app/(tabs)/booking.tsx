@@ -98,6 +98,7 @@ function BookingTab() {
           <TouchableOpacity 
             key={c.id} 
             style={styles.gridItem}
+            activeOpacity={0.7}
             onPress={() => router.push({
               pathname: '/booking-items',
               params: { categoryId: c.id, categoryName: c.label }
@@ -449,10 +450,38 @@ const styles = StyleSheet.create({
   contentArea: { paddingHorizontal: 20, paddingBottom: 40 },
   
   // Booking Tab Styles
-  gridNav: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginTop: 10, gap: 12 },
-  gridItem: { width: (width - 40 - 24) / 3, backgroundColor: '#FFF', borderRadius: 16, padding: 16, alignItems: 'center', borderWidth: 1, borderColor: '#F3F4F6' },
-  gridIconBox: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
-  gridItemLabel: { fontSize: 12, fontWeight: '600', color: WayoraColors.black },
+  gridNav: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between', 
+    marginTop: 10, 
+    gap: 12 
+  },
+  gridItem: { 
+    width: (width - 40 - 24) / 3, 
+    backgroundColor: '#FFF', 
+    borderRadius: 20, 
+    paddingVertical: 20, 
+    paddingHorizontal: 12,
+    alignItems: 'center', 
+    justifyContent: 'center',
+    borderWidth: 1, 
+    borderColor: '#F1F5F9',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 12,
+    elevation: 3
+  },
+  gridIconBox: { 
+    width: 50, 
+    height: 50, 
+    borderRadius: 16, 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    marginBottom: 10 
+  },
+  gridItemLabel: { fontSize: 13, fontWeight: '700', color: WayoraColors.black, textAlign: 'center' },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: WayoraColors.black, marginTop: 28, marginBottom: 16 },
   
   dealCard: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 16, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: '#F3F4F6' },
