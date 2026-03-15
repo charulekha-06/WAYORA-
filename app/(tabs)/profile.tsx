@@ -6,6 +6,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { WayoraColors } from '@/constants/Colors';
 
 // New color palette — deep purple/indigo/teal
@@ -46,6 +47,8 @@ const menu = [
 export default function ProfileScreen() {
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [userName, setUserName] = useState('Alex Traveler');
+  const [userLocation, setUserLocation] = useState('France');
+  const [fetchingLocation, setFetchingLocation] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const nameInputRef = useRef<TextInput>(null);
 
@@ -65,6 +68,33 @@ export default function ProfileScreen() {
 
     if (!result.canceled && result.assets[0]) {
       setAvatarUri(result.assets[0].uri);
+    }
+  };
+
+  const fetchLiveLocation = async () => {
+    try {
+      setFetchingLocation(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission denied', 'Allow location access to fetch your live position.');
+        setFetchingLocation(false);
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const [address] = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      if (address) {
+        const locationStr = `${address.city || address.region}, ${address.country}`;
+        setUserLocation(locationStr);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Could not fetch location.');
+    } finally {
+      setFetchingLocation(false);
     }
   };
 
@@ -188,7 +218,11 @@ export default function ProfileScreen() {
             <Ionicons name="settings-outline" size={16} color="#6B7280" />{' '}Settings
           </Text>
           {menu.map(item => (
-            <TouchableOpacity key={item.label} style={styles.menuItem}>
+            <TouchableOpacity 
+              key={item.label} 
+              style={styles.menuItem}
+              onPress={() => item.label === 'Location' && fetchLiveLocation()}
+            >
               <Ionicons name={item.icon} size={20} color="#6B7280" />
               <Text style={styles.menuLabel}>{item.label}</Text>
               {item.badge && (
@@ -196,7 +230,13 @@ export default function ProfileScreen() {
                   <Text style={styles.menuBadgeText}>{item.badge}</Text>
                 </View>
               )}
-              {item.value && <Text style={styles.menuValue}>{item.value}</Text>}
+              {item.label === 'Location' ? (
+                <Text style={[styles.menuValue, fetchingLocation && { opacity: 0.5 }]}>
+                  {fetchingLocation ? 'Fetching...' : userLocation}
+                </Text>
+              ) : (
+                item.value && <Text style={styles.menuValue}>{item.value}</Text>
+              )}
               <Ionicons name="chevron-forward" size={16} color="#D1D5DB" />
             </TouchableOpacity>
           ))}
