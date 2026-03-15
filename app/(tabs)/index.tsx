@@ -133,6 +133,10 @@ export default function HomeScreen() {
                   router.push('/todo' as any);
                 } else if (f.title === 'Emergency Finder') {
                   router.push('/emergency' as any);
+                } else if (f.title === 'Post Generator') {
+                  router.push('/post-generator' as any);
+                } else if (f.title === 'Currency Converter') {
+                  router.push('/currency' as any);
                 }
               };
 

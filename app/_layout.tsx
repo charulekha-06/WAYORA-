@@ -58,6 +58,8 @@ function RootLayoutNav() {
           <Stack.Screen name="itinerary" options={{ headerShown: false }} />
           <Stack.Screen name="todo" options={{ headerShown: false }} />
           <Stack.Screen name="emergency" options={{ headerShown: false }} />
+          <Stack.Screen name="post-generator" options={{ headerShown: false }} />
+          <Stack.Screen name="currency" options={{ headerShown: false }} />
         </Stack>
       </View>
       <FloatingChatbot />
