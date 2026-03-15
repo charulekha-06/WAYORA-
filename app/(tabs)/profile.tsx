@@ -38,6 +38,7 @@ const trips = [
 const menu = [
   { label: 'Notifications', icon: 'notifications-outline' as const, badge: '3' },
   { label: 'Privacy & Security', icon: 'shield-checkmark-outline' as const },
+  { label: 'Location', icon: 'location-outline' as const, value: 'France' },
   { label: 'Language', icon: 'globe-outline' as const, value: 'English' },
   { label: 'Help & Support', icon: 'help-circle-outline' as const },
 ];
