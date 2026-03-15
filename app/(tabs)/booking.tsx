@@ -386,14 +386,15 @@ function CultureTab() {
 
 // 5. Eco Tab Content
 const ECO_INITIATIVES = [
-  { id: 'e1', name: 'Green Travel Guide', subtitle: 'Reduce your carbon footprint', image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80', action: 'Read More' },
-  { id: 'e2', name: 'Zero Waste Transit', subtitle: 'Eco-friendly commuting tips', image: 'https://images.unsplash.com/photo-1556122071-e404be745493?w=400&q=80', action: 'Explore' },
-  { id: 'e3', name: 'Wildlife Protection', subtitle: 'Respecting natural habitats', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80', action: 'Join Now' },
-  { id: 'e4', name: 'Re-forest France', subtitle: 'Planting trees in the Loire', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80', action: 'Donate' },
-  { id: 'e5', name: 'Plastic-Free Paris', subtitle: 'Find eco-friendly retailers', image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=400&q=80', action: 'View Map' },
+  { id: 'e1', name: 'Green Travel Guide', subtitle: 'Reduce your carbon footprint', image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80', action: 'Read More', description: 'Sustainable travel is about making smarter choices. Learn how to reduce your carbon footprint while exploring the world, from choosing eco-friendly transport to supporting local green businesses.' },
+  { id: 'e2', name: 'Zero Waste Transit', subtitle: 'Eco-friendly commuting tips', image: 'https://images.unsplash.com/photo-1444491741275-3747c33cc99b?w=400&q=80', action: 'Explore', description: 'Experience Paris like a local—on two wheels! Discover the best bike-sharing programs, zero-emission walking tours, and why the Metro is still one of the greenest ways to navigate the city.' },
+  { id: 'e3', name: 'Wildlife Protection', subtitle: 'Respecting natural habitats', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80', action: 'Join Now', description: 'Our protection programs focus on preserving the delicate ecosystems of the French countryside. Join us in respecting local flora and fauna and ensuring these natural wonders remain for generations.' },
+  { id: 'e4', name: 'Re-forest France', subtitle: 'Planting trees in the Loire', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80', action: 'Donate', description: 'The Loire Valley is the heart of France. Contribute to our reforestation efforts and help us plant thousands of native trees to combat climate change and restore biodiversity.' },
+  { id: 'e5', name: 'Plastic-Free Paris', subtitle: 'Find eco-friendly retailers', image: 'https://images.unsplash.com/photo-1591189863430-ab87e120f312?w=400&q=80', action: 'View Map', description: 'Say no to single-use plastics! Use our interactive map to find bulk-buy stores, water fountain locations, and retailers committed to zero-waste packaging in the city.' },
 ];
 
 function EcoTab() {
+  const router = useRouter();
   return (
     <View>
       <View style={[styles.artisanBanner, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
@@ -406,7 +407,14 @@ function EcoTab() {
 
       <Text style={styles.sectionTitle}>Eco-Friendly Initiatives</Text>
       {ECO_INITIATIVES.map(item => (
-        <TouchableOpacity key={item.id} style={styles.dealCard}>
+        <TouchableOpacity 
+          key={item.id} 
+          style={styles.dealCard}
+          onPress={() => router.push({
+            pathname: '/eco-details',
+            params: { id: item.id, name: item.name, subtitle: item.subtitle, image: item.image, description: item.description }
+          } as any)}
+        >
           <Image source={{ uri: item.image }} style={styles.dealImage} />
           <View style={styles.dealInfo}>
             <Text style={styles.dealName}>{item.name}</Text>
