@@ -260,7 +260,7 @@ function CultureTab() {
       {/* Culture Card 1 */}
       <TouchableOpacity style={styles.cultureCard}>
         <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1543158055-1f919bffa9c5?auto=format&fit=crop&w=800&q=80' }} // Notre dame representation
+          source={{ uri: 'https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=800&q=80' }} // Notre dame representation
           style={styles.cultureCardImage}
           imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
         >
@@ -293,7 +293,7 @@ function CultureTab() {
       {/* Culture Card 2 */}
       <TouchableOpacity style={styles.cultureCard}>
         <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1575416049301-381c62f275e7?auto=format&fit=crop&w=800&q=80' }} // Louvre representation
+          source={{ uri: 'https://images.unsplash.com/photo-1554941068-a252680d25d9?auto=format&fit=crop&w=800&q=80' }} // Louvre representation
           style={styles.cultureCardImage}
           imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
         >
