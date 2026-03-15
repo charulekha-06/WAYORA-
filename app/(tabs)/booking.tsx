@@ -24,22 +24,12 @@ export default function BookingScreen() {
       <StatusBar barStyle="dark-content" />
       <ScrollView showsVerticalScrollIndicator={false} stickyHeaderIndices={[1]}>
         
-        {/* Header & Search */}
         <View style={styles.header}>
           <View style={styles.topRow}>
             <Text style={styles.title}>Discover & Book</Text>
             <TouchableOpacity>
               <Ionicons name="search-outline" size={24} color={WayoraColors.black} />
             </TouchableOpacity>
-          </View>
-          
-          <View style={styles.searchBarContainer}>
-            <Ionicons name="search" size={18} color={WayoraColors.gray} />
-            <TextInput 
-              style={styles.searchInput} 
-              placeholder="Search destinations, stays, experiences..."
-              placeholderTextColor={WayoraColors.gray}
-            />
           </View>
         </View>
 
