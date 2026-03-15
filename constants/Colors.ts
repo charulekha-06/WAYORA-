@@ -15,6 +15,9 @@ export const WayoraColors = {
   red: '#E85D6F',
   redLight: '#F5A0AB',
   purple: '#C77DBA',
+  taviPurple: '#7C3AED',
+  taviPurpleLight: '#EDE9FE',
+  taviBg: '#F9FAFB',
 
   black: '#1A1A2E',
   darkGray: '#4A4A5A',

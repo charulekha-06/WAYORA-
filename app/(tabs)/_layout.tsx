@@ -18,9 +18,9 @@ export default function TabLayout() {
           backgroundColor: WayoraColors.white,
           borderTopColor: WayoraColors.lightGray,
           borderTopWidth: 1,
-          paddingBottom: Platform.OS === 'ios' ? 30 : 10,
+          paddingBottom: Platform.OS === 'ios' ? 30 : 14,
           paddingTop: 8,
-          minHeight: Platform.OS === 'ios' ? 95 : 70,
+          minHeight: Platform.OS === 'ios' ? 95 : 75,
           elevation: 8,
           shadowColor: WayoraColors.black,
           shadowOffset: { width: 0, height: -2 },
@@ -30,7 +30,7 @@ export default function TabLayout() {
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '600',
-          marginTop: 4,
+          marginTop: 2,
         },
         headerStyle: {
           backgroundColor: WayoraColors.white,
