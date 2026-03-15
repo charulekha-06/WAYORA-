@@ -22,6 +22,10 @@ const BOOKING_DATA = {
   ],
   car: [
     { id: 'c1', name: 'Tesla Model 3', price: 85, rating: 4.9, reviews: 156, image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80', location: 'Paris City Center', tag: 'Electric' },
+    { id: 'c2', name: 'Range Rover Sport', price: 145, rating: 4.8, reviews: 92, image: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=600&q=80', location: 'CDG Airport', tag: 'Luxury SUV' },
+    { id: 'c3', name: 'Mercedes-Benz E-Class', price: 110, rating: 5.0, reviews: 210, image: 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600&q=80', location: 'Paris Downtown', tag: 'Premium' },
+    { id: 'c4', name: 'Mini Cooper Convertible', price: 65, rating: 4.7, reviews: 340, image: 'https://images.unsplash.com/photo-1594070319944-7c0c63146b1d?w=600&q=80', location: 'Nice Coast', tag: 'Fun' },
+    { id: 'c5', name: 'Peugeot 3008', price: 55, rating: 4.5, reviews: 820, image: 'https://images.unsplash.com/photo-1621245023901-fd5138092288?w=600&q=80', location: 'Lyon Center', tag: 'Economical' },
   ],
   activities: [
     { id: 'a1', name: 'Seine River Dinner Cruise', price: 65, rating: 4.9, reviews: 890, image: 'https://images.unsplash.com/photo-1548544149-4835e62ee5b3?w=600&q=80', location: 'Paris, France', tag: 'Romantic' },
