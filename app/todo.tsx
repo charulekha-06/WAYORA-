@@ -33,13 +33,15 @@ export default function TodoScreen() {
   const router = useRouter();
   const [showAddModal, setShowAddModal] = useState(false);
   const [todos, setTodos] = useState<TodoItem[]>([
-    { id: '1', task: 'Check passport validity', completed: true, category: 'Pre-Trip', priority: 'High', classification: 'Docs' },
+    { id: '1', task: 'Check passport validity', completed: true, category: 'Pre-Trip', priority: 'High', classification: 'Docs', description: 'Expiry date must be at least 6 months after return.' },
     { id: '2', task: 'Book flight tickets', completed: true, category: 'Pre-Trip', priority: 'High', classification: 'Booking' },
-    { id: '3', task: 'Pack lightweight clothing', completed: false, category: 'Pre-Trip', priority: 'Medium', classification: 'Packing' },
+    { id: '3', task: 'Pack lightweight clothing', completed: false, category: 'Pre-Trip', priority: 'Medium', classification: 'Packing', description: 'Focus on breathable fabrics for humid weather.' },
     { id: '4', task: 'Exchange local currency', completed: false, category: 'On-Trip', priority: 'Medium', classification: 'Finance' },
     { id: '5', task: 'Visit the main museum', completed: false, category: 'On-Trip', priority: 'Low', classification: 'Activities' },
     { id: '6', task: 'Sort trip photos', completed: false, category: 'After-Trip', priority: 'Low', classification: 'Memories' },
   ]);
+
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
   // Modal State
   const [newTask, setNewTask] = useState('');
@@ -47,6 +49,13 @@ export default function TodoScreen() {
   const [newCat, setNewCat] = useState<Category>('Pre-Trip');
   const [newPriority, setNewPriority] = useState<Priority>('Medium');
   const [newClass, setNewClass] = useState('');
+
+  const toggleExpand = (id: string) => {
+    const next = new Set(expandedIds);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedIds(next);
+  };
 
   const toggleTodo = (id: string) => {
     setTodos(todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
@@ -106,13 +115,26 @@ export default function TodoScreen() {
                     <View style={styles.classTag}>
                       <Text style={styles.classTagText}>{item.classification}</Text>
                     </View>
-                    {item.description ? <Text style={styles.todoDesc} numberOfLines={1}>{item.description}</Text> : null}
                   </View>
+                  {(item.description && expandedIds.has(item.id)) ? (
+                    <Text style={styles.todoDescFull}>{item.description}</Text>
+                  ) : null}
                 </View>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => deleteTodo(item.id)} style={styles.deleteBtn}>
-                <Ionicons name="trash-outline" size={18} color="#FF6B6B" />
-              </TouchableOpacity>
+              <View style={styles.actionRow}>
+                {item.description ? (
+                  <TouchableOpacity onPress={() => toggleExpand(item.id)} style={styles.infoBtn}>
+                    <Ionicons 
+                      name={expandedIds.has(item.id) ? "information-circle" : "information-circle-outline"} 
+                      size={20} 
+                      color={expandedIds.has(item.id) ? WayoraColors.coral : WayoraColors.gray} 
+                    />
+                  </TouchableOpacity>
+                ) : null}
+                <TouchableOpacity onPress={() => deleteTodo(item.id)} style={styles.deleteBtn}>
+                  <Ionicons name="trash-outline" size={18} color="#FF6B6B" />
+                </TouchableOpacity>
+              </View>
             </View>
           ))}
         </View>
@@ -219,11 +241,6 @@ export default function TodoScreen() {
           </View>
         </KeyboardAvoidingView>
       </Modal>
-
-      {/* Floating Action Button */}
-      <TouchableOpacity style={styles.fab} onPress={() => setShowAddModal(true)}>
-        <Ionicons name="add" size={30} color="white" />
-      </TouchableOpacity>
     </View>
   );
 }
@@ -252,7 +269,7 @@ const styles = StyleSheet.create({
   textRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
   todoText: { fontSize: 15, fontWeight: '600', color: WayoraColors.black },
   todoTextDone: { textDecorationLine: 'line-through', opacity: 0.4 },
-  todoDesc: { fontSize: 12, color: WayoraColors.gray, marginTop: 4 },
+  todoDescFull: { fontSize: 13, color: WayoraColors.gray, marginTop: 10, lineHeight: 18, fontStyle: 'italic', paddingRight: 10 },
   
   priorityBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 5 },
   priorityText: { fontSize: 9, fontWeight: '800', textTransform: 'uppercase' },
@@ -261,9 +278,9 @@ const styles = StyleSheet.create({
   classTag: { backgroundColor: '#F1F3F5', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6 },
   classTagText: { fontSize: 10, fontWeight: '700', color: WayoraColors.gray },
 
+  actionRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  infoBtn: { padding: 8 },
   deleteBtn: { padding: 8 },
-
-  fab: { position: 'absolute', right: 25, bottom: 25, width: 60, height: 60, borderRadius: 30, backgroundColor: WayoraColors.coral, alignItems: 'center', justifyContent: 'center', shadowColor: WayoraColors.coral, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 6 },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: { backgroundColor: 'white', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 25, maxHeight: '90%' },
