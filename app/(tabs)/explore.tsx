@@ -15,7 +15,7 @@ const categories = [
   { name: 'Beach', icon: 'water-outline' as const },
   { name: 'Cultural', icon: 'business-outline' as const },
   { name: 'Wellness', icon: 'heart-outline' as const },
-  { name: 'Food', icon: 'restaurant-outline' as const },
+  { name: 'Nature', icon: 'leaf-outline' as const },
 ];
 
 const destinations = [
