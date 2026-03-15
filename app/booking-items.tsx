@@ -76,32 +76,32 @@ export default function BookingItemsScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>{categoryName || 'Search'}</Text>
-        <TouchableOpacity style={styles.filterButton}>
-          <Ionicons name="options-outline" size={22} color={WayoraColors.black} />
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Bar */}
-      <View style={styles.searchSection}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={WayoraColors.gray} />
-          <TextInput 
-            style={styles.searchInput}
-            placeholder={`Search ${categoryName?.toLowerCase() || 'items'}...`}
-            placeholderTextColor="#94A3B8"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-      </View>
-
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+            <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>{categoryName || 'Search'}</Text>
+          <TouchableOpacity style={styles.filterButton}>
+            <Ionicons name="options-outline" size={22} color={WayoraColors.black} />
+          </TouchableOpacity>
+        </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchSection}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search" size={20} color={WayoraColors.gray} />
+            <TextInput 
+              style={styles.searchInput}
+              placeholder={`Search ${categoryName?.toLowerCase() || 'items'}...`}
+              placeholderTextColor="#94A3B8"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+        </View>
+
         {items.map((item) => (
           <TouchableOpacity 
             key={item.id} 
@@ -195,17 +195,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
-    paddingHorizontal: 20, 
-    paddingTop: 60, 
+    paddingHorizontal: 0, 
+    paddingTop: 10, 
     paddingBottom: 15,
-    backgroundColor: 'white',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
+    backgroundColor: 'transparent',
   },
   backButton: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: 20, fontWeight: '800', color: WayoraColors.black },
   filterButton: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
   
-  searchSection: { paddingHorizontal: 20, marginTop: 20, marginBottom: 15 },
+  searchSection: { paddingHorizontal: 0, marginTop: 10, marginBottom: 20 },
   searchBar: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
   },
   searchInput: { flex: 1, marginLeft: 12, fontSize: 16, color: WayoraColors.black, fontWeight: '600' },
 
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 120, paddingTop: 50 },
   card: { 
     backgroundColor: '#FFF', 
     borderRadius: 24, 
@@ -260,7 +259,7 @@ const styles = StyleSheet.create({
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: WayoraColors.taviPurple,
+    backgroundColor: '#FF8A00',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 14,
@@ -272,7 +271,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: '#EF4444',
+    backgroundColor: WayoraColors.taviPurple,
     width: 20,
     height: 20,
     borderRadius: 10,
@@ -293,10 +292,10 @@ const styles = StyleSheet.create({
     width: 68,
     height: 68,
     borderRadius: 34,
-    backgroundColor: WayoraColors.taviPurple,
+    backgroundColor: '#FF8A00',
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: WayoraColors.taviPurple,
+    shadowColor: '#FF8A00',
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.4,
     shadowRadius: 15,
@@ -308,7 +307,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -5,
-    backgroundColor: '#EF4444',
+    backgroundColor: WayoraColors.taviPurple,
     minWidth: 24,
     height: 24,
     borderRadius: 12,
