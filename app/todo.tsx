@@ -118,22 +118,22 @@ export default function TodoScreen() {
                     <Text style={styles.classTagText}>{item.classification}</Text>
                   </View>
                 </View>
-                {item.description && expandedIds.has(item.id) && (
+                {item.description && expandedIds.has(item.id) ? (
                   <Text style={styles.todoDescFull}>{item.description}</Text>
-                )}
+                ) : expandedIds.has(item.id) ? (
+                  <Text style={[styles.todoDescFull, { opacity: 0.5 }]}>No additional details available.</Text>
+                ) : null}
               </View>
             </TouchableOpacity>
             
             <View style={styles.actionColumn}>
-              {item.description && (
-                <TouchableOpacity onPress={() => toggleExpand(item.id)} style={styles.actionIconBtn}>
-                  <Ionicons 
-                    name={expandedIds.has(item.id) ? "information-circle" : "information-circle-outline"} 
-                    size={20} 
-                    color={expandedIds.has(item.id) ? WayoraColors.coral : WayoraColors.gray} 
-                  />
-                </TouchableOpacity>
-              )}
+              <TouchableOpacity onPress={() => toggleExpand(item.id)} style={styles.actionIconBtn}>
+                <Ionicons 
+                  name={expandedIds.has(item.id) ? "information-circle" : "information-circle-outline"} 
+                  size={20} 
+                  color={expandedIds.has(item.id) ? WayoraColors.indigo : WayoraColors.gray} 
+                />
+              </TouchableOpacity>
               <TouchableOpacity onPress={() => deleteTodo(item.id)} style={styles.actionIconBtn}>
                 <Ionicons name="trash-outline" size={18} color="#FF6B6B" />
               </TouchableOpacity>
@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
     padding: 16, 
     marginBottom: 12, 
     borderLeftWidth: 4,
+    alignItems: 'center',
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2
   },
   todoMain: { flex: 1, flexDirection: 'row', alignItems: 'flex-start' },
