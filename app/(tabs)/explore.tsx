@@ -34,12 +34,12 @@ const destinations = [
     desc: 'Rice terraces, temples, and serenity.'
   },
   { 
-    name: 'Paris', country: 'France', image: 'https://images.unsplash.com/photo-1502602898657-3e907a5ea071?auto=format&fit=crop&w=800&q=80',
+    name: 'Paris', country: 'France',    image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?auto=format&fit=crop&w=800&q=80',
     rating: 4.9, price: '$2,100', category: 'Cultural', duration: '6 DAYS', 
     desc: 'The city of light, love, and art.'
   },
   { 
-    name: 'Machu Picchu', country: 'Peru', image: 'https://images.unsplash.com/photo-1526392060635-9d601988106a?auto=format&fit=crop&w=800&q=80',
+    name: 'Machu Picchu', country: 'Peru',    image: 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?auto=format&fit=crop&w=800&q=80',
     rating: 4.8, price: '$1,500', category: 'Adventure', duration: '8 DAYS', 
     desc: 'Lost city of the Incas in the Andes.'
   },
