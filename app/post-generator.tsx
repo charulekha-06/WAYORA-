@@ -11,19 +11,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 const TONES = [
   { 
     label: 'Adventurous', value: 'adventurous', icon: 'compass-outline' as const, 
-    active: '#FFF7ED', inactive: '#FFFFFF', text: '#EA580C' 
+    active: 'rgba(0, 0, 0, 0.85)', inactive: 'rgba(0, 0, 0, 0.05)', text: 'rgba(0, 0, 0, 0.7)' 
   },
   { 
     label: 'Whimsical', value: 'whimsical', icon: 'sparkles-outline' as const, 
-    active: '#FAF5FF', inactive: '#FFFFFF', text: '#9333EA' 
+    active: 'rgba(0, 0, 0, 0.85)', inactive: 'rgba(0, 0, 0, 0.05)', text: 'rgba(0, 0, 0, 0.7)' 
   },
   { 
     label: 'Relaxed', value: 'relaxed', icon: 'leaf-outline' as const, 
-    active: '#F0FDFA', inactive: '#FFFFFF', text: '#0D9488' 
+    active: 'rgba(0, 0, 0, 0.85)', inactive: 'rgba(0, 0, 0, 0.05)', text: 'rgba(0, 0, 0, 0.7)' 
   },
   { 
     label: 'Professional', value: 'professional', icon: 'business-outline' as const, 
-    active: '#EFF6FF', inactive: '#FFFFFF', text: '#2563EB' 
+    active: 'rgba(0, 0, 0, 0.85)', inactive: 'rgba(0, 0, 0, 0.05)', text: 'rgba(0, 0, 0, 0.7)' 
   },
 ];
 
@@ -134,7 +134,7 @@ export default function PostGeneratorScreen() {
               onPress={generatePost}
               disabled={!dest || isGenerating}
             >
-              <LinearGradient colors={['#FDCBD1', '#F2A0A9']} style={styles.genGradient}>
+              <LinearGradient colors={['rgba(0, 0, 0, 0.75)', 'rgba(0, 0, 0, 0.95)']} style={styles.genGradient}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   {isGenerating ? (
                     <ActivityIndicator size="small" color="white" />
