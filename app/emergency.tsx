@@ -29,8 +29,6 @@ const EMERGENCY_SERVICES = [
   { id: '2', name: 'Pharmacies', icon: 'bandage', color: '#3B82F6', bgColor: '#EFF6FF' },
   { id: '3', name: 'ATMs', icon: 'card', color: '#10B981', bgColor: '#ECFDF5' },
   { id: '4', name: 'Restrooms', icon: 'water', color: '#D946EF', bgColor: '#FDF4FF' },
-  { id: '5', name: 'Police', icon: 'shield-checkmark', color: '#1F2937', bgColor: '#F9FAFB' },
-  { id: '6', name: 'Embassy', icon: 'flag', color: '#F59E0B', bgColor: '#FFFBEB' },
 ];
 
 const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
@@ -402,9 +400,9 @@ const styles = StyleSheet.create({
 
   sosSection: { padding: 25, alignItems: 'center' },
   sosButton: { 
-    width: width * 0.5, 
-    height: width * 0.5, 
-    borderRadius: width * 0.25, 
+    width: 160, 
+    height: 160, 
+    borderRadius: 80, 
     alignItems: 'center', 
     justifyContent: 'center',
     shadowColor: '#EF4444', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.4, shadowRadius: 20, elevation: 12
