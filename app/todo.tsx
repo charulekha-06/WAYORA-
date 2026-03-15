@@ -23,10 +23,11 @@ interface TodoItem {
   classification: string;
 }
 
+// Strictly Monochromatic Priority System
 const PRIORITY_COLORS = {
-  High: '#EF4444',
-  Medium: '#F59E0B',
-  Low: '#10B981',
+  High: '#000000',     // Black
+  Medium: '#4B5563',   // Dark Gray (slate-600)
+  Low: '#9CA3AF',      // Medium Gray (slate-400)
 };
 
 const CATEGORY_ICONS = {
@@ -93,7 +94,7 @@ export default function TodoScreen() {
     return (
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Ionicons name={CATEGORY_ICONS[cat]} size={18} color={WayoraColors.gray} />
+          <Ionicons name={CATEGORY_ICONS[cat]} size={18} color="#000" />
           <Text style={styles.sectionTitle}>{title}</Text>
         </View>
         {items.map(item => (
@@ -109,7 +110,7 @@ export default function TodoScreen() {
               <View style={{ flex: 1 }}>
                 <View style={styles.textRow}>
                   <Text style={[styles.todoText, item.completed && styles.todoTextDone]}>{item.task}</Text>
-                  <View style={[styles.priorityBadge, { backgroundColor: PRIORITY_COLORS[item.priority] + '15' }]}>
+                  <View style={[styles.priorityBadge, { backgroundColor: '#F3F4F6' }]}>
                     <Text style={[styles.priorityText, { color: PRIORITY_COLORS[item.priority] }]}>{item.priority}</Text>
                   </View>
                 </View>
@@ -118,11 +119,11 @@ export default function TodoScreen() {
                     <Text style={styles.classTagText}>{item.classification}</Text>
                   </View>
                 </View>
-                {item.description && expandedIds.has(item.id) ? (
-                  <Text style={styles.todoDescFull}>{item.description}</Text>
-                ) : expandedIds.has(item.id) ? (
-                  <Text style={[styles.todoDescFull, { opacity: 0.5 }]}>No additional details available.</Text>
-                ) : null}
+                {expandedIds.has(item.id) && (
+                  <Text style={styles.todoDescFull}>
+                    {item.description || "No additional details available."}
+                  </Text>
+                )}
               </View>
             </TouchableOpacity>
             
@@ -131,11 +132,11 @@ export default function TodoScreen() {
                 <Ionicons 
                   name={expandedIds.has(item.id) ? "information-circle" : "information-circle-outline"} 
                   size={20} 
-                  color={expandedIds.has(item.id) ? WayoraColors.indigo : WayoraColors.gray} 
+                  color={expandedIds.has(item.id) ? "#000" : "#9CA3AF"} 
                 />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => deleteTodo(item.id)} style={styles.actionIconBtn}>
-                <Ionicons name="trash-outline" size={18} color="#FF6B6B" />
+                <Ionicons name="trash-outline" size={18} color="#000" />
               </TouchableOpacity>
             </View>
           </View>
@@ -151,21 +152,21 @@ export default function TodoScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
-      {/* Premium Header */}
+      {/* Monochromatic Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
+          <Ionicons name="chevron-back" size={24} color="#000" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>To Do List</Text>
         <TouchableOpacity onPress={() => setShowAddModal(true)} style={styles.addBtn}>
-          <Ionicons name="add" size={24} color={WayoraColors.white} />
+          <Ionicons name="add" size={24} color="#FFF" />
         </TouchableOpacity>
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-        {/* Modern Progress Card */}
+        {/* Monochromatic Progress Card */}
         <View style={styles.progressContainer}>
-          <LinearGradient colors={['#4F46E5', '#7C3AED']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.progressCard}>
+          <View style={styles.progressCard}>
             <View style={styles.progressTop}>
               <View>
                 <Text style={styles.progressLabel}>Trip Readiness</Text>
@@ -176,7 +177,7 @@ export default function TodoScreen() {
             <View style={styles.progressTrack}>
               <View style={[styles.progressFill, { width: `${progress}%` }]} />
             </View>
-          </LinearGradient>
+          </View>
         </View>
 
         {renderSection('Before Trip', 'Pre-Trip')}
@@ -184,28 +185,35 @@ export default function TodoScreen() {
         {renderSection('After Trip', 'After-Trip')}
       </ScrollView>
 
-      {/* Add Task Modal */}
+      {/* Monochromatic Add Task Modal */}
       <Modal visible={showAddModal} animationType="fade" transparent>
         <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>New Task</Text>
               <TouchableOpacity onPress={() => setShowAddModal(false)}>
-                <Ionicons name="close" size={24} color={WayoraColors.gray} />
+                <Ionicons name="close" size={24} color="#000" />
               </TouchableOpacity>
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text style={styles.inputLabel}>Task Name</Text>
-              <TextInput style={styles.input} placeholder="e.g. Packing list" value={newTask} onChangeText={setNewTask} />
+              <TextInput style={styles.input} placeholder="e.g. Packing list" placeholderTextColor="#9CA3AF" value={newTask} onChangeText={setNewTask} />
 
               <Text style={styles.inputLabel}>Description (Optional)</Text>
-              <TextInput style={[styles.input, { height: 80 }]} multiline placeholder="Add details..." value={newDesc} onChangeText={setNewDesc} />
+              <TextInput 
+                style={[styles.input, { height: 80 }]} 
+                multiline 
+                placeholder="Add details..." 
+                placeholderTextColor="#9CA3AF"
+                value={newDesc} 
+                onChangeText={setNewDesc} 
+              />
 
               <View style={styles.inputRow}>
                 <View style={{ flex: 1, marginRight: 12 }}>
                   <Text style={styles.inputLabel}>Category</Text>
-                  <TextInput style={styles.input} placeholder="e.g. Gear" value={newClass} onChangeText={setNewClass} />
+                  <TextInput style={styles.input} placeholder="e.g. Gear" placeholderTextColor="#9CA3AF" value={newClass} onChangeText={setNewClass} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.inputLabel}>Priority</Text>
@@ -248,7 +256,7 @@ export default function TodoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8F9FB' },
+  container: { flex: 1, backgroundColor: '#FFFFFF' },
   header: { 
     flexDirection: 'row', 
     alignItems: 'center', 
@@ -257,62 +265,64 @@ const styles = StyleSheet.create({
     paddingTop: 10, 
     paddingBottom: 15,
     backgroundColor: 'white',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F1F3F5', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black },
-  addBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: WayoraColors.coral, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: '800', color: '#000' },
+  addBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#000', alignItems: 'center', justifyContent: 'center' },
 
   progressContainer: { padding: 20 },
-  progressCard: { padding: 24, borderRadius: 24, shadowColor: '#4F46E5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 15, elevation: 8 },
+  progressCard: { padding: 24, borderRadius: 24, backgroundColor: '#000', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 15, elevation: 8 },
   progressTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
   progressLabel: { fontSize: 16, fontWeight: '700', color: 'white' },
-  progressCount: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
+  progressCount: { fontSize: 12, color: '#9CA3AF', marginTop: 4 },
   progressPercent: { fontSize: 28, fontWeight: '900', color: 'white' },
-  progressTrack: { height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: 'white', borderRadius: 3 },
+  progressTrack: { height: 4, backgroundColor: '#374151', borderRadius: 2, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: 'white', borderRadius: 2 },
 
   section: { paddingHorizontal: 20, marginBottom: 25 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 15 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.gray, textTransform: 'uppercase', letterSpacing: 0.5 },
+  sectionTitle: { fontSize: 13, fontWeight: '800', color: '#000', textTransform: 'uppercase', letterSpacing: 1 },
   
   todoCard: { 
     flexDirection: 'row', 
     backgroundColor: 'white', 
-    borderRadius: 20, 
+    borderRadius: 0, // Harder edges for monochromatic look
     padding: 16, 
-    marginBottom: 12, 
-    borderLeftWidth: 4,
+    marginBottom: 0, 
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+    borderLeftWidth: 3, // Priority indicator
     alignItems: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2
   },
   todoMain: { flex: 1, flexDirection: 'row', alignItems: 'flex-start' },
-  checkbox: { width: 22, height: 22, borderRadius: 8, borderWidth: 2, borderColor: '#E5E7EB', alignItems: 'center', justifyContent: 'center', marginRight: 16, marginTop: 2 },
-  checkboxDone: { backgroundColor: WayoraColors.coral, borderColor: WayoraColors.coral },
+  checkbox: { width: 20, height: 20, borderRadius: 4, borderWidth: 2, borderColor: '#000', alignItems: 'center', justifyContent: 'center', marginRight: 16, marginTop: 2 },
+  checkboxDone: { backgroundColor: '#000' },
   textRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  todoText: { fontSize: 15, fontWeight: '700', color: WayoraColors.black },
-  todoTextDone: { textDecorationLine: 'line-through', opacity: 0.4 },
-  priorityBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  priorityText: { fontSize: 9, fontWeight: '800', textTransform: 'uppercase' },
-  metaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  classTag: { backgroundColor: '#F3F4F6', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  classTagText: { fontSize: 10, fontWeight: '700', color: WayoraColors.gray },
-  todoDescFull: { fontSize: 13, color: WayoraColors.gray, marginTop: 12, lineHeight: 18, fontStyle: 'italic' },
+  todoText: { fontSize: 15, fontWeight: '700', color: '#000' },
+  todoTextDone: { textDecorationLine: 'line-through', color: '#9CA3AF' },
+  priorityBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  priorityText: { fontSize: 9, fontWeight: '900', textTransform: 'uppercase' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 6 },
+  classTag: { backgroundColor: '#F3F4F6', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4 },
+  classTagText: { fontSize: 10, fontWeight: '700', color: '#4B5563' },
+  todoDescFull: { fontSize: 13, color: '#4B5563', marginTop: 12, lineHeight: 18, fontStyle: 'italic' },
   
   actionColumn: { alignItems: 'center', gap: 12, marginLeft: 10 },
   actionIconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
 
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.4)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: 'white', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 24, maxHeight: '85%' },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  modalTitle: { fontSize: 22, fontWeight: '800', color: WayoraColors.black },
-  inputLabel: { fontSize: 13, fontWeight: '700', color: WayoraColors.gray, marginBottom: 8, marginTop: 16 },
-  input: { backgroundColor: '#F3F4F6', borderRadius: 14, padding: 16, fontSize: 14, color: WayoraColors.black },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: 'white', borderTopLeftRadius: 0, borderTopRightRadius: 0, padding: 24, maxHeight: '85%' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24, borderBottomWidth: 2, borderBottomColor: '#000', paddingBottom: 10 },
+  modalTitle: { fontSize: 22, fontWeight: '900', color: '#000', textTransform: 'uppercase' },
+  inputLabel: { fontSize: 12, fontWeight: '900', color: '#000', marginBottom: 8, marginTop: 16, textTransform: 'uppercase' },
+  input: { backgroundColor: '#F9FAFB', borderRadius: 0, padding: 16, fontSize: 14, color: '#000', borderWidth: 1, borderColor: '#E5E7EB' },
   inputRow: { flexDirection: 'row', marginTop: 4 },
-  selector: { flexDirection: 'row', backgroundColor: '#F3F4F6', borderRadius: 12, padding: 4, gap: 4 },
-  selectorBtn: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  selectorBtnActive: { backgroundColor: WayoraColors.coral },
-  selectorText: { fontSize: 11, fontWeight: '700', color: WayoraColors.gray },
-  submitBtn: { backgroundColor: WayoraColors.coral, padding: 18, borderRadius: 18, alignItems: 'center', marginTop: 32 },
-  submitBtnText: { color: 'white', fontSize: 16, fontWeight: '800' },
+  selector: { flexDirection: 'row', backgroundColor: '#F3F4F6', borderRadius: 0, padding: 2, gap: 2 },
+  selectorBtn: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 0 },
+  selectorBtnActive: { backgroundColor: '#000' },
+  selectorText: { fontSize: 11, fontWeight: '800', color: '#4B5563' },
+  submitBtn: { backgroundColor: '#000', padding: 18, borderRadius: 0, alignItems: 'center', marginTop: 32 },
+  submitBtnText: { color: 'white', fontSize: 14, fontWeight: '900', textTransform: 'uppercase', letterSpacing: 2 },
 });
