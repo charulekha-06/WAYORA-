@@ -11,19 +11,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 const TONES = [
   { 
     label: 'Adventurous', value: 'adventurous', icon: 'compass-outline' as const, 
-    active: '#F59E0B', inactive: '#FEF3C7', text: '#92400E' 
+    active: '#FFF7ED', inactive: '#FFFFFF', text: '#EA580C' 
   },
   { 
     label: 'Whimsical', value: 'whimsical', icon: 'sparkles-outline' as const, 
-    active: '#8B5CF6', inactive: '#EDE9FE', text: '#5B21B6' 
+    active: '#FAF5FF', inactive: '#FFFFFF', text: '#9333EA' 
   },
   { 
     label: 'Relaxed', value: 'relaxed', icon: 'leaf-outline' as const, 
-    active: '#10B981', inactive: '#D1FAE5', text: '#065F46' 
+    active: '#F0FDFA', inactive: '#FFFFFF', text: '#0D9488' 
   },
   { 
     label: 'Professional', value: 'professional', icon: 'business-outline' as const, 
-    active: '#4F46E5', inactive: '#E0E7FF', text: '#3730A3' 
+    active: '#EFF6FF', inactive: '#FFFFFF', text: '#2563EB' 
   },
 ];
 
@@ -134,7 +134,7 @@ export default function PostGeneratorScreen() {
               onPress={generatePost}
               disabled={!dest || isGenerating}
             >
-              <LinearGradient colors={['#F27471', '#EF4444']} style={styles.genGradient}>
+              <LinearGradient colors={['#FDCBD1', '#F2A0A9']} style={styles.genGradient}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   {isGenerating ? (
                     <ActivityIndicator size="small" color="white" />
