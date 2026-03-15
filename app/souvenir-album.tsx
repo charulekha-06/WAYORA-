@@ -16,15 +16,23 @@ const MEMORIES = [
   { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=60' },
   { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=70' },
   { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=500&q=60' },
+  { id: '5', title: 'Sacré-Cœur Peak', date: 'Oct 17, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1503917988258-f1978d442b10?w=500&q=60' },
+  { id: '6', title: 'Street Music', date: 'Oct 18, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1511732351157-1871f1ae058d?w=500&q=60' },
 ];
 
 const ACHIEVEMENTS = [
   { id: '1', title: 'Paris Explorer', icon: 'map-outline', unlocked: true },
   { id: '2', title: 'Art Connoisseur', icon: 'color-palette-outline', unlocked: true },
   { id: '3', title: 'Local Foodie', icon: 'restaurant-outline', unlocked: true },
-  { id: '4', title: 'Global Nomad', icon: 'airplane-outline', unlocked: false },
-  { id: '5', title: 'Photo Master', icon: 'camera-outline', unlocked: false },
-  { id: '6', title: 'Hidden Gem Hunter', icon: 'search-outline', unlocked: false },
+  { id: '4', title: 'Eco Warrior', icon: 'leaf-outline', unlocked: true },
+  { id: '5', title: 'Global Nomad', icon: 'airplane-outline', unlocked: false },
+  { id: '6', title: 'Photo Master', icon: 'camera-outline', unlocked: false },
+  { id: '7', title: 'Hidden Gem Hunter', icon: 'search-outline', unlocked: false },
+  { id: '8', title: 'Budget Pro', icon: 'wallet-outline', unlocked: false },
+  { id: '9', title: 'Museum Buff', icon: 'business-outline', unlocked: false },
+  { id: '10', title: 'Night Owl', icon: 'moon-outline', unlocked: false },
+  { id: '11', title: 'Wellness Guru', icon: 'heart-outline', unlocked: false },
+  { id: '12', title: 'Artisan Scout', icon: 'hammer-outline', unlocked: false },
 ];
 
 export default function SouvenirAlbumScreen() {
@@ -32,14 +40,13 @@ export default function SouvenirAlbumScreen() {
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('memories');
   const [imageError, setImageError] = useState<Record<string, boolean>>({});
-  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
 
   const handleImageError = (id: string) => {
     setImageError(prev => ({ ...prev, [id]: true }));
   };
 
   const renderMemory = ({ item }: { item: typeof MEMORIES[0] }) => (
-    <View style={[styles.memoryCard, { width: (width - 52) / 2 }]}>
+    <View key={item.id} style={[styles.memoryCard, { width: (width - 52) / 2 }]}>
       <Image 
         source={{ uri: item.image }} 
         style={styles.memoryImage}
@@ -51,12 +58,12 @@ export default function SouvenirAlbumScreen() {
         </View>
       )}
       <LinearGradient
-        colors={['transparent', 'rgba(0,0,0,0.8)']}
+        colors={['transparent', 'rgba(0,0,0,0.85)']}
         style={styles.memoryOverlay}
       >
         <Text style={styles.memoryTitle}>{item.title}</Text>
         <View style={styles.memoryInfo}>
-          <Ionicons name="location-sharp" size={12} color="white" />
+          <Ionicons name="location-sharp" size={12} color="#FFF" />
           <Text style={styles.memoryDate}>{item.location} • {item.date}</Text>
         </View>
       </LinearGradient>
@@ -64,16 +71,26 @@ export default function SouvenirAlbumScreen() {
   );
 
   const renderAchievement = (item: typeof ACHIEVEMENTS[0]) => (
-    <View style={[styles.badgeCard, !item.unlocked && { opacity: 0.4 }]}>
+    <View style={[styles.badgeCard, !item.unlocked && { opacity: 0.45 }]}>
       <View style={[styles.badgeIcon, !item.unlocked && styles.badgeLocked]}>
-        <View style={styles.badgeInner}>
-           <Ionicons name={item.icon as any} size={24} color={WayoraColors.black} />
+        <View style={[styles.badgeInner, item.unlocked && styles.badgeInnerUnlocked]}>
+           <Ionicons 
+            name={item.icon as any} 
+            size={26} 
+            color={item.unlocked ? WayoraColors.taviPurple : WayoraColors.gray} 
+          />
         </View>
       </View>
-      <Text style={styles.badgeText}>{item.title}</Text>
-      {!item.unlocked && <Ionicons name="lock-closed" size={10} color={WayoraColors.gray} style={styles.lockIcon} />}
+      <Text style={[styles.badgeText, item.unlocked && styles.badgeTextUnlocked]}>{item.title}</Text>
+      {!item.unlocked && (
+        <View style={styles.lockBadge}>
+          <Ionicons name="lock-closed" size={10} color="#FFF" />
+        </View>
+      )}
     </View>
   );
+
+  const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
 
   return (
     <View style={styles.container}>
@@ -85,7 +102,7 @@ export default function SouvenirAlbumScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Souvenir Album</Text>
         <TouchableOpacity style={styles.cameraBtn}>
-          <Ionicons name="camera" size={24} color={WayoraColors.black} />
+          <Ionicons name="camera" size={24} color={WayoraColors.taviPurple} />
         </TouchableOpacity>
       </View>
 
@@ -120,20 +137,20 @@ export default function SouvenirAlbumScreen() {
         )}
       </ScrollView>
 
-      {/* Stats Summary Tooltip-like section */}
+      {/* Stats Summary Section */}
       <View style={styles.statsBar}>
          <View style={styles.statItem}>
-            <Text style={styles.statValue}>12</Text>
+            <Text style={styles.statValue}>{MEMORIES.length}</Text>
             <Text style={styles.statLabel}>Memories</Text>
          </View>
          <View style={styles.statDivider} />
          <View style={styles.statItem}>
-            <Text style={styles.statValue}>3/6</Text>
+            <Text style={styles.statValue}>{unlockedCount}/{ACHIEVEMENTS.length}</Text>
             <Text style={styles.statLabel}>Badges</Text>
          </View>
          <View style={styles.statDivider} />
          <View style={styles.statItem}>
-            <Text style={styles.statValue}>850</Text>
+            <Text style={styles.statValue}>1,250</Text>
             <Text style={styles.statLabel}>Travel Pts</Text>
          </View>
       </View>
@@ -142,66 +159,74 @@ export default function SouvenirAlbumScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8F9FA' },
+  container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: { 
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
-    paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15, backgroundColor: 'white' 
+    paddingHorizontal: 20, paddingTop: 60, paddingBottom: 15, backgroundColor: 'white',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
   },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F1F3F5', alignItems: 'center', justifyContent: 'center' },
-  cameraBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F1F3F5', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black },
+  backBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  cameraBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: WayoraColors.taviBg, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: WayoraColors.black },
 
-  tabContainer: { flexDirection: 'row', padding: 4, backgroundColor: '#E2E8F0', borderRadius: 16, margin: 20 },
-  tab: { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 12 },
-  activeTab: { backgroundColor: 'white', shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, elevation: 2 },
-  tabText: { fontSize: 14, fontWeight: '700', color: '#64748B' },
-  activeTabText: { color: WayoraColors.black },
+  tabContainer: { flexDirection: 'row', padding: 5, backgroundColor: '#F3F4F6', borderRadius: 20, margin: 20 },
+  tab: { flex: 1, paddingVertical: 14, alignItems: 'center', borderRadius: 16 },
+  activeTab: { backgroundColor: 'white', shadowColor: '#000', shadowOpacity: 0.08, shadowRadius: 8, elevation: 4 },
+  tabText: { fontSize: 15, fontWeight: '700', color: '#94A3B8' },
+  activeTabText: { color: WayoraColors.taviPurple },
 
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 100 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  memoryCard: { height: 200, borderRadius: 20, overflow: 'hidden', backgroundColor: '#E5E7EB' },
+  memoryCard: { height: 210, borderRadius: 24, overflow: 'hidden', backgroundColor: '#E5E7EB', elevation: 4 },
   memoryImage: { width: '100%', height: '100%', resizeMode: 'cover' },
   imageLoader: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F1F5F9' },
-  memoryOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', padding: 12 },
-  memoryTitle: { color: 'white', fontSize: 14, fontWeight: '800' },
-  memoryInfo: { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 },
-  memoryDate: { color: 'rgba(255,255,255,0.8)', fontSize: 10, fontWeight: '600' },
-
-  captureNew: { height: 200, borderRadius: 20, borderStyle: 'dashed', borderWidth: 2, borderColor: '#CBD5E1' },
-  captureGradient: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  captureText: { color: '#94A3B8', fontSize: 13, fontWeight: '700', marginTop: 10 },
+  memoryOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', padding: 16 },
+  memoryTitle: { color: 'white', fontSize: 15, fontWeight: '800' },
+  memoryInfo: { flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 5 },
+  memoryDate: { color: 'rgba(255,255,255,0.9)', fontSize: 11, fontWeight: '600' },
 
   badgeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 15 },
   badgeWrapper: { },
-  badgeCard: { alignItems: 'center' },
+  badgeCard: { alignItems: 'center', position: 'relative' },
   badgeIcon: { 
-    width: 68, height: 68, borderRadius: 34, 
-    borderWidth: 1.5, borderColor: '#000',
+    width: 76, height: 76, borderRadius: 38, 
     alignItems: 'center', justifyContent: 'center', 
-    marginBottom: 10,
-    backgroundColor: 'white'
+    marginBottom: 12,
+    backgroundColor: 'white',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.08, shadowRadius: 10, elevation: 4
   },
   badgeLocked: { 
-    borderColor: '#94A3B8', 
-    borderStyle: 'dashed',
-    backgroundColor: 'transparent'
+    backgroundColor: '#F3F4F6',
+    borderWidth: 1.5, borderColor: '#E5E7EB', borderStyle: 'dashed',
+    shadowOpacity: 0, elevation: 0
   },
   badgeInner: { 
-    width: 60, height: 60, borderRadius: 30, 
-    borderWidth: 1, borderColor: '#E2E8F0',
+    width: 66, height: 66, borderRadius: 33, 
+    borderWidth: 1, borderColor: '#F1F5F9',
     alignItems: 'center', justifyContent: 'center',
   },
-  badgeText: { fontSize: 10, fontWeight: '800', color: WayoraColors.black, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 },
-  lockIcon: { marginTop: 4 },
+  badgeInnerUnlocked: {
+    backgroundColor: WayoraColors.taviBg,
+    borderColor: WayoraColors.taviPurpleLight,
+  },
+  badgeText: { fontSize: 10, fontWeight: '800', color: WayoraColors.gray, textAlign: 'center', textTransform: 'uppercase', letterSpacing: 0.5 },
+  badgeTextUnlocked: { color: WayoraColors.taviPurple },
+  lockBadge: { 
+    position: 'absolute', top: 52, right: 8,
+    width: 20, height: 20, borderRadius: 10,
+    backgroundColor: '#94A3B8', alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: '#FFF'
+  },
 
   statsBar: { 
-    position: 'absolute', bottom: 20, left: 20, right: 20, 
-    flexDirection: 'row', backgroundColor: 'white', borderRadius: 24, padding: 20,
-    shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 15, elevation: 10,
-    alignItems: 'center', justifyContent: 'space-around'
+    position: 'absolute', bottom: 25, left: 20, right: 20, 
+    flexDirection: 'row', backgroundColor: 'white', borderRadius: 28, padding: 24,
+    shadowColor: WayoraColors.taviPurple, shadowOpacity: 0.15, shadowRadius: 20, elevation: 12,
+    alignItems: 'center', justifyContent: 'space-around',
+    borderWidth: 1, borderColor: WayoraColors.taviBg
   },
   statItem: { alignItems: 'center' },
-  statValue: { fontSize: 18, fontWeight: '900', color: WayoraColors.black },
-  statLabel: { fontSize: 11, fontWeight: '600', color: WayoraColors.gray, marginTop: 2 },
-  statDivider: { width: 1, height: 30, backgroundColor: '#E2E8F0' },
+  statValue: { fontSize: 22, fontWeight: '900', color: WayoraColors.taviPurple },
+  statLabel: { fontSize: 12, fontWeight: '700', color: WayoraColors.gray, marginTop: 3 },
+  statDivider: { width: 1, height: 36, backgroundColor: '#F1F5F9' },
 });
