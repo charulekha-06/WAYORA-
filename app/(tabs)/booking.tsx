@@ -254,18 +254,6 @@ function ArtisanTab() {
            <Text style={{ marginTop: 10, color: WayoraColors.gray }}>No products found in this category.</Text>
         </View>
       )}
-          <Text style={styles.artisanBy}>by Sophie Martin</Text>
-          <Text style={styles.artisanProduct}>Custom Fragrance Blends</Text>
-          
-          <View style={styles.artisanBottomRow}>
-            <View style={styles.ratingInline}>
-              <Ionicons name="star" size={14} color="#FBBF24" />
-              <Text style={styles.ratingNumber}>4.8 <Text style={styles.ratingCount}>(203 sold)</Text></Text>
-            </View>
-            <Text style={styles.artisanPrice}>$65</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
 
       {/* Artisan Markets Banner */}
       <View style={styles.marketsBanner}>
