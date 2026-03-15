@@ -9,10 +9,10 @@ import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const TONES = [
-  { label: 'Adventurous 🏔️', value: 'adventurous' },
-  { label: 'Whimsical ✨', value: 'whimsical' },
-  { label: 'Relaxed 🌊', value: 'relaxed' },
-  { label: 'Pro 💼', value: 'professional' },
+  { label: 'Adventurous', value: 'adventurous', icon: 'compass-outline' as const },
+  { label: 'Whimsical', value: 'whimsical', icon: 'sparkles-outline' as const },
+  { label: 'Relaxed', value: 'relaxed', icon: 'leaf-outline' as const },
+  { label: 'Professional', value: 'professional', icon: 'business-outline' as const },
 ];
 
 export default function PostGeneratorScreen() {
@@ -30,19 +30,22 @@ export default function PostGeneratorScreen() {
     // Simulation delay
     setTimeout(() => {
       let post = '';
+      const place = dest.charAt(0).toUpperCase() + dest.slice(1);
+      const items = highlights ? highlights.toLowerCase() : 'the beautiful architecture and local vibes';
+
       if (tone === 'adventurous') {
-        post = `Beyond excited to finally check ${dest} off the bucket list! 🌍✨ Spent the day exploring ${highlights || 'local gems'} and pushing my limits. There's nothing like the thrill of discovering somewhere new. #Adventure #Wanderlust #${dest.replace(/\s/g, '')} #Wayora`;
+        post = `Beyond excited to finally experience ${place}! 🌍\n\nSpent the day exploring ${items} and pushing my boundaries. There's nothing quite like the thrill of discovering hidden gems in a new city. Every corner here tells a story. 🏔️✨\n\n#Adventure #Wanderlust #${place.replace(/\s/g, '')} #Wayora`;
       } else if (tone === 'whimsical') {
-        post = `Lost in a dream at ${dest}... 🕊️✨ It feels like stepping into a storybook here. Magic was everywhere at ${highlights || 'the local markets'}, and my soul is so full. Pure enchantment! 🧚‍♀️💫 #TravelMagic #DreamDestination #${dest.replace(/\s/g, '')}`;
+        post = `Lost in a dream at ${place}... 🕊️\n\nIt feels like stepping into a storybook here. Magic was everywhere, especially while taking in ${items}. My soul is so full of wonder right now. Pure enchantment! ✨🎠💫\n\n#TravelMagic #DreamDestination #${place.replace(/\s/g, '')} #ParisVibes`;
       } else if (tone === 'relaxed') {
-        post = `Slowing down and soaking in every second at ${dest}. 🌿🌊 Sometimes the best way to travel is to just *be*. ${highlights || 'Taking in the views'} was exactly the reset I needed. Peace and quiet at last. 🧘‍♀️✨ #SlowTravel #MindfulMoments #${dest.replace(/\s/g, '')}`;
+        post = `Slowing down and soaking in every second at ${place}. 🌿\n\nSometimes the best way to travel is to just *be*. Enjoying ${items} was exactly the reset I needed. Peace and quiet found in the heart of the city. 🌊🧘‍♀️\n\n#SlowTravel #MindfulMoments #${place.replace(/\s/g, '')} #Serenity`;
       } else {
-        post = `Successfully concluded my visit to ${dest}. 🏙️💼 Exceptional experiences at ${highlights || 'selected venues'}, offering a unique perspective on the regional culture and infrastructure. Highly recommended for a balanced itinerary. #TravelPro #IndustryInsights #Wayora`;
+        post = `Highly impressed by the cultural richness and infrastructure of ${place}. 🏙️\n\nThe experience at ${items} provided unique insights into the region's heritage and modern lifestyle. A must-visit for anyone looking for a balanced and enriching travel itinerary. 💼🖋️\n\n#TravelPro #GlobalInsights #Wayora #${place.replace(/\s/g, '')}`;
       }
       
       setGeneratedPost(post);
       setIsGenerating(false);
-    }, 1500);
+    }, 1200);
   };
 
   const copyToClipboard = () => {
@@ -97,6 +100,12 @@ export default function PostGeneratorScreen() {
                   style={[styles.toneChip, tone === t.value && styles.toneChipActive]}
                   onPress={() => setTone(t.value)}
                 >
+                  <Ionicons 
+                    name={t.icon} 
+                    size={16} 
+                    color={tone === t.value ? 'white' : '#1E40AF'} 
+                    style={{ marginRight: 6 }}
+                  />
                   <Text style={[styles.toneLabel, tone === t.value && { color: 'white' }]}>{t.label}</Text>
                 </TouchableOpacity>
               ))}
@@ -108,7 +117,14 @@ export default function PostGeneratorScreen() {
               disabled={!dest || isGenerating}
             >
               <LinearGradient colors={['#34D399', '#10B981']} style={styles.genGradient}>
-                <Text style={styles.genText}>{isGenerating ? 'Drafting...' : 'Generate Magic ✨'}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  {isGenerating ? (
+                    <ActivityIndicator size="small" color="white" />
+                  ) : (
+                    <Ionicons name="sparkles" size={20} color="white" />
+                  )}
+                  <Text style={styles.genText}>{isGenerating ? 'Polishing your post...' : 'Create Post'}</Text>
+                </View>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -137,7 +153,7 @@ export default function PostGeneratorScreen() {
   );
 }
 
-import { Alert } from 'react-native';
+import { Alert, ActivityIndicator } from 'react-native';
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F8F9FA' },
@@ -156,11 +172,11 @@ const styles = StyleSheet.create({
   toneChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
   toneLabel: { fontSize: 12, fontWeight: '700', color: '#1E40AF' },
 
-  genBtn: { marginTop: 30, borderRadius: 18, overflow: 'hidden' },
+  genBtn: { marginTop: 30, borderRadius: 18, overflow: 'hidden', shadowColor: '#10B981', shadowOpacity: 0.2, shadowRadius: 10, elevation: 5 },
   genGradient: { paddingVertical: 18, alignItems: 'center' },
   genText: { color: 'white', fontSize: 16, fontWeight: '800' },
 
-  resultCard: { marginTop: 25, backgroundColor: '#FEF3EA', padding: 25, borderRadius: 24, borderStyle: 'dashed', borderWidth: 2, borderColor: '#F5BE87' },
+  resultCard: { marginTop: 25, backgroundColor: 'white', padding: 25, borderRadius: 24, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 15, elevation: 5, borderLeftWidth: 6, borderLeftColor: '#F5BE87' },
   resultHeading: { fontSize: 14, fontWeight: '800', color: '#C0512E', marginBottom: 15, textTransform: 'uppercase' },
   resultBox: { backgroundColor: 'white', padding: 20, borderRadius: 18 },
   resultText: { fontSize: 14, color: '#4A5568', lineHeight: 22 },
