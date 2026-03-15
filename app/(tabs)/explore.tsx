@@ -75,40 +75,40 @@ export default function ExploreScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color="#9CA3AF" />
-          <TextInput
-            placeholder="Search destinations..."
-            placeholderTextColor="#9CA3AF"
-            style={styles.searchInput}
-            value={search}
-            onChangeText={setSearch}
-          />
-        </View>
-      </View>
-
-      {/* Categories */}
-      <View style={{ backgroundColor: '#FFF' }}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={styles.catContent}>
-          {categories.map((cat) => {
-            const isActive = activeCategory === cat.name;
-            return (
-              <TouchableOpacity
-                key={cat.name}
-                onPress={() => setActiveCategory(cat.name)}
-                style={[styles.catBtn, isActive && styles.catBtnActive]}>
-                <Ionicons name={cat.icon} size={16} color={isActive ? '#fff' : '#6B7280'} />
-                <Text style={[styles.catText, isActive && styles.catTextActive]}>{cat.name}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
-      </View>
-
       {/* Results */}
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.results}>
+        {/* Header moved inside */}
+        <View style={styles.headerInner}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search" size={18} color="#9CA3AF" />
+            <TextInput
+              placeholder="Search destinations..."
+              placeholderTextColor="#9CA3AF"
+              style={styles.searchInput}
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
+        </View>
+
+        {/* Categories moved inside */}
+        <View style={{ backgroundColor: 'transparent' }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.catScroll} contentContainerStyle={styles.catContent}>
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat.name;
+              return (
+                <TouchableOpacity
+                  key={cat.name}
+                  onPress={() => setActiveCategory(cat.name)}
+                  style={[styles.catBtn, isActive && styles.catBtnActive]}>
+                  <Ionicons name={cat.icon} size={16} color={isActive ? '#fff' : '#6B7280'} />
+                  <Text style={[styles.catText, isActive && styles.catTextActive]}>{cat.name}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+        </View>
+
         <Text style={styles.resultCount}>{filtered.length} destinations found</Text>
         
         {filtered.map((dest, idx) => (
@@ -158,12 +158,12 @@ export default function ExploreScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F3F4F6' },
-  header: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: '#FFF' },
+  headerInner: { paddingHorizontal: 0, paddingBottom: 16 },
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFC', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, gap: 10, borderWidth: 1, borderColor: '#E5E7EB' },
   searchInput: { flex: 1, fontSize: 16, color: '#111827' },
   
-  catScroll: { backgroundColor: '#FFF', paddingBottom: 10 },
-  catContent: { paddingHorizontal: 20, gap: 10, alignItems: 'center', paddingTop: 4 },
+  catScroll: { backgroundColor: 'transparent', paddingBottom: 10 },
+  catContent: { paddingHorizontal: 0, gap: 10, alignItems: 'center', paddingTop: 4 },
   catBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 18, paddingVertical: 10, borderRadius: 24, backgroundColor: '#F9FAFC', borderWidth: 1, borderColor: '#E5E7EB' },
   catBtnActive: { backgroundColor: '#FF5A36', borderColor: '#FF5A36' },
   catText: { fontSize: 14, fontWeight: '600', color: '#6B7280' },

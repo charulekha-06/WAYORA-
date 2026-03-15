@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F9FAFC', // slightly softer background to match image
   },
   header: {
-    paddingTop: 60,
+    paddingTop: 10,
     paddingHorizontal: 20,
     paddingBottom: 20,
     flexDirection: 'row',
