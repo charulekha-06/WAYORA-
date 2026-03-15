@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
 
   floatingCart: {
     position: 'absolute',
-    bottom: 100, // Above chatbot
+    bottom: 120, // Increased to avoid collision
     right: 20,
     width: 56,
     height: 56,
