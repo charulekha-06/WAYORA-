@@ -63,7 +63,6 @@ export default function ExploreScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>Explore</Text>
-        <Text style={styles.subtitle}>Discover amazing destinations</Text>
         <View style={styles.searchBar}>
           <Ionicons name="search" size={18} color={WayoraColors.gray} />
           <TextInput
