@@ -12,13 +12,19 @@ const BOOKING_DATA = {
     { id: 'h1', name: 'Le Grand Hotel Paris', price: 180, rating: 4.8, reviews: 1240, image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80', location: 'Paris, France', tag: 'Luxury' },
     { id: 'h2', name: 'Alpine Resort & Spa', price: 250, rating: 4.9, reviews: 856, image: 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&q=80', location: 'Swiss Alps', tag: 'Top Rated' },
     { id: 'h3', name: 'Coastal Breeze Inn', price: 120, rating: 4.5, reviews: 412, image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80', location: 'Amalfi Coast', tag: 'Best Value' },
+    { id: 'h4', name: 'The Ritz-Carlton Paris', price: 550, rating: 5.0, reviews: 2100, image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600&q=80', location: 'Place Vendôme', tag: 'Ultra Luxury' },
+    { id: 'h5', name: 'Château Stay Versailles', price: 380, rating: 4.9, reviews: 156, image: 'https://images.unsplash.com/photo-1564501025302-689dfcb3f4e1?w=600&q=80', location: 'Versailles', tag: 'Royal Experience' },
   ],
   flight: [
     { id: 'f1', name: 'Air France AF123', price: 450, rating: 4.7, reviews: 3200, image: 'https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?w=600&q=80', location: 'CDG to JFK', tag: 'Fastest' },
     { id: 'f2', name: 'Emirates EK202', price: 850, rating: 5.0, reviews: 5400, image: 'https://images.unsplash.com/photo-1540339832863-474c99b3f66f?w=600&q=80', location: 'DXB to Heathrow', tag: 'Premium' },
+    { id: 'f3', name: 'Lufthansa LH456', price: 320, rating: 4.6, reviews: 1800, image: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?w=600&q=80', location: 'FRA to CDG', tag: 'Efficient' },
+    { id: 'f4', name: 'Singapore Airlines SQ12', price: 980, rating: 5.0, reviews: 6200, image: 'https://images.unsplash.com/photo-1570710891163-6d3b5c47248b?w=600&q=80', location: 'SIN to CDG', tag: 'Best Service' },
   ],
   transport: [
     { id: 't1', name: 'Eurostar Express', price: 95, rating: 4.6, reviews: 2100, image: 'https://images.unsplash.com/photo-1474487056207-5d7d76e535cd?w=600&q=80', location: 'London to Paris', tag: 'Eco-Friendly' },
+    { id: 't2', name: 'Thalys High Speed', price: 75, rating: 4.8, reviews: 1500, image: 'https://images.unsplash.com/photo-1532105956626-ce5e407b4975?w=600&q=80', location: 'Brussels to Paris', tag: 'Sustainable' },
+    { id: 't3', name: 'FlixBus Premium', price: 25, rating: 4.2, reviews: 4500, image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&q=80', location: 'Amsterdam to Paris', tag: 'Budget' },
   ],
   car: [
     { id: 'c1', name: 'Tesla Model 3', price: 85, rating: 4.9, reviews: 156, image: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80', location: 'Paris City Center', tag: 'Electric' },
@@ -29,6 +35,9 @@ const BOOKING_DATA = {
   ],
   activities: [
     { id: 'a1', name: 'Seine River Dinner Cruise', price: 65, rating: 4.9, reviews: 890, image: 'https://images.unsplash.com/photo-1548544149-4835e62ee5b3?w=600&q=80', location: 'Paris, France', tag: 'Romantic' },
+    { id: 'a2', name: 'Eiffel Tower Access', price: 45, rating: 4.7, reviews: 25000, image: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=600&q=80', location: 'Champ de Mars', tag: 'Must Do' },
+    { id: 'a3', name: 'Louvre Museum Tour', price: 85, rating: 4.8, reviews: 18000, image: 'https://images.unsplash.com/photo-1544413647-b51463ddffb3?w=600&q=80', location: 'Rue de Rivoli', tag: 'Cultural' },
+    { id: 'a4', name: 'Mont-Saint-Michel Trip', price: 120, rating: 4.9, reviews: 4200, image: 'https://images.unsplash.com/photo-1533104816931-20fa691ff6ca?w=600&q=80', location: 'Normandy', tag: 'Excursion' },
   ],
   food: [
     { id: 'fd1', name: 'Le Meurice Alain Ducasse', price: 150, rating: 5.0, reviews: 320, image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80', location: 'Paris, France', tag: 'Michelin Star' },
