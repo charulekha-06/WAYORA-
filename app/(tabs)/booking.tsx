@@ -11,7 +11,6 @@ const { width } = Dimensions.get('window');
 
 const TABS = [
   { id: 'booking', label: 'Booking', icon: 'ticket-outline' as const },
-  { id: 'stays', label: 'Stays', icon: 'business-outline' as const },
   { id: 'artisan', label: 'Artisan', icon: 'color-palette-outline' as const },
   { id: 'culture', label: 'Culture', icon: 'library-outline' as const },
 ];
@@ -65,7 +64,6 @@ export default function BookingScreen() {
         {/* Dynamic Content based on Active Tab */}
         <View style={styles.contentArea}>
           {activeTab === 'booking' && <BookingTab />}
-          {activeTab === 'stays' && <StaysTab />}
           {activeTab === 'artisan' && <ArtisanTab />}
           {activeTab === 'culture' && <CultureTab />}
         </View>
@@ -149,103 +147,7 @@ function BookingTab() {
   );
 }
 
-// 2. Stays Tab Content
-function StaysTab() {
-  const filters = ['All', 'Budget', 'Mid-range', 'Luxury', 'Top Rated'];
-  const [activeFilter, setActiveFilter] = useState('All');
 
-  return (
-    <View>
-      {/* Filter Chips */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll} style={{ marginBottom: 20 }}>
-        {filters.map(f => (
-          <TouchableOpacity 
-            key={f} 
-            onPress={() => setActiveFilter(f)}
-            style={[styles.filterChip, activeFilter === f && styles.filterChipActive]}
-          >
-            <Text style={[styles.filterText, activeFilter === f && styles.filterTextActive]}>{f}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Scroll Indicator Fake UI */}
-      <View style={styles.scrollIndicatorRow}>
-         <Ionicons name="caret-back" size={16} color="#9CA3AF" />
-         <View style={styles.scrollIndicatorLine}></View>
-         <Ionicons name="caret-forward" size={16} color="#9CA3AF" />
-      </View>
-
-      <Text style={styles.sectionTitle}>Recommended Stays</Text>
-
-      {/* Large Stay Card 1 */}
-      <TouchableOpacity style={styles.largeCard}>
-        <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80' }} 
-          style={styles.largeCardImage}
-          imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-        >
-          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.largeCardOverlay}>
-             <Ionicons name="heart-outline" size={24} color="#FFF" style={styles.heartAbs} />
-             <Text style={styles.largeCardTitle}>Boutique Hotel Marais</Text>
-             <View style={styles.inlineLocation}>
-               <Ionicons name="location-outline" size={14} color="#FFF" />
-               <Text style={styles.largeCardLocation}>Le Marais, Paris</Text>
-             </View>
-          </LinearGradient>
-        </ImageBackground>
-
-        <View style={styles.largeCardBody}>
-           <View style={styles.largeCardTopRow}>
-              <View style={styles.ratingInline}>
-                <Ionicons name="star" size={16} color="#FBBF24" />
-                <Text style={styles.ratingNumber}>4.8 <Text style={styles.ratingCount}>(342 reviews)</Text></Text>
-              </View>
-              <Text style={styles.largePrice}><Text style={styles.largePriceNum}>$120</Text>/night</Text>
-           </View>
-           <View style={styles.amenitiesRow}>
-              <View style={styles.amenityBadge}><Text style={styles.amenityText}>Free WiFi</Text></View>
-              <View style={styles.amenityBadge}><Text style={styles.amenityText}>Breakfast</Text></View>
-              <View style={styles.amenityBadge}><Text style={styles.amenityText}>Pool</Text></View>
-           </View>
-        </View>
-      </TouchableOpacity>
-
-      {/* Large Stay Card 2 */}
-      <TouchableOpacity style={styles.largeCard}>
-        <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1629140727571-9b5c6f6267b4?auto=format&fit=crop&w=800&q=80' }} 
-          style={styles.largeCardImage}
-          imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-        >
-          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.largeCardOverlay}>
-             <Ionicons name="heart-outline" size={24} color="#FFF" style={styles.heartAbs} />
-             <Text style={styles.largeCardTitle}>Luxury Eiffel Suite</Text>
-             <View style={styles.inlineLocation}>
-               <Ionicons name="location-outline" size={14} color="#FFF" />
-               <Text style={styles.largeCardLocation}>7th Arr., Paris</Text>
-             </View>
-          </LinearGradient>
-        </ImageBackground>
-
-        <View style={styles.largeCardBody}>
-           <View style={styles.largeCardTopRow}>
-              <View style={styles.ratingInline}>
-                <Ionicons name="star" size={16} color="#FBBF24" />
-                <Text style={styles.ratingNumber}>4.9 <Text style={styles.ratingCount}>(128 reviews)</Text></Text>
-              </View>
-              <Text style={styles.largePrice}><Text style={styles.largePriceNum}>$350</Text>/night</Text>
-           </View>
-           <View style={styles.amenitiesRow}>
-              <View style={styles.amenityBadge}><Text style={styles.amenityText}>Eiffel View</Text></View>
-              <View style={styles.amenityBadge}><Text style={styles.amenityText}>Spa</Text></View>
-              <View style={styles.amenityBadge}><Text style={styles.amenityText}>Room Service</Text></View>
-           </View>
-        </View>
-      </TouchableOpacity>
-    </View>
-  );
-}
 
 // 3. Artisan Tab Content
 function ArtisanTab() {
@@ -446,32 +348,7 @@ const styles = StyleSheet.create({
   discountBadge: { backgroundColor: '#FF5A36', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
   discountText: { fontSize: 10, fontWeight: '800', color: '#FFF' },
 
-  // Stays Tab Styles
-  filterScroll: { flexDirection: 'row' },
-  filterChip: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8, borderWidth: 1, borderColor: '#E5E7EB', marginRight: 10, backgroundColor: '#FFF' },
-  filterChipActive: { backgroundColor: '#FF8A00', borderColor: '#FF8A00' },
-  filterText: { fontSize: 13, fontWeight: '600', color: WayoraColors.black },
-  filterTextActive: { color: '#FFF' },
-  scrollIndicatorRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 },
-  scrollIndicatorLine: { flex: 1, height: 8, backgroundColor: '#9CA3AF', borderRadius: 10, marginHorizontal: 8 },
-  
-  largeCard: { backgroundColor: '#FFF', borderRadius: 16, borderWidth: 1, borderColor: '#F3F4F6', marginBottom: 20 },
-  largeCardImage: { width: '100%', height: 200 },
-  largeCardOverlay: { flex: 1, justifyContent: 'flex-end', padding: 16 },
-  heartAbs: { position: 'absolute', top: 16, right: 16 },
-  largeCardTitle: { fontSize: 18, fontWeight: '700', color: '#FFF', marginBottom: 4 },
-  inlineLocation: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  largeCardLocation: { fontSize: 13, color: 'rgba(255,255,255,0.9)' },
-  largeCardBody: { padding: 16 },
-  largeCardTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  ratingInline: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  ratingNumber: { fontSize: 14, fontWeight: '700', color: WayoraColors.black },
-  ratingCount: { fontSize: 12, fontWeight: '400', color: WayoraColors.gray },
-  largePrice: { fontSize: 12, color: WayoraColors.gray },
-  largePriceNum: { fontSize: 18, fontWeight: '800', color: '#FF5A36' },
-  amenitiesRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  amenityBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, borderWidth: 1, borderColor: '#F3F4F6' },
-  amenityText: { fontSize: 11, fontWeight: '600', color: WayoraColors.black },
+
 
   // Artisan Styles
   artisanBanner: { backgroundColor: '#FFFDF0', borderWidth: 1, borderColor: '#FEF3C7', padding: 20, borderRadius: 12, marginTop: 10 },
