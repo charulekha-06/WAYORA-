@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  StatusBar, Dimensions, Alert, ActivityIndicator, Modal
+  StatusBar, Dimensions, Alert, ActivityIndicator, Modal, FlatList
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 interface ServiceInfo {
+  id: string;
   name: string;
   category: string;
   distance: string;
@@ -32,92 +33,177 @@ const EMERGENCY_SERVICES = [
   { id: '6', name: 'Embassy', icon: 'flag', color: '#F59E0B', bgColor: '#FFFBEB' },
 ];
 
-const MOCK_DATA: Record<string, ServiceInfo> = {
-  'Hospitals': {
-    name: 'Hôpital Saint-Joseph',
-    category: 'General Hospital',
-    distance: '2.4 km',
-    status: 'Open 24 Hours',
-    address: '185 Rue Raymond Losserand, 75014 Paris',
-    rating: '4.1',
-    reviews: '654 reviews',
-    phone: '+33 1 44 12 33 33',
-    tags: ['Emergency', 'Surgery', 'Cardiology'],
-    icon: 'business'
-  },
-  'Pharmacies': {
-    name: 'Pharmacie de la Mairie',
-    category: 'Late Night Pharmacy',
-    distance: '0.8 km',
-    status: 'Open until 11:00 PM',
-    address: '12 Rue de Rivoli, 75004 Paris',
-    rating: '4.5',
-    reviews: '128 reviews',
-    phone: '+33 1 42 72 34 56',
-    tags: ['Prescriptions', 'Vaccinations', 'OTC'],
-    icon: 'medkit'
-  },
-  'ATMs': {
-    name: 'BNP Paribas ATM',
-    category: 'Bank / ATM',
-    distance: '0.3 km',
-    status: 'Available',
-    address: '45 Boulevard Saint-Germain, 75005 Paris',
-    rating: '3.8',
-    reviews: '42 reviews',
-    phone: '3477 (Local)',
-    tags: ['24h Access', 'Withdrawal', 'English Menu'],
-    icon: 'cash'
-  },
-  'Restrooms': {
-    name: 'Sanisette Public Toliet',
-    category: 'Public Restroom',
-    distance: '0.1 km',
-    status: 'Operational',
-    address: 'Place de la Concorde, 75008 Paris',
-    rating: '3.5',
-    reviews: '210 reviews',
-    phone: 'N/A',
-    tags: ['Accessible', 'Self-Cleaning', 'Free'],
-    icon: 'water'
-  },
-  'Police': {
-    name: 'Commissariat de Police',
-    category: 'Police Station',
-    distance: '1.2 km',
-    status: 'Open 24 Hours',
-    address: '9 Boulevard du Palais, 75004 Paris',
-    rating: '4.0',
-    reviews: '85 reviews',
-    phone: '17 (Emergency)',
-    tags: ['Passport Loss', 'Security', 'Reporting'],
-    icon: 'shield-half'
-  },
-  'Embassy': {
-    name: 'Consulat Général',
-    category: 'Diplomatic Mission',
-    distance: '3.5 km',
-    status: 'By Appointment',
-    address: '2 Avenue Gabriel, 75008 Paris',
-    rating: '4.2',
-    reviews: '150 reviews',
-    phone: '+33 1 43 12 22 22',
-    tags: ['Visas', 'Passport Services', 'Citizenship'],
-    icon: 'flag'
-  }
+const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
+  'Hospitals': [
+    {
+      id: 'h1',
+      name: 'Hôpital Saint-Joseph',
+      category: 'General Hospital',
+      distance: '2.4 km',
+      status: 'Open 24 Hours',
+      address: '185 Rue Raymond Losserand, 75014 Paris',
+      rating: '4.1',
+      reviews: '654 reviews',
+      phone: '+33 1 44 12 33 33',
+      tags: ['Emergency', 'Surgery', 'Cardiology'],
+      icon: 'business'
+    },
+    {
+      id: 'h2',
+      name: 'Pitié-Salpêtrière Hospital',
+      category: 'Public Hospital',
+      distance: '3.1 km',
+      status: 'Open 24 Hours',
+      address: '47-83 Bd de l\'Hôpital, 75013 Paris',
+      rating: '4.3',
+      reviews: '1.2k reviews',
+      phone: '+33 1 42 16 00 00',
+      tags: ['Cardiology', 'Neurology', 'Urgences'],
+      icon: 'medical'
+    }
+  ],
+  'Pharmacies': [
+    {
+      id: 'p1',
+      name: 'Pharmacie de la Mairie',
+      category: 'Late Night Pharmacy',
+      distance: '0.8 km',
+      status: 'Open until 11:00 PM',
+      address: '12 Rue de Rivoli, 75004 Paris',
+      rating: '4.5',
+      reviews: '128 reviews',
+      phone: '+33 1 42 72 34 56',
+      tags: ['Prescriptions', 'Vaccinations', 'English'],
+      icon: 'medkit'
+    },
+    {
+      id: 'p2',
+      name: 'Citypharma',
+      category: 'Pharmacy & Drugstore',
+      distance: '1.5 km',
+      status: 'Open (Busy)',
+      address: '26 Rue du Four, 75006 Paris',
+      rating: '4.4',
+      reviews: '3.5k reviews',
+      phone: '+33 1 46 33 20 81',
+      tags: ['Cosmetics', 'Expert Staff', 'Large Stock'],
+      icon: 'bandage'
+    }
+  ],
+  'ATMs': [
+    {
+      id: 'a1',
+      name: 'BNP Paribas ATM',
+      category: 'Bank / ATM',
+      distance: '0.3 km',
+      status: 'Available',
+      address: '45 Boulevard Saint-Germain, 75005 Paris',
+      rating: '3.8',
+      reviews: '42 reviews',
+      phone: '3477',
+      tags: ['24h Access', 'Withdrawal', 'English'],
+      icon: 'cash'
+    },
+    {
+      id: 'a2',
+      name: 'Société Générale ATM',
+      category: 'ATM Terminal',
+      distance: '0.5 km',
+      status: 'Available',
+      address: '12 Place de la Bastille, 75011 Paris',
+      rating: '4.0',
+      reviews: '15 reviews',
+      phone: '3933',
+      tags: ['Touch Screen', 'Receipts', 'Safe'],
+      icon: 'card'
+    },
+    {
+      id: 'a3',
+      name: 'HSBC ATM',
+      category: 'Global ATM',
+      distance: '0.6 km',
+      status: 'Available',
+      address: '52 Avenue des Champs-Élysées, 75008 Paris',
+      rating: '4.2',
+      reviews: '88 reviews',
+      phone: '+33 810 246 810',
+      tags: ['Global Cards', 'Multi-Currency'],
+      icon: 'card'
+    }
+  ],
+  'Restrooms': [
+    {
+      id: 'r1',
+      name: 'Sanisette Public Toilet',
+      category: 'Public Restroom',
+      distance: '0.1 km',
+      status: 'Operational',
+      address: 'Place de la Concorde, 75008 Paris',
+      rating: '3.5',
+      reviews: '210 reviews',
+      phone: 'N/A',
+      tags: ['Accessible', 'Self-Cleaning', 'Free'],
+      icon: 'water'
+    },
+    {
+      id: 'r2',
+      name: 'Louvre Public Restrooms',
+      category: 'Museum Facility',
+      distance: '0.4 km',
+      status: 'Open (Museum hours)',
+      address: 'Palais Royal, 75001 Paris',
+      rating: '4.2',
+      reviews: '50 reviews',
+      phone: 'N/A',
+      tags: ['Clean', 'Infant Care', 'Paid'],
+      icon: 'water'
+    }
+  ],
+  'Police': [
+    {
+      id: 'police1',
+      name: 'Commissariat de Police',
+      category: 'Police Station',
+      distance: '1.2 km',
+      status: 'Open 24 Hours',
+      address: '9 Boulevard du Palais, 75004 Paris',
+      rating: '4.0',
+      reviews: '85 reviews',
+      phone: '17',
+      tags: ['Passport Loss', 'Security', 'Urgences'],
+      icon: 'shield-half'
+    }
+  ],
+  'Embassy': [
+    {
+      id: 'e1',
+      name: 'Consulat Général',
+      category: 'Diplomatic Mission',
+      distance: '3.5 km',
+      status: 'By Appointment',
+      address: '2 Avenue Gabriel, 75008 Paris',
+      rating: '4.2',
+      reviews: '150 reviews',
+      phone: '+33 1 43 12 22 22',
+      tags: ['Visas', 'Passport Services', 'Citizenship'],
+      icon: 'flag'
+    }
+  ]
 };
 
 export default function EmergencyScreen() {
   const router = useRouter();
   const [searching, setSearching] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState<ServiceInfo | null>(null);
+  const [results, setResults] = useState<ServiceInfo[] | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const handleServicePress = (service: string) => {
     setSearching(service);
-    // Simulate finding nearest service
+    setSelectedCategory(service);
+    // Simulate finding multiple services
     setTimeout(() => {
       setSearching(null);
-      setShowResult(MOCK_DATA[service] || MOCK_DATA['Hospitals']);
+      setResults(MOCK_RESULTS[service] || []);
     }, 1200);
   };
 
@@ -131,6 +217,64 @@ export default function EmergencyScreen() {
       ]
     );
   };
+
+  const renderResultItem = ({ item }: { item: ServiceInfo }) => (
+    <View style={styles.resultCard}>
+      <View style={styles.resultHeader}>
+        <View style={styles.resultIconBox}>
+          <Ionicons name={item.icon as any} size={20} color={WayoraColors.black} />
+        </View>
+        <View style={{ flex: 1, marginLeft: 12 }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Text style={styles.resultTitle}>{item.name}</Text>
+            <Text style={styles.resultDistance}>{item.distance}</Text>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
+            <Text style={styles.resultCategory}>{item.category}</Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>{item.status}</Text>
+            </View>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.infoRow}>
+        <Ionicons name="location-sharp" size={16} color={WayoraColors.coral} />
+        <Text style={styles.infoText}>{item.address}</Text>
+      </View>
+
+      <View style={styles.infoRow}>
+        <Ionicons name="star" size={16} color="#F59E0B" />
+        <Text style={styles.infoText}>
+          <Text style={{ fontWeight: '700', color: WayoraColors.black }}>{item.rating}</Text> ({item.reviews})
+        </Text>
+        <View style={{ width: 12 }} />
+        <Ionicons name="call" size={16} color={WayoraColors.black} />
+        <Text style={styles.infoText}>{item.phone}</Text>
+      </View>
+
+      <View style={styles.tagRow}>
+        {item.tags.map((tag, idx) => (
+          <View key={idx} style={styles.tagCell}>
+            <Text style={styles.tagText}>{tag}</Text>
+          </View>
+        ))}
+      </View>
+
+      <View style={styles.footerActions}>
+        <TouchableOpacity style={styles.getDirectionsBtn}>
+          <Text style={styles.getDirectionsText}>Get Directions</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.callNowBtn}>
+          <Ionicons name="call-outline" size={18} color="#4F46E5" />
+          <Text style={styles.callNowText}>Call Now</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{ padding: 10 }}>
+          <Text style={styles.detailsText}>Details</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -166,7 +310,12 @@ export default function EmergencyScreen() {
 
         {/* Improved Service Grid */}
         <View style={styles.gridSection}>
-          <Text style={styles.gridTitle}>Nearest Services</Text>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+            <Text style={styles.gridTitle}>Nearest Services</Text>
+            <TouchableOpacity>
+              <Text style={{ fontSize: 13, color: WayoraColors.gray, fontWeight: '600' }}>View Map</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.grid}>
             {EMERGENCY_SERVICES.map((service) => (
               <TouchableOpacity
@@ -203,68 +352,33 @@ export default function EmergencyScreen() {
         <View style={styles.modalOverlayLight}>
           <View style={styles.searchBox}>
             <ActivityIndicator size="large" color="#000" />
-            <Text style={styles.searchText}>Finding nearest {searching}...</Text>
+            <Text style={styles.searchText}>Searching nearby {searching}...</Text>
           </View>
         </View>
       </Modal>
 
-      {/* DETAILED Result Modal (Based on user image) */}
-      <Modal visible={showResult !== null} transparent animationType="slide">
+      {/* MULTI-RESULT Modal */}
+      <Modal visible={results !== null} transparent animationType="slide">
         <View style={styles.modalOverlayDark}>
-          <View style={styles.resultCard}>
-            <View style={styles.resultHeader}>
-              <View style={styles.resultIconBox}>
-                <Ionicons name={showResult?.icon as any} size={20} color={WayoraColors.black} />
+          <View style={styles.resultsContainer}>
+            <View style={styles.resultsHeader}>
+              <View>
+                <Text style={styles.resultsHeading}>Nearby {selectedCategory}</Text>
+                <Text style={styles.resultsCount}>{results?.length} found matches</Text>
               </View>
-              <View style={{ flex: 1, marginLeft: 12 }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={styles.resultTitle}>{showResult?.name}</Text>
-                  <Text style={styles.resultDistance}>{showResult?.distance}</Text>
-                </View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
-                  <Text style={styles.resultCategory}>{showResult?.category}</Text>
-                  <View style={styles.statusBadge}>
-                    <Text style={styles.statusText}>{showResult?.status}</Text>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Ionicons name="location-sharp" size={16} color={WayoraColors.coral} />
-              <Text style={styles.infoText}>{showResult?.address}</Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Ionicons name="star" size={16} color="#F59E0B" />
-              <Text style={styles.infoText}>
-                <Text style={{ fontWeight: '700', color: WayoraColors.black }}>{showResult?.rating}</Text> ({showResult?.reviews})
-              </Text>
-              <View style={{ width: 12 }} />
-              <Ionicons name="call" size={16} color={WayoraColors.black} />
-              <Text style={styles.infoText}>{showResult?.phone}</Text>
-            </View>
-
-            <View style={styles.tagRow}>
-              {showResult?.tags.map((tag, idx) => (
-                <View key={idx} style={styles.tagCell}>
-                  <Text style={styles.tagText}>{tag}</Text>
-                </View>
-              ))}
-            </View>
-
-            <View style={styles.footerActions}>
-              <TouchableOpacity style={styles.getDirectionsBtn} onPress={() => setShowResult(null)}>
-                <Text style={styles.getDirectionsText}>Get Directions</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.callNowBtn} onPress={() => setShowResult(null)}>
-                <Ionicons name="call-outline" size={18} color="#4F46E5" />
-                <Text style={styles.callNowText}>Call Now</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setShowResult(null)} style={{ padding: 10 }}>
-                <Text style={styles.detailsText}>Details</Text>
+              <TouchableOpacity onPress={() => setResults(null)} style={styles.closeResultsBtn}>
+                <Ionicons name="close" size={24} color={WayoraColors.black} />
               </TouchableOpacity>
             </View>
+
+            <FlatList
+              data={results}
+              renderItem={renderResultItem}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={{ padding: 20, paddingTop: 0 }}
+              showsVerticalScrollIndicator={false}
+              ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
+            />
           </View>
         </View>
       </Modal>
@@ -301,7 +415,7 @@ const styles = StyleSheet.create({
   locationText: { fontSize: 12, fontWeight: '600', color: WayoraColors.gray },
 
   gridSection: { paddingHorizontal: 20 },
-  gridTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black, marginBottom: 20 },
+  gridTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black },
   grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
   serviceCard: { 
     width: (width - 55) / 2, 
@@ -329,37 +443,55 @@ const styles = StyleSheet.create({
   assistanceDesc: { fontSize: 12, color: WayoraColors.gray, marginTop: 2 },
   callBtn: { width: 44, height: 44, borderRadius: 15, backgroundColor: WayoraColors.black, alignItems: 'center', justifyContent: 'center' },
 
-  modalOverlayLight: { flex: 1, backgroundColor: 'rgba(255,255,255,0.85)', justifyContent: 'center', alignItems: 'center' },
+  modalOverlayLight: { flex: 1, backgroundColor: 'rgba(255,255,255,0.9)', justifyContent: 'center', alignItems: 'center' },
   modalOverlayDark: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   searchBox: { alignItems: 'center' },
   searchText: { marginTop: 20, fontSize: 16, fontWeight: '700', color: '#000' },
   
+  resultsContainer: { 
+    backgroundColor: 'white', 
+    borderTopLeftRadius: 32, 
+    borderTopRightRadius: 32, 
+    height: height * 0.85, 
+    shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 20, elevation: 20 
+  },
+  resultsHeader: { 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    padding: 25, 
+    paddingBottom: 20 
+  },
+  resultsHeading: { fontSize: 22, fontWeight: '900', color: '#111827' },
+  resultsCount: { fontSize: 13, color: WayoraColors.gray, marginTop: 2, fontWeight: '600' },
+  closeResultsBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+
   resultCard: { 
     backgroundColor: 'white', 
     padding: 20, 
-    borderTopLeftRadius: 32, 
-    borderTopRightRadius: 32, 
-    shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 20, elevation: 15 
+    borderRadius: 24, 
+    borderWidth: 1, 
+    borderColor: '#F3F4F6'
   },
-  resultHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#F3F4F6', paddingBottom: 15 },
-  resultIconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
-  resultTitle: { fontSize: 18, fontWeight: '800', color: '#1F2937' },
-  resultDistance: { fontSize: 14, fontWeight: '700', color: '#000' },
-  resultCategory: { fontSize: 13, color: WayoraColors.gray },
-  statusBadge: { backgroundColor: '#ECFDF5', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
-  statusText: { fontSize: 11, fontWeight: '700', color: '#10B981' },
+  resultHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 15 },
+  resultIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  resultTitle: { fontSize: 16, fontWeight: '800', color: '#1F2937' },
+  resultDistance: { fontSize: 13, fontWeight: '700', color: '#000' },
+  resultCategory: { fontSize: 12, color: WayoraColors.gray },
+  statusBadge: { backgroundColor: '#ECFDF5', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
+  statusText: { fontSize: 10, fontWeight: '800', color: '#10B981', textTransform: 'uppercase' },
 
-  infoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
-  infoText: { fontSize: 12, color: WayoraColors.gray, flex: 1 },
+  infoRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 6 },
+  infoText: { fontSize: 11, color: WayoraColors.gray, flex: 1 },
 
-  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 15, marginBottom: 25 },
-  tagCell: { backgroundColor: '#F3F4F6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
-  tagText: { fontSize: 11, fontWeight: '600', color: WayoraColors.gray },
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 12, marginBottom: 20 },
+  tagCell: { backgroundColor: '#F9FAFB', paddingHorizontal: 10, paddingVertical: 5, borderRadius: 8, borderWidth: 1, borderColor: '#F3F4F6' },
+  tagText: { fontSize: 10, fontWeight: '600', color: WayoraColors.gray },
 
-  footerActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  getDirectionsBtn: { flex: 1, backgroundColor: '#111827', paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
-  getDirectionsText: { color: 'white', fontSize: 14, fontWeight: '700' },
-  callNowBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: '#E5E7EB', paddingVertical: 14, paddingHorizontal: 16, borderRadius: 14 },
-  callNowText: { color: WayoraColors.black, fontSize: 14, fontWeight: '700' },
-  detailsText: { fontSize: 13, fontWeight: '600', color: WayoraColors.gray },
+  footerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  getDirectionsBtn: { flex: 1, backgroundColor: '#111827', paddingVertical: 12, borderRadius: 12, alignItems: 'center' },
+  getDirectionsText: { color: 'white', fontSize: 13, fontWeight: '700' },
+  callNowBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: '#E5E7EB', paddingVertical: 12, paddingHorizontal: 12, borderRadius: 12 },
+  callNowText: { color: WayoraColors.black, fontSize: 13, fontWeight: '700' },
+  detailsText: { fontSize: 12, fontWeight: '600', color: WayoraColors.gray },
 });
