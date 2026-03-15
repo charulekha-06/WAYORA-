@@ -151,18 +151,18 @@ export default function TodoScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>To Do List</Text>
-        <TouchableOpacity onPress={() => setShowAddModal(true)} style={styles.addBtn}>
-          <Ionicons name="add" size={24} color={WayoraColors.white} />
-        </TouchableOpacity>
-      </View>
-
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>To Do List</Text>
+          <TouchableOpacity onPress={() => setShowAddModal(true)} style={styles.addBtn}>
+            <Ionicons name="add" size={24} color={WayoraColors.white} />
+          </TouchableOpacity>
+        </View>
+
         {/* Progress Card */}
         <View style={styles.progressContainer}>
           <LinearGradient colors={[WayoraColors.taviPurple, '#A78BFA']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.progressCard}>
@@ -254,10 +254,9 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'space-between', 
     paddingHorizontal: 20, 
-    paddingTop: 60, 
+    paddingTop: 20, 
     paddingBottom: 15,
-    backgroundColor: 'white',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
+    backgroundColor: 'transparent',
   },
   backBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#E5E7EB' },
   headerTitle: { fontSize: 20, fontWeight: '800', color: WayoraColors.black },
