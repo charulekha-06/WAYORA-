@@ -14,7 +14,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 const MEMORIES = [
   { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&q=60' },
   { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=60' },
-  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500&q=60' },
+  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=70' },
   { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=500&q=60' },
 ];
 
