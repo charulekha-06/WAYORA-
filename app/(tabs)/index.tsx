@@ -129,6 +129,10 @@ export default function HomeScreen() {
               const handlePress = () => {
                 if (f.title === 'Itinerary Planner') {
                   router.push('/itinerary' as any);
+                } else if (f.title === 'To Do List') {
+                  router.push('/todo' as any);
+                } else if (f.title === 'Emergency Finder') {
+                  router.push('/emergency' as any);
                 }
               };
 
