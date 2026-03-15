@@ -13,6 +13,7 @@ const TABS = [
   { id: 'booking', label: 'Booking', icon: 'ticket-outline' as const },
   { id: 'artisan', label: 'Artisan', icon: 'color-palette-outline' as const },
   { id: 'culture', label: 'Culture', icon: 'library-outline' as const },
+  { id: 'eco', label: 'Eco', icon: 'leaf-outline' as const },
 ];
 
 export default function BookingScreen() {
@@ -66,6 +67,7 @@ export default function BookingScreen() {
           {activeTab === 'booking' && <BookingTab />}
           {activeTab === 'artisan' && <ArtisanTab />}
           {activeTab === 'culture' && <CultureTab />}
+          {activeTab === 'eco' && <EcoTab />}
         </View>
 
       </ScrollView>
@@ -210,12 +212,40 @@ function ArtisanTab() {
           <View style={styles.artisanBottomRow}>
             <View style={styles.ratingInline}>
               <Ionicons name="star" size={14} color="#FBBF24" />
-              <Text style={styles.ratingNumber}>4.8 <Text style={styles.ratingCount}>(89 sold)</Text></Text>
+              <Text style={styles.ratingNumber}>5.0 <Text style={styles.ratingCount}>(89 sold)</Text></Text>
             </View>
             <Text style={styles.artisanPrice}>$120</Text>
           </View>
         </View>
       </TouchableOpacity>
+      
+      {/* Artisan Card 3 */}
+      <TouchableOpacity style={styles.artisanDealCard}>
+        <Image source={{ uri: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
+        <View style={styles.dealInfo}>
+          <Text style={styles.artisanName}>Atelier des Parfums</Text>
+          <Text style={styles.artisanBy}>by Sophie Martin</Text>
+          <Text style={styles.artisanProduct}>Custom Fragrance Blends</Text>
+          
+          <View style={styles.artisanBottomRow}>
+            <View style={styles.ratingInline}>
+              <Ionicons name="star" size={14} color="#FBBF24" />
+              <Text style={styles.ratingNumber}>4.8 <Text style={styles.ratingCount}>(203 sold)</Text></Text>
+            </View>
+            <Text style={styles.artisanPrice}>$65</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      {/* Artisan Markets Banner */}
+      <View style={styles.marketsBanner}>
+         <Text style={styles.marketsTitle}>Visit Local Artisan Markets</Text>
+         <Text style={styles.marketsDesc}>Explore weekend markets and meet artisans in person</Text>
+         <TouchableOpacity style={styles.marketsBtn}>
+            <Ionicons name="location-outline" size={16} color="#FF6B00" style={{ marginRight: 6 }} />
+            <Text style={styles.marketsBtnText}>Find Markets Near You</Text>
+         </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -305,6 +335,31 @@ function CultureTab() {
   );
 }
 
+// 5. Eco Tab Content
+function EcoTab() {
+  return (
+    <View>
+      <View style={[styles.artisanBanner, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
+        <View style={styles.bannerTop}>
+           <Ionicons name="leaf" size={20} color="#16A34A" style={{ marginRight: 8 }} />
+           <Text style={styles.bannerTitle}>ECO INTELLIGENCE</Text>
+        </View>
+        <Text style={styles.bannerDesc}>Encourages sustainable travel, crowd control, and protection of eco-sensitive areas.</Text>
+      </View>
+
+      <Text style={styles.sectionTitle}>Eco-Friendly Initiatives</Text>
+      <TouchableOpacity style={styles.dealCard}>
+        <Image source={{ uri: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=400&q=80' }} style={styles.dealImage} />
+        <View style={styles.dealInfo}>
+          <Text style={styles.dealName}>Green Travel Guide</Text>
+          <Text style={styles.dealSubtitle}>Reduce your carbon footprint</Text>
+          <Text style={styles.priceAmount}>Read More</Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   STYLES                                   */
 /* -------------------------------------------------------------------------- */
@@ -350,6 +405,12 @@ const styles = StyleSheet.create({
 
 
 
+  // Common Shared Styles (formerly in Stays)
+  ratingInline: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  ratingNumber: { fontSize: 14, fontWeight: '700', color: WayoraColors.black },
+  ratingCount: { fontSize: 12, fontWeight: '400', color: WayoraColors.gray },
+  largeCardTitle: { fontSize: 18, fontWeight: '700', color: '#FFF', marginBottom: 4 },
+
   // Artisan Styles
   artisanBanner: { backgroundColor: '#FFFDF0', borderWidth: 1, borderColor: '#FEF3C7', padding: 20, borderRadius: 12, marginTop: 10 },
   bannerTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
@@ -367,6 +428,12 @@ const styles = StyleSheet.create({
   artisanProduct: { fontSize: 12, fontWeight: '600', color: '#374151', marginBottom: 10 },
   artisanBottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   artisanPrice: { fontSize: 16, fontWeight: '800', color: '#FF5A36' },
+  
+  marketsBanner: { backgroundColor: '#FF8A00', borderRadius: 16, padding: 20, marginTop: 10 },
+  marketsTitle: { fontSize: 18, fontWeight: '800', color: '#FFF', marginBottom: 16 },
+  marketsDesc: { fontSize: 14, color: '#FFF', lineHeight: 20, marginBottom: 24 },
+  marketsBtn: { backgroundColor: '#FFF', borderRadius: 12, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  marketsBtnText: { fontSize: 15, fontWeight: '700', color: '#FF6B00' },
 
   // Culture Styles
   cultureCard: { backgroundColor: '#FFF', borderRadius: 16, borderWidth: 1, borderColor: '#F3F4F6', marginBottom: 20 },
