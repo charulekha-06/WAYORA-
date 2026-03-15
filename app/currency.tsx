@@ -160,11 +160,14 @@ const styles = StyleSheet.create({
     fontWeight: '800', 
     color: '#111827', 
     marginLeft: 15,
-    paddingVertical: 8
-  },
+    paddingVertical: 8,
+    // @ts-ignore
+    outlineWidth: 0,
+  } as any,
 
   converterGrid: { gap: 15 },
-  pickerBox: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  currencySelector: { flex: 1 },
+  pickerBox: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 5 },
   miniChip: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 10, backgroundColor: '#F3F4F6', borderWidth: 1, borderColor: '#E5E7EB' },
   miniChipActive: { backgroundColor: '#14B8A6', borderColor: '#14B8A6' },
   miniText: { fontSize: 12, fontWeight: '700', color: WayoraColors.gray },
