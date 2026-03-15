@@ -137,6 +137,8 @@ export default function HomeScreen() {
                   router.push('/post-generator' as any);
                 } else if (f.title === 'Currency Converter') {
                   router.push('/currency' as any);
+                } else if (f.title === 'Souvenir Album') {
+                  router.push('/souvenir-album' as any);
                 }
               };
 
