@@ -10,6 +10,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
+interface ServiceInfo {
+  name: string;
+  category: string;
+  distance: string;
+  status: string;
+  address: string;
+  rating: string;
+  reviews: string;
+  phone: string;
+  tags: string[];
+  icon: string;
+}
+
 const EMERGENCY_SERVICES = [
   { id: '1', name: 'Hospitals', icon: 'medical', color: '#EF4444', bgColor: '#FEF2F2' },
   { id: '2', name: 'Pharmacies', icon: 'bandage', color: '#3B82F6', bgColor: '#EFF6FF' },
@@ -19,21 +32,93 @@ const EMERGENCY_SERVICES = [
   { id: '6', name: 'Embassy', icon: 'flag', color: '#F59E0B', bgColor: '#FFFBEB' },
 ];
 
+const MOCK_DATA: Record<string, ServiceInfo> = {
+  'Hospitals': {
+    name: 'Hôpital Saint-Joseph',
+    category: 'General Hospital',
+    distance: '2.4 km',
+    status: 'Open 24 Hours',
+    address: '185 Rue Raymond Losserand, 75014 Paris',
+    rating: '4.1',
+    reviews: '654 reviews',
+    phone: '+33 1 44 12 33 33',
+    tags: ['Emergency', 'Surgery', 'Cardiology'],
+    icon: 'business'
+  },
+  'Pharmacies': {
+    name: 'Pharmacie de la Mairie',
+    category: 'Late Night Pharmacy',
+    distance: '0.8 km',
+    status: 'Open until 11:00 PM',
+    address: '12 Rue de Rivoli, 75004 Paris',
+    rating: '4.5',
+    reviews: '128 reviews',
+    phone: '+33 1 42 72 34 56',
+    tags: ['Prescriptions', 'Vaccinations', 'OTC'],
+    icon: 'medkit'
+  },
+  'ATMs': {
+    name: 'BNP Paribas ATM',
+    category: 'Bank / ATM',
+    distance: '0.3 km',
+    status: 'Available',
+    address: '45 Boulevard Saint-Germain, 75005 Paris',
+    rating: '3.8',
+    reviews: '42 reviews',
+    phone: '3477 (Local)',
+    tags: ['24h Access', 'Withdrawal', 'English Menu'],
+    icon: 'cash'
+  },
+  'Restrooms': {
+    name: 'Sanisette Public Toliet',
+    category: 'Public Restroom',
+    distance: '0.1 km',
+    status: 'Operational',
+    address: 'Place de la Concorde, 75008 Paris',
+    rating: '3.5',
+    reviews: '210 reviews',
+    phone: 'N/A',
+    tags: ['Accessible', 'Self-Cleaning', 'Free'],
+    icon: 'water'
+  },
+  'Police': {
+    name: 'Commissariat de Police',
+    category: 'Police Station',
+    distance: '1.2 km',
+    status: 'Open 24 Hours',
+    address: '9 Boulevard du Palais, 75004 Paris',
+    rating: '4.0',
+    reviews: '85 reviews',
+    phone: '17 (Emergency)',
+    tags: ['Passport Loss', 'Security', 'Reporting'],
+    icon: 'shield-half'
+  },
+  'Embassy': {
+    name: 'Consulat Général',
+    category: 'Diplomatic Mission',
+    distance: '3.5 km',
+    status: 'By Appointment',
+    address: '2 Avenue Gabriel, 75008 Paris',
+    rating: '4.2',
+    reviews: '150 reviews',
+    phone: '+33 1 43 12 22 22',
+    tags: ['Visas', 'Passport Services', 'Citizenship'],
+    icon: 'flag'
+  }
+};
+
 export default function EmergencyScreen() {
   const router = useRouter();
   const [searching, setSearching] = useState<string | null>(null);
-  const [showResult, setShowResult] = useState<{name: string, dist: string} | null>(null);
+  const [showResult, setShowResult] = useState<ServiceInfo | null>(null);
 
   const handleServicePress = (service: string) => {
     setSearching(service);
     // Simulate finding nearest service
     setTimeout(() => {
       setSearching(null);
-      setShowResult({
-        name: `Nearest ${service}`,
-        dist: (Math.random() * 2 + 0.2).toFixed(1) + ' km away'
-      });
-    }, 1500);
+      setShowResult(MOCK_DATA[service] || MOCK_DATA['Hospitals']);
+    }, 1200);
   };
 
   const handleSOS = () => {
@@ -54,7 +139,7 @@ export default function EmergencyScreen() {
       {/* Premium Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
+          <Ionicons name="chevron-back" size={20} color={WayoraColors.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Emergency Finder</Text>
         <View style={{ width: 40 }} />
@@ -75,7 +160,7 @@ export default function EmergencyScreen() {
           </TouchableOpacity>
           <View style={styles.locationBadge}>
             <Ionicons name="location" size={14} color={WayoraColors.gray} />
-            <Text style={styles.locationText}>Location: Active (Milan, Italy)</Text>
+            <Text style={styles.locationText}>Location: Active (Paris, France)</Text>
           </View>
         </View>
 
@@ -115,7 +200,7 @@ export default function EmergencyScreen() {
 
       {/* Searching Modal */}
       <Modal visible={searching !== null} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
+        <View style={styles.modalOverlayLight}>
           <View style={styles.searchBox}>
             <ActivityIndicator size="large" color="#000" />
             <Text style={styles.searchText}>Finding nearest {searching}...</Text>
@@ -123,19 +208,63 @@ export default function EmergencyScreen() {
         </View>
       </Modal>
 
-      {/* Result Modal */}
-      <Modal visible={showResult !== null} transparent animationType="fade">
-        <View style={styles.modalOverlay}>
-          <View style={styles.resultBox}>
-            <Ionicons name="location-sharp" size={40} color={WayoraColors.coral} />
-            <Text style={styles.resultTitle}>{showResult?.name}</Text>
-            <Text style={styles.resultDist}>{showResult?.dist}</Text>
-            <TouchableOpacity style={styles.navBtn} onPress={() => setShowResult(null)}>
-              <Text style={styles.navBtnText}>Open in Maps</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.closeBtn} onPress={() => setShowResult(null)}>
-              <Text style={styles.closeBtnText}>Dismiss</Text>
-            </TouchableOpacity>
+      {/* DETAILED Result Modal (Based on user image) */}
+      <Modal visible={showResult !== null} transparent animationType="slide">
+        <View style={styles.modalOverlayDark}>
+          <View style={styles.resultCard}>
+            <View style={styles.resultHeader}>
+              <View style={styles.resultIconBox}>
+                <Ionicons name={showResult?.icon as any} size={20} color={WayoraColors.black} />
+              </View>
+              <View style={{ flex: 1, marginLeft: 12 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text style={styles.resultTitle}>{showResult?.name}</Text>
+                  <Text style={styles.resultDistance}>{showResult?.distance}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
+                  <Text style={styles.resultCategory}>{showResult?.category}</Text>
+                  <View style={styles.statusBadge}>
+                    <Text style={styles.statusText}>{showResult?.status}</Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Ionicons name="location-sharp" size={16} color={WayoraColors.coral} />
+              <Text style={styles.infoText}>{showResult?.address}</Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Ionicons name="star" size={16} color="#F59E0B" />
+              <Text style={styles.infoText}>
+                <Text style={{ fontWeight: '700', color: WayoraColors.black }}>{showResult?.rating}</Text> ({showResult?.reviews})
+              </Text>
+              <View style={{ width: 12 }} />
+              <Ionicons name="call" size={16} color={WayoraColors.black} />
+              <Text style={styles.infoText}>{showResult?.phone}</Text>
+            </View>
+
+            <View style={styles.tagRow}>
+              {showResult?.tags.map((tag, idx) => (
+                <View key={idx} style={styles.tagCell}>
+                  <Text style={styles.tagText}>{tag}</Text>
+                </View>
+              ))}
+            </View>
+
+            <View style={styles.footerActions}>
+              <TouchableOpacity style={styles.getDirectionsBtn} onPress={() => setShowResult(null)}>
+                <Text style={styles.getDirectionsText}>Get Directions</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.callNowBtn} onPress={() => setShowResult(null)}>
+                <Ionicons name="call-outline" size={18} color="#4F46E5" />
+                <Text style={styles.callNowText}>Call Now</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setShowResult(null)} style={{ padding: 10 }}>
+                <Text style={styles.detailsText}>Details</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
@@ -200,15 +329,37 @@ const styles = StyleSheet.create({
   assistanceDesc: { fontSize: 12, color: WayoraColors.gray, marginTop: 2 },
   callBtn: { width: 44, height: 44, borderRadius: 15, backgroundColor: WayoraColors.black, alignItems: 'center', justifyContent: 'center' },
 
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(255,255,255,0.9)', justifyContent: 'center', alignItems: 'center' },
+  modalOverlayLight: { flex: 1, backgroundColor: 'rgba(255,255,255,0.85)', justifyContent: 'center', alignItems: 'center' },
+  modalOverlayDark: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   searchBox: { alignItems: 'center' },
   searchText: { marginTop: 20, fontSize: 16, fontWeight: '700', color: '#000' },
   
-  resultBox: { width: width * 0.8, backgroundColor: 'white', padding: 30, borderRadius: 32, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 20, elevation: 10 },
-  resultTitle: { fontSize: 20, fontWeight: '800', color: '#000', marginTop: 15 },
-  resultDist: { fontSize: 16, color: WayoraColors.gray, marginTop: 5, marginBottom: 25 },
-  navBtn: { backgroundColor: WayoraColors.black, paddingVertical: 15, paddingHorizontal: 30, borderRadius: 18, width: '100%', alignItems: 'center' },
-  navBtnText: { color: 'white', fontSize: 15, fontWeight: '700' },
-  closeBtn: { marginTop: 15 },
-  closeBtnText: { color: WayoraColors.gray, fontSize: 14, fontWeight: '600' },
+  resultCard: { 
+    backgroundColor: 'white', 
+    padding: 20, 
+    borderTopLeftRadius: 32, 
+    borderTopRightRadius: 32, 
+    shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 20, elevation: 15 
+  },
+  resultHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#F3F4F6', paddingBottom: 15 },
+  resultIconBox: { width: 44, height: 44, borderRadius: 12, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  resultTitle: { fontSize: 18, fontWeight: '800', color: '#1F2937' },
+  resultDistance: { fontSize: 14, fontWeight: '700', color: '#000' },
+  resultCategory: { fontSize: 13, color: WayoraColors.gray },
+  statusBadge: { backgroundColor: '#ECFDF5', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
+  statusText: { fontSize: 11, fontWeight: '700', color: '#10B981' },
+
+  infoRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 },
+  infoText: { fontSize: 12, color: WayoraColors.gray, flex: 1 },
+
+  tagRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 15, marginBottom: 25 },
+  tagCell: { backgroundColor: '#F3F4F6', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 10 },
+  tagText: { fontSize: 11, fontWeight: '600', color: WayoraColors.gray },
+
+  footerActions: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  getDirectionsBtn: { flex: 1, backgroundColor: '#111827', paddingVertical: 14, borderRadius: 14, alignItems: 'center' },
+  getDirectionsText: { color: 'white', fontSize: 14, fontWeight: '700' },
+  callNowBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, borderWidth: 1, borderColor: '#E5E7EB', paddingVertical: 14, paddingHorizontal: 16, borderRadius: 14 },
+  callNowText: { color: WayoraColors.black, fontSize: 14, fontWeight: '700' },
+  detailsText: { fontSize: 13, fontWeight: '600', color: WayoraColors.gray },
 });
