@@ -12,10 +12,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 // Removed static Dimensions calculation
 
 const MEMORIES = [
-  { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&q=80' },
-  { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=80' },
-  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502301103665-0b95cc738def?w=500&q=80' },
-  { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=500&q=80' },
+  { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=300&q=60' },
+  { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=300&q=60' },
+  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502301103665-0b95cc738def?w=300&q=60' },
+  { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=300&q=60' },
 ];
 
 const ACHIEVEMENTS = [
@@ -31,10 +31,15 @@ export default function SouvenirAlbumScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('memories');
-  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
+  const [imageError, setImageError] = useState<Record<string, boolean>>({});
 
   const handleImageLoad = (id: string) => {
     setImageLoading(prev => ({ ...prev, [id]: false }));
+  };
+
+  const handleImageError = (id: string) => {
+    setImageLoading(prev => ({ ...prev, [id]: false }));
+    setImageError(prev => ({ ...prev, [id]: true }));
   };
 
   const renderMemory = ({ item }: { item: typeof MEMORIES[0] }) => (
@@ -44,10 +49,17 @@ export default function SouvenirAlbumScreen() {
         style={styles.memoryImage}
         onLoadStart={() => setImageLoading(prev => ({ ...prev, [item.id]: true }))}
         onLoad={() => handleImageLoad(item.id)}
+        onError={() => handleImageError(item.id)}
       />
       {imageLoading[item.id] && (
         <View style={styles.imageLoader}>
           <ActivityIndicator size="small" color={WayoraColors.black} />
+        </View>
+      )}
+      {imageError[item.id] && (
+        <View style={[styles.imageLoader, { backgroundColor: '#FEE2E2' }]}>
+          <Ionicons name="image-outline" size={24} color="#EF4444" />
+          <Text style={{ fontSize: 10, color: '#EF4444', marginTop: 4 }}>Load Error</Text>
         </View>
       )}
       <LinearGradient
