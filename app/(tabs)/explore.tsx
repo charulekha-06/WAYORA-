@@ -158,7 +158,7 @@ export default function ExploreScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F3F4F6' },
-  header: { paddingTop: 60, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: '#FFF' },
+  header: { paddingTop: 10, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: '#FFF' },
   searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFC', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, gap: 10, borderWidth: 1, borderColor: '#E5E7EB' },
   searchInput: { flex: 1, fontSize: 16, color: '#111827' },
   
