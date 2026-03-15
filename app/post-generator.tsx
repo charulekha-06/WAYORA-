@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  StatusBar, TextInput, Platform, KeyboardAvoidingView, Share, Clipboard
+  StatusBar, TextInput, Platform, KeyboardAvoidingView, Share, Clipboard,
+  Dimensions
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -187,9 +188,9 @@ const styles = StyleSheet.create({
   inputCard: { backgroundColor: 'white', padding: 25, borderRadius: 24, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
   label: { fontSize: 13, fontWeight: '700', color: WayoraColors.gray, marginBottom: 8, marginTop: 15 },
   input: { backgroundColor: '#F8FAFC', borderRadius: 16, padding: 16, fontSize: 14, color: WayoraColors.black, borderWidth: 1, borderColor: '#F1F5F9' },
-  toneGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 10 },
+  toneGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12, marginTop: 10 },
   toneChip: { 
-    width: (width - 40 - 25 * 2 - 12) / 2, // Accounting for screen padding, card padding, and gap
+    width: '48%', // More reliable than manual dimension math
     paddingVertical: 16, 
     borderRadius: 16, 
     alignItems: 'center', 
