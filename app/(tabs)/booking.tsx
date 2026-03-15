@@ -28,14 +28,7 @@ export default function BookingScreen() {
             <Text style={styles.title}>Discover & Book</Text>
             <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <Ionicons name="search-outline" size={24} color={WayoraColors.black} />
-              {activeTab === 'artisan' && (
-                <TouchableOpacity onPress={() => router.push('/cart' as any)}>
-                  <Ionicons name="bag-handle-outline" size={24} color={WayoraColors.black} />
-                  <View style={styles.cartBadge}>
-                    <Text style={styles.cartBadgeText}>2</Text>
-                  </View>
-                </TouchableOpacity>
-              )}
+              <Ionicons name="search-outline" size={24} color={WayoraColors.black} />
             </TouchableOpacity>
           </View>
         </View>
@@ -59,7 +52,6 @@ export default function BookingScreen() {
           </ScrollView>
         </View>
 
-        {/* Dynamic Content based on Active Tab */}
         <View style={styles.contentArea}>
           {activeTab === 'booking' && <BookingTab />}
           {activeTab === 'artisan' && <ArtisanTab />}
@@ -68,6 +60,19 @@ export default function BookingScreen() {
         </View>
 
       </ScrollView>
+
+      {/* Floating Cart for Artisan Tab */}
+      {activeTab === 'artisan' && (
+        <TouchableOpacity 
+          style={styles.floatingCart}
+          onPress={() => router.push('/payment' as any)} // For demo, let's go to payment or a cart page
+        >
+          <Ionicons name="bag-handle" size={26} color="white" />
+          <View style={styles.floatingBadge}>
+            <Text style={styles.floatingBadgeText}>2</Text>
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -475,4 +480,38 @@ const styles = StyleSheet.create({
     borderWidth: 2, borderColor: 'white'
   },
   cartBadgeText: { color: 'white', fontSize: 8, fontWeight: '900' },
+
+  floatingCart: {
+    position: 'absolute',
+    bottom: 100, // Above chatbot
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FF8A00', // Orange
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  floatingBadge: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'white',
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  floatingBadgeText: {
+    color: '#FF8A00',
+    fontSize: 10,
+    fontWeight: '900',
+  },
 });
