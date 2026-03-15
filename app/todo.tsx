@@ -93,7 +93,7 @@ export default function TodoScreen() {
     return (
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Ionicons name={CATEGORY_ICONS[cat]} size={18} color={WayoraColors.gray} />
+          <Ionicons name={CATEGORY_ICONS[cat]} size={18} color={WayoraColors.taviPurple} />
           <Text style={styles.sectionTitle}>{title}</Text>
         </View>
         {items.map(item => (
@@ -131,7 +131,7 @@ export default function TodoScreen() {
                 <Ionicons 
                   name={expandedIds.has(item.id) ? "information-circle" : "information-circle-outline"} 
                   size={20} 
-                  color={expandedIds.has(item.id) ? WayoraColors.coral : WayoraColors.gray} 
+                  color={expandedIds.has(item.id) ? WayoraColors.taviPurple : WayoraColors.gray} 
                 />
               </TouchableOpacity>
               <TouchableOpacity onPress={() => deleteTodo(item.id)} style={styles.actionIconBtn}>
@@ -165,7 +165,7 @@ export default function TodoScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Progress Card */}
         <View style={styles.progressContainer}>
-          <LinearGradient colors={['#4F46E5', '#7C3AED']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.progressCard}>
+          <LinearGradient colors={[WayoraColors.taviPurple, '#A78BFA']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.progressCard}>
             <View style={styles.progressTop}>
               <View>
                 <Text style={styles.progressLabel}>Trip Readiness</Text>
@@ -254,65 +254,65 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'space-between', 
     paddingHorizontal: 20, 
-    paddingTop: 10, 
+    paddingTop: 60, 
     paddingBottom: 15,
     backgroundColor: 'white',
     shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
   },
-  backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F1F3F5', alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black },
-  addBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: WayoraColors.coral, alignItems: 'center', justifyContent: 'center' },
+  backBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#E5E7EB' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: WayoraColors.black },
+  addBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: WayoraColors.taviPurple, alignItems: 'center', justifyContent: 'center' },
 
   progressContainer: { padding: 20 },
-  progressCard: { padding: 24, borderRadius: 24, shadowColor: '#4F46E5', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 15, elevation: 8 },
+  progressCard: { padding: 24, borderRadius: 28, shadowColor: WayoraColors.taviPurple, shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 10 },
   progressTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
-  progressLabel: { fontSize: 16, fontWeight: '700', color: 'white' },
-  progressCount: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
-  progressPercent: { fontSize: 28, fontWeight: '900', color: 'white' },
-  progressTrack: { height: 6, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 3, overflow: 'hidden' },
-  progressFill: { height: '100%', backgroundColor: 'white', borderRadius: 3 },
+  progressLabel: { fontSize: 18, fontWeight: '800', color: 'white' },
+  progressCount: { fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
+  progressPercent: { fontSize: 32, fontWeight: '900', color: 'white' },
+  progressTrack: { height: 8, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 4, overflow: 'hidden' },
+  progressFill: { height: '100%', backgroundColor: 'white', borderRadius: 4 },
 
-  section: { paddingHorizontal: 20, marginBottom: 25 },
-  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 15 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: WayoraColors.gray, textTransform: 'uppercase', letterSpacing: 0.5 },
+  section: { paddingHorizontal: 20, marginBottom: 30 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 18 },
+  sectionTitle: { fontSize: 15, fontWeight: '800', color: WayoraColors.gray, textTransform: 'uppercase', letterSpacing: 1 },
   
   todoCard: { 
     flexDirection: 'row', 
     backgroundColor: 'white', 
-    borderRadius: 20, 
-    padding: 16, 
-    marginBottom: 12, 
-    borderLeftWidth: 4,
+    borderRadius: 24, 
+    padding: 18, 
+    marginBottom: 14, 
+    borderLeftWidth: 5,
     alignItems: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8, elevation: 2
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3
   },
   todoMain: { flex: 1, flexDirection: 'row', alignItems: 'flex-start' },
-  checkbox: { width: 22, height: 22, borderRadius: 8, borderWidth: 2, borderColor: '#E5E7EB', alignItems: 'center', justifyContent: 'center', marginRight: 16, marginTop: 2 },
-  checkboxDone: { backgroundColor: WayoraColors.coral, borderColor: WayoraColors.coral },
-  textRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  todoText: { fontSize: 15, fontWeight: '700', color: WayoraColors.black },
+  checkbox: { width: 26, height: 26, borderRadius: 10, borderWidth: 2, borderColor: '#E5E7EB', alignItems: 'center', justifyContent: 'center', marginRight: 18, marginTop: 2 },
+  checkboxDone: { backgroundColor: WayoraColors.taviPurple, borderColor: WayoraColors.taviPurple },
+  textRow: { flexDirection: 'row', alignItems: 'center', gap: 10, flexWrap: 'wrap' },
+  todoText: { fontSize: 16, fontWeight: '700', color: WayoraColors.black },
   todoTextDone: { textDecorationLine: 'line-through', opacity: 0.4 },
-  priorityBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  priorityText: { fontSize: 9, fontWeight: '800', textTransform: 'uppercase' },
-  metaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  classTag: { backgroundColor: '#F3F4F6', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  classTagText: { fontSize: 10, fontWeight: '700', color: WayoraColors.gray },
-  todoDescFull: { fontSize: 13, color: WayoraColors.gray, marginTop: 12, lineHeight: 18, fontStyle: 'italic' },
+  priorityBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+  priorityText: { fontSize: 10, fontWeight: '800', textTransform: 'uppercase' },
+  metaRow: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
+  classTag: { backgroundColor: WayoraColors.taviBg, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
+  classTagText: { fontSize: 11, fontWeight: '800', color: WayoraColors.taviPurple },
+  todoDescFull: { fontSize: 14, color: WayoraColors.gray, marginTop: 14, lineHeight: 20, fontStyle: 'italic' },
   
-  actionColumn: { alignItems: 'center', gap: 12, marginLeft: 10 },
-  actionIconBtn: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+  actionColumn: { alignItems: 'center', gap: 16, marginLeft: 12 },
+  actionIconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
 
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: 'white', borderTopLeftRadius: 32, borderTopRightRadius: 32, padding: 24, maxHeight: '85%' },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  modalTitle: { fontSize: 22, fontWeight: '800', color: WayoraColors.black },
-  inputLabel: { fontSize: 13, fontWeight: '700', color: WayoraColors.gray, marginBottom: 8, marginTop: 16 },
-  input: { backgroundColor: '#F3F4F6', borderRadius: 14, padding: 16, fontSize: 14, color: WayoraColors.black },
-  inputRow: { flexDirection: 'row', marginTop: 4 },
-  selector: { flexDirection: 'row', backgroundColor: '#F3F4F6', borderRadius: 12, padding: 4, gap: 4 },
-  selectorBtn: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  selectorBtnActive: { backgroundColor: WayoraColors.coral },
-  selectorText: { fontSize: 11, fontWeight: '700', color: WayoraColors.gray },
-  submitBtn: { backgroundColor: WayoraColors.coral, padding: 18, borderRadius: 18, alignItems: 'center', marginTop: 32 },
-  submitBtnText: { color: 'white', fontSize: 16, fontWeight: '800' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: 'white', borderTopLeftRadius: 40, borderTopRightRadius: 40, padding: 28, maxHeight: '90%' },
+  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 25 },
+  modalTitle: { fontSize: 24, fontWeight: '900', color: WayoraColors.black },
+  inputLabel: { fontSize: 14, fontWeight: '800', color: WayoraColors.gray, marginBottom: 10, marginTop: 18 },
+  input: { backgroundColor: '#F3F4F6', borderRadius: 16, padding: 18, fontSize: 15, color: WayoraColors.black, borderWidth: 1, borderColor: '#E5E7EB' },
+  inputRow: { flexDirection: 'row', marginTop: 6 },
+  selector: { flexDirection: 'row', backgroundColor: '#F3F4F6', borderRadius: 16, padding: 5, gap: 5 },
+  selectorBtn: { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 12 },
+  selectorBtnActive: { backgroundColor: WayoraColors.taviPurple },
+  selectorText: { fontSize: 12, fontWeight: '800', color: WayoraColors.gray },
+  submitBtn: { backgroundColor: WayoraColors.taviPurple, padding: 20, borderRadius: 20, alignItems: 'center', marginTop: 36, shadowColor: WayoraColors.taviPurple, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 5 },
+  submitBtnText: { color: 'white', fontSize: 18, fontWeight: '900' },
 });
