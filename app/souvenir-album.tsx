@@ -12,10 +12,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 // Removed static Dimensions calculation
 
 const MEMORIES = [
-  { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400&q=40&auto=format' },
-  { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=400&q=40&auto=format' },
-  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502301103665-0b95cc738def?w=400&q=40&auto=format' },
-  { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=400&q=40&auto=format' },
+  { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&q=60' },
+  { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=60' },
+  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?w=500&q=60' },
+  { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=500&q=60' },
 ];
 
 const ACHIEVEMENTS = [
@@ -84,8 +84,8 @@ export default function SouvenirAlbumScreen() {
           <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Souvenir Album</Text>
-        <TouchableOpacity style={styles.addBtn}>
-          <Ionicons name="add" size={28} color="white" />
+        <TouchableOpacity style={styles.cameraBtn}>
+          <Ionicons name="camera" size={24} color={WayoraColors.black} />
         </TouchableOpacity>
       </View>
 
@@ -108,12 +108,6 @@ export default function SouvenirAlbumScreen() {
         {activeTab === 'memories' ? (
           <View style={styles.grid}>
             {MEMORIES.map((m) => renderMemory({ item: m }))}
-            <TouchableOpacity style={[styles.captureNew, { width: (width - 52) / 2 }]}>
-               <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.05)']} style={styles.captureGradient}>
-                  <Ionicons name="camera" size={32} color="rgba(0,0,0,0.2)" />
-                  <Text style={styles.captureText}>Capture Moment</Text>
-               </LinearGradient>
-            </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.badgeGrid}>
@@ -154,7 +148,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, paddingTop: 10, paddingBottom: 15, backgroundColor: 'white' 
   },
   backBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F1F3F5', alignItems: 'center', justifyContent: 'center' },
-  addBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: WayoraColors.black, alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 5, elevation: 5 },
+  cameraBtn: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#F1F3F5', alignItems: 'center', justifyContent: 'center' },
   headerTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black },
 
   tabContainer: { flexDirection: 'row', padding: 4, backgroundColor: '#E2E8F0', borderRadius: 16, margin: 20 },
