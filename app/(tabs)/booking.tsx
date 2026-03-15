@@ -27,8 +27,16 @@ export default function BookingScreen() {
         <View style={styles.header}>
           <View style={styles.topRow}>
             <Text style={styles.title}>Discover & Book</Text>
-            <TouchableOpacity>
+            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <Ionicons name="search-outline" size={24} color={WayoraColors.black} />
+              {activeTab === 'artisan' && (
+                <TouchableOpacity onPress={() => router.push('/cart' as any)}>
+                  <Ionicons name="bag-handle-outline" size={24} color={WayoraColors.black} />
+                  <View style={styles.cartBadge}>
+                    <Text style={styles.cartBadgeText}>2</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -176,7 +184,13 @@ function ArtisanTab() {
       <Text style={styles.sectionTitle}>Featured Artisans</Text>
 
       {/* Artisan Card 1 */}
-      <TouchableOpacity style={styles.artisanDealCard}>
+      <TouchableOpacity 
+        style={styles.artisanDealCard}
+        onPress={() => router.push({
+          pathname: '/product-details',
+          params: { id: '1', name: "Marie's Pottery Studio", price: '45', artisan: 'Marie Dubois', image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=600&q=80' }
+        } as any)}
+      >
         <Image source={{ uri: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
         <View style={styles.dealInfo}>
           <Text style={styles.artisanName}>Marie's Pottery Studio</Text>
@@ -194,7 +208,13 @@ function ArtisanTab() {
       </TouchableOpacity>
       
       {/* Artisan Card 2 */}
-      <TouchableOpacity style={styles.artisanDealCard}>
+      <TouchableOpacity 
+        style={styles.artisanDealCard}
+        onPress={() => router.push({
+          pathname: '/product-details',
+          params: { id: '2', name: "Parisian Leather Co.", price: '120', artisan: 'Jean-Pierre Laurent', image: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=600&q=80' }
+        } as any)}
+      >
         <Image source={{ uri: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
         <View style={styles.dealInfo}>
           <Text style={styles.artisanName}>Parisian Leather Co.</Text>
@@ -212,7 +232,13 @@ function ArtisanTab() {
       </TouchableOpacity>
       
       {/* Artisan Card 3 */}
-      <TouchableOpacity style={styles.artisanDealCard}>
+      <TouchableOpacity 
+        style={styles.artisanDealCard}
+        onPress={() => router.push({
+          pathname: '/product-details',
+          params: { id: '3', name: "Atelier des Parfums", price: '65', artisan: 'Sophie Martin', image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=600&q=80' }
+        } as any)}
+      >
         <Image source={{ uri: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
         <View style={styles.dealInfo}>
           <Text style={styles.artisanName}>Atelier des Parfums</Text>
@@ -439,4 +465,13 @@ const styles = StyleSheet.create({
   freeText: { fontSize: 14, fontWeight: '700', color: '#A855F7' },
   interactiveBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 8, alignSelf: 'flex-start' },
   interactiveText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+
+  cartBadge: {
+    position: 'absolute', top: -5, right: -5,
+    backgroundColor: WayoraColors.coral,
+    width: 16, height: 16, borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 2, borderColor: 'white'
+  },
+  cartBadgeText: { color: 'white', fontSize: 8, fontWeight: '900' },
 });
