@@ -21,13 +21,8 @@ export default function BookingScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <ScrollView showsVerticalScrollIndicator={false} stickyHeaderIndices={[1]}>
+      <ScrollView showsVerticalScrollIndicator={false} stickyHeaderIndices={[0]}>
         
-        <View style={styles.header}>
-          <View style={styles.topRow}>
-          </View>
-        </View>
-
         {/* Sticky Tab Navigation */}
         <View style={styles.tabsContainerWrapper}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsScrollContent}>
@@ -386,7 +381,7 @@ const styles = StyleSheet.create({
   searchBarContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFB', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: '#F3F4F6' },
   searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: WayoraColors.black },
   
-  tabsContainerWrapper: { backgroundColor: '#FFF', paddingBottom: 16 },
+  tabsContainerWrapper: { backgroundColor: '#FFF', paddingBottom: 16, paddingTop: 10 },
   tabsScrollContent: { paddingHorizontal: 20, gap: 10, alignItems: 'center' },
   tabBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#F3F4F6' },
   tabBtnActive: { backgroundColor: '#FFF', borderColor: '#E5E7EB', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
