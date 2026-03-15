@@ -27,6 +27,8 @@ const ACHIEVEMENTS = [
   { id: '6', title: 'Hidden Gem Hunter', icon: 'search-outline', unlocked: false },
 ];
 
+export default function SouvenirAlbumScreen() {
+  const router = useRouter();
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('memories');
   const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
