@@ -71,6 +71,14 @@ export default function BookingScreen() {
 /*                                SUB-TABS VIEWS                              */
 /* -------------------------------------------------------------------------- */
 
+const FEATURED_DEALS = [
+  { id: 'd1', name: 'Le Grand Hotel Paris', subtitle: 'Luxury Hotel', price: '180', unit: '/night', rating: '4.8', discount: '20% OFF', image: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&q=80', type: 'hotel' },
+  { id: 'd2', name: 'Seine River Cruise', subtitle: 'Activity', price: '45', unit: '/person', rating: '4.9', image: 'https://images.unsplash.com/photo-1548544149-4835e62ee5b3?w=400&q=80', type: 'activities' },
+  { id: 'd3', name: 'Swiss Alp Chalet', subtitle: 'Resort', price: '210', unit: '/night', rating: '4.7', discount: '15% OFF', image: 'https://images.unsplash.com/photo-1502784444187-359ac186c5bb?w=400&q=80', type: 'hotel' },
+  { id: 'd4', name: 'Eurostar Business', subtitle: 'Transport', price: '85', unit: '/ticket', rating: '4.6', image: 'https://images.unsplash.com/photo-1474487056207-5d7d76e535cd?w=400&q=80', type: 'transport' },
+  { id: 'd5', name: 'Louvre Explorer', subtitle: 'Activity', price: '35', unit: '/person', rating: '4.8', image: 'https://images.unsplash.com/photo-1544413647-b51463ddffb3?w=400&q=80', type: 'activities' },
+];
+
 // 1. Booking Tab Content
 function BookingTab() {
   const router = useRouter();
@@ -105,46 +113,37 @@ function BookingTab() {
 
       <Text style={styles.sectionTitle}>Featured Deals</Text>
       
-      {/* Featured Deal Card 1 */}
-      <TouchableOpacity style={styles.dealCard}>
-        <Image source={{ uri: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=400&q=80' }} style={styles.dealImage} />
-        <View style={styles.dealInfo}>
-          <View style={styles.dealTitleRow}>
-            <Text style={styles.dealName}>Le Grand Hotel Paris</Text>
-            <Ionicons name="heart-outline" size={18} color="#D1D5DB" />
-          </View>
-          <Text style={styles.dealSubtitle}>Luxury Hotel</Text>
-          <View style={styles.ratingRow}>
-            <Ionicons name="star" size={14} color="#FBBF24" />
-            <Text style={styles.ratingText}>4.8</Text>
-          </View>
-          <View style={styles.priceRow}>
-            <Text style={styles.priceText}><Text style={styles.priceAmount}>$180</Text>/night</Text>
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>20% OFF</Text>
+      {FEATURED_DEALS.map(deal => (
+        <TouchableOpacity 
+          key={deal.id} 
+          style={styles.dealCard}
+          onPress={() => router.push({
+            pathname: '/booking-details',
+            params: { id: deal.id, category: deal.type, name: deal.name, price: deal.price, image: deal.image, location: 'Paris, France' }
+          } as any)}
+        >
+          <Image source={{ uri: deal.image }} style={styles.dealImage} />
+          <View style={styles.dealInfo}>
+            <View style={styles.dealTitleRow}>
+              <Text style={styles.dealName}>{deal.name}</Text>
+              <Ionicons name="heart-outline" size={18} color="#D1D5DB" />
+            </View>
+            <Text style={styles.dealSubtitle}>{deal.subtitle}</Text>
+            <View style={styles.ratingRow}>
+              <Ionicons name="star" size={14} color="#FBBF24" />
+              <Text style={styles.ratingText}>{deal.rating}</Text>
+            </View>
+            <View style={styles.priceRow}>
+              <Text style={styles.priceText}><Text style={styles.priceAmount}>${deal.price}</Text>{deal.unit}</Text>
+              {deal.discount && (
+                <View style={styles.discountBadge}>
+                  <Text style={styles.discountText}>{deal.discount}</Text>
+                </View>
+              )}
             </View>
           </View>
-        </View>
-      </TouchableOpacity>
-
-      {/* Featured Deal Card 2 */}
-      <TouchableOpacity style={styles.dealCard}>
-        <Image source={{ uri: 'https://images.unsplash.com/photo-1548544149-4835e62ee5b3?auto=format&fit=crop&w=400&q=80' }} style={styles.dealImage} />
-        <View style={styles.dealInfo}>
-          <View style={styles.dealTitleRow}>
-            <Text style={styles.dealName}>Seine River Cruise</Text>
-            <Ionicons name="heart-outline" size={18} color="#D1D5DB" />
-          </View>
-          <Text style={styles.dealSubtitle}>Activity</Text>
-          <View style={styles.ratingRow}>
-            <Ionicons name="star" size={14} color="#FBBF24" />
-            <Text style={styles.ratingText}>4.9</Text>
-          </View>
-           <View style={styles.priceRow}>
-            <Text style={styles.priceText}><Text style={styles.priceAmount}>$45</Text>/person</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 }
@@ -160,6 +159,8 @@ const ARTISAN_PRODUCTS = [
   { id: '6', name: "Terra Cotta Collective", price: '38', artisan: 'Ana Silva', product: 'Rustic Planters', category: 'Pottery', rating: '4.6', sold: '310', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&q=80' },
   { id: '7', name: "Bijoux de Paris", price: '150', artisan: 'Chloé Bernard', product: 'Gold Necklaces', category: 'Jewelry', rating: '5.0', sold: '72', image: 'https://images.unsplash.com/photo-1515562141521-7a1dd0db7941?w=400&q=80' },
   { id: '8', name: "Abstract Soul", price: '210', artisan: 'Sacha Vogel', product: 'Oil on Canvas', category: 'Art', rating: '4.8', sold: '28', image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&q=80' },
+  { id: '9', name: "Nordic Wood Craft", price: '75', artisan: 'Erik Svenson', product: 'Hand-carved Bowls', category: 'Art', rating: '4.9', sold: '142', image: 'https://images.unsplash.com/photo-1520408162871-29433433383a?w=400&q=80' },
+  { id: '10', name: "Azure Ceramics", price: '58', artisan: 'Lia Costa', product: 'Blue Glazed Plates', category: 'Pottery', rating: '4.7', sold: '88', image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400&q=80' },
 ];
 
 // 3. Artisan Tab Content
@@ -346,6 +347,39 @@ function CultureTab() {
         </View>
       </TouchableOpacity>
 
+      {/* Culture Card 3 */}
+      <TouchableOpacity style={styles.cultureCard}>
+        <ImageBackground 
+          source={{ uri: 'https://images.unsplash.com/photo-1503917988258-f87a78e3c995?auto=format&fit=crop&w=800&q=80' }} // Montmartre
+          style={styles.cultureCardImage}
+          imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+        >
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.cultureCardOverlay}>
+             <View style={styles.purpleTag}><Text style={styles.purpleTagText}>Artist Quarter</Text></View>
+             
+             <View style={styles.cultureBottomText}>
+                <Text style={styles.largeCardTitle}>Sacré-Cœur & Montmartre</Text>
+                <Text style={styles.cultureStyleText}>Bohemian Heritage</Text>
+             </View>
+          </LinearGradient>
+        </ImageBackground>
+
+        <View style={styles.cultureCardBody}>
+           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+               <Ionicons name="walk-outline" size={14} color="#6B7280" />
+               <Text style={styles.timeText}>Flexible</Text>
+             </View>
+             <Text style={styles.freeText}>Free</Text>
+           </View>
+           
+           <View style={styles.interactiveBadge}>
+              <Ionicons name="brush-outline" size={14} color="#374151" />
+              <Text style={styles.interactiveText}>Local Portrait Artists</Text>
+           </View>
+        </View>
+      </TouchableOpacity>
+
     </View>
   );
 }
@@ -369,6 +403,24 @@ function EcoTab() {
           <Text style={styles.dealName}>Green Travel Guide</Text>
           <Text style={styles.dealSubtitle}>Reduce your carbon footprint</Text>
           <Text style={styles.priceAmount}>Read More</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.dealCard}>
+        <Image source={{ uri: 'https://images.unsplash.com/photo-1532105956626-ce5e407b4975?auto=format&fit=crop&w=400&q=80' }} style={styles.dealImage} />
+        <View style={styles.dealInfo}>
+          <Text style={styles.dealName}>Zero Waste Transit</Text>
+          <Text style={styles.dealSubtitle}>Eco-friendly commuting tips</Text>
+          <Text style={styles.priceAmount}>Explore</Text>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.dealCard}>
+        <Image source={{ uri: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=400&q=80' }} style={styles.dealImage} />
+        <View style={styles.dealInfo}>
+          <Text style={styles.dealName}>Wildlife Protection</Text>
+          <Text style={styles.dealSubtitle}>Respecting natural habitats</Text>
+          <Text style={styles.priceAmount}>Get Involved</Text>
         </View>
       </TouchableOpacity>
     </View>
