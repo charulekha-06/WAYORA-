@@ -77,7 +77,7 @@ function BookingTab() {
     { id: 'transport', label: 'Transport', icon: 'train', color: '#DE31D1' },
     { id: 'car', label: 'Car Rental', icon: 'car', color: '#05C46B' },
     { id: 'activities', label: 'Activities', icon: 'ticket', color: '#FF8A00' },
-    { id: 'tours', label: 'Tours', icon: 'compass', color: '#8854D0' },
+    { id: 'food', label: 'Food', icon: 'fast-food', color: '#8854D0' },
   ];
 
   return (
@@ -144,10 +144,10 @@ function BookingTab() {
 // 3. Artisan Tab Content
 function ArtisanTab() {
   const artisanCats = [
-    { name: 'Art', image: '🎨' },
-    { name: 'Textiles', image: '🧵' },
-    { name: 'Pottery', image: '🏺' },
-    { name: 'Jewelry', image: '💍' },
+    { name: 'Art', icon: 'color-palette-outline' as const, color: '#EC4899' },
+    { name: 'Textiles', icon: 'shirt-outline' as const, color: '#8B5CF6' },
+    { name: 'Pottery', icon: 'cafe-outline' as const, color: '#D97706' },
+    { name: 'Jewelry', icon: 'diamond-outline' as const, color: '#0D9488' },
   ];
 
   return (
@@ -155,7 +155,7 @@ function ArtisanTab() {
       {/* Banner */}
       <View style={styles.artisanBanner}>
         <View style={styles.bannerTop}>
-           <Text style={styles.bannerEmoji}>🎨</Text>
+           <Ionicons name="storefront-outline" size={20} color="#D97706" style={{ marginRight: 8 }} />
            <Text style={styles.bannerTitle}>Support Local Artisans</Text>
         </View>
         <Text style={styles.bannerDesc}>Discover authentic handcrafted products from local creators</Text>
@@ -165,7 +165,9 @@ function ArtisanTab() {
       <View style={styles.artisanGrid}>
         {artisanCats.map(c => (
            <TouchableOpacity key={c.name} style={styles.artisanCatCard}>
-             <Text style={styles.artisanEmoji}>{c.image}</Text>
+             <View style={[styles.artisanIconWrap, { backgroundColor: c.color + '18' }]}>
+               <Ionicons name={c.icon} size={24} color={c.color} />
+             </View>
              <Text style={styles.artisanCatName}>{c.name}</Text>
            </TouchableOpacity>
         ))}
@@ -404,12 +406,11 @@ const styles = StyleSheet.create({
   // Artisan Styles
   artisanBanner: { backgroundColor: '#FFFDF0', borderWidth: 1, borderColor: '#FEF3C7', padding: 20, borderRadius: 12, marginTop: 10 },
   bannerTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  bannerEmoji: { fontSize: 18, marginRight: 8 },
   bannerTitle: { fontSize: 16, fontWeight: '700', color: WayoraColors.black },
   bannerDesc: { fontSize: 13, color: '#6B7280', lineHeight: 18 },
   artisanGrid: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 20, gap: 10 },
   artisanCatCard: { flex: 1, paddingVertical: 16, backgroundColor: '#FFF', borderRadius: 12, borderWidth: 1, borderColor: '#F3F4F6', alignItems: 'center' },
-  artisanEmoji: { fontSize: 24, marginBottom: 8 },
+  artisanIconWrap: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   artisanCatName: { fontSize: 12, fontWeight: '600', color: WayoraColors.black },
   
   artisanDealCard: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 12, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: '#F3F4F6' },
