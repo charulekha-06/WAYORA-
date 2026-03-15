@@ -28,6 +28,10 @@ const BOOKING_DATA = {
   ],
   food: [
     { id: 'fd1', name: 'Le Meurice Alain Ducasse', price: 150, rating: 5.0, reviews: 320, image: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80', location: 'Paris, France', tag: 'Michelin Star' },
+    { id: 'fd2', name: 'La Tour d\'Argent', price: 180, rating: 4.9, reviews: 560, image: 'https://images.unsplash.com/photo-1550966842-28c2e202ec91?w=600&q=80', location: 'Paris, France', tag: 'Historic' },
+    { id: 'fd3', name: 'Septime', price: 95, rating: 4.8, reviews: 1100, image: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=600&q=80', location: 'Paris, France', tag: 'Modern' },
+    { id: 'fd4', name: 'Boulangerie Poilâne', price: 15, rating: 5.0, reviews: 4500, image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&q=80', location: 'Saint-Germain', tag: 'Legendary' },
+    { id: 'fd5', name: 'L\'As du Fallafel', price: 12, rating: 4.7, reviews: 12000, image: 'https://images.unsplash.com/photo-1561651823-34feb02250e4?w=600&q=80', location: 'Le Marais', tag: 'Must Try' },
   ]
 };
 
@@ -120,6 +124,19 @@ export default function BookingItemsScreen() {
           </View>
         )}
       </ScrollView>
+
+      {/* Floating Cart for Food Category */}
+      {categoryId === 'food' && (
+        <TouchableOpacity 
+          style={styles.floatingCart}
+          onPress={() => router.push('/payment' as any)}
+        >
+          <Ionicons name="bag-handle" size={26} color="white" />
+          <View style={styles.floatingBadge}>
+            <Text style={styles.floatingBadgeText}>2</Text>
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -187,4 +204,38 @@ const styles = StyleSheet.create({
 
   emptyState: { alignItems: 'center', marginTop: 100 },
   emptyText: { marginTop: 15, color: WayoraColors.gray, fontSize: 16 },
+
+  floatingCart: {
+    position: 'absolute',
+    bottom: 100, // Above chatbot
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FF8A00', // Orange
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  floatingBadge: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'white',
+    minWidth: 18,
+    height: 18,
+    borderRadius: 9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 4,
+  },
+  floatingBadgeText: {
+    color: '#FF8A00',
+    fontSize: 10,
+    fontWeight: '900',
+  },
 });

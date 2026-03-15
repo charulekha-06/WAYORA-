@@ -117,8 +117,8 @@ export default function BookingDetailsScreen() {
             params: { name: params.name, price: params.price, type: 'Booking' }
           } as any)}
         >
-          <Text style={styles.bookButtonText}>Book Now</Text>
-          <Ionicons name="arrow-forward" size={18} color="#FFF" />
+          <Text style={styles.bookButtonText}>{params.category === 'food' ? 'Add to Cart' : 'Book Now'}</Text>
+          <Ionicons name={params.category === 'food' ? 'cart' : 'arrow-forward'} size={18} color="#FFF" />
         </TouchableOpacity>
       </View>
     </View>
