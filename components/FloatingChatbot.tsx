@@ -103,6 +103,26 @@ export default function FloatingChatbot() {
                    </View>
                 </View>
               </ScrollView>
+
+              <View style={styles.inputSection}>
+                <View style={styles.inputContainer}>
+                  <TouchableOpacity style={styles.iconButton}>
+                    <Ionicons name="mic-outline" size={22} color={WayoraColors.gray} />
+                  </TouchableOpacity>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Type your message..."
+                    placeholderTextColor={WayoraColors.gray}
+                    value={input}
+                    onChangeText={setInput}
+                    onSubmitEditing={() => sendMessage()}
+                  />
+                  <TouchableOpacity style={styles.sendButton} onPress={() => sendMessage()}>
+                    <Ionicons name="send" size={18} color="#fff" />
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
           </View>
         </View>
       </Modal>
