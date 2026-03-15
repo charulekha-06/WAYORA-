@@ -77,54 +77,32 @@ export default function FloatingChatbot() {
                     <Text style={styles.timeText}>{msg.time}</Text>
                   </View>
                 ))}
-              </ScrollView>
 
-              <View style={styles.inputSection}>
-                <View style={styles.inputContainer}>
-                  <TouchableOpacity style={styles.iconButton}>
-                    <Ionicons name="mic-outline" size={22} color={WayoraColors.gray} />
-                  </TouchableOpacity>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Type your message..."
-                    placeholderTextColor={WayoraColors.gray}
-                    value={input}
-                    onChangeText={setInput}
-                    onSubmitEditing={() => sendMessage()}
-                  />
-                  <TouchableOpacity style={styles.sendButton} onPress={() => sendMessage()}>
-                    <Ionicons name="send" size={18} color="#fff" />
-                  </TouchableOpacity>
-                </View>
-              </View>
-            </View>
+                {/* Integrated Suggestions Section */}
+                <View style={styles.integratedSuggestions}>
+                   <View style={styles.sectionDivider} />
+                   
+                   <Text style={styles.integratedTitle}>Popular Topics</Text>
+                   <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.horizontalScroll}>
+                      {POPULAR_TOPICS.map(topic => (
+                        <TouchableOpacity key={topic.id} style={styles.topicChip}>
+                          <Ionicons name={topic.icon as any} size={16} color={WayoraColors.taviPurple} />
+                          <Text style={styles.topicChipText}>{topic.title}</Text>
+                        </TouchableOpacity>
+                      ))}
+                   </ScrollView>
 
-            {/* Sidebar (Visible on web/larger screens, here for style) */}
-            <View style={styles.sidebar}>
-              <ScrollView showsVerticalScrollIndicator={false}>
-                <Text style={styles.sidebarTitle}>Popular Topics</Text>
-                {POPULAR_TOPICS.map(topic => (
-                  <TouchableOpacity key={topic.id} style={styles.topicCard}>
-                    <View style={styles.topicIcon}>
-                      <Ionicons name={topic.icon as any} size={20} color={WayoraColors.taviPurple} />
-                    </View>
-                    <View>
-                      <Text style={styles.topicTitle}>{topic.title}</Text>
-                      <Text style={styles.topicDesc}>{topic.desc}</Text>
-                    </View>
-                  </TouchableOpacity>
-                ))}
-
-                <Text style={[styles.sidebarTitle, { marginTop: 24 }]}>Quick Questions</Text>
-                <View style={styles.questionsList}>
-                  {QUICK_QUESTIONS.map((q, i) => (
-                    <TouchableOpacity key={i} style={styles.qChip} onPress={() => sendMessage(q)}>
-                      <Text style={styles.qChipText}>{q}</Text>
-                    </TouchableOpacity>
-                  ))}
+                   <Text style={[styles.integratedTitle, { marginTop: 24 }]}>Quick Questions</Text>
+                   <View style={styles.questionsGrid}>
+                      {QUICK_QUESTIONS.map((q, i) => (
+                        <TouchableOpacity key={i} style={styles.qCard} onPress={() => sendMessage(q)}>
+                          <Text style={styles.qCardText}>{q}</Text>
+                          <Ionicons name="chevron-forward" size={14} color={WayoraColors.gray} />
+                        </TouchableOpacity>
+                      ))}
+                   </View>
                 </View>
               </ScrollView>
-            </View>
           </View>
         </View>
       </Modal>
@@ -167,23 +145,15 @@ const styles = StyleSheet.create({
   },
   contentWrapper: {
     width: '90%',
-    height: '85%',
+    height: '80%',
     backgroundColor: WayoraColors.white,
     borderRadius: 24,
-    flexDirection: 'row',
     overflow: 'hidden',
-    maxWidth: 1000,
+    maxWidth: 500, // Reduced for single column
   },
   chatContainer: {
-    flex: 1.5,
-    backgroundColor: WayoraColors.white,
-  },
-  sidebar: {
     flex: 1,
-    backgroundColor: WayoraColors.taviBg,
-    borderLeftWidth: 1,
-    borderLeftColor: WayoraColors.lightGray,
-    padding: 20,
+    backgroundColor: WayoraColors.white,
   },
   header: {
     flexDirection: 'row',
@@ -250,6 +220,60 @@ const styles = StyleSheet.create({
     color: WayoraColors.gray,
     marginHorizontal: 4,
   },
+  integratedSuggestions: {
+    marginTop: 10,
+    paddingBottom: 20,
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: WayoraColors.lightGray,
+    marginVertical: 24,
+    width: '100%',
+  },
+  integratedTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: WayoraColors.black,
+    marginBottom: 16,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  horizontalScroll: {
+    marginBottom: 10,
+  },
+  topicChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: WayoraColors.taviPurpleLight,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    marginRight: 10,
+    gap: 8,
+  },
+  topicChipText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: WayoraColors.taviPurple,
+  },
+  questionsGrid: {
+    gap: 12,
+  },
+  qCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: WayoraColors.taviBg,
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: WayoraColors.lightGray,
+  },
+  qCardText: {
+    fontSize: 14,
+    color: WayoraColors.darkGray,
+    fontWeight: '500',
+  },
   inputSection: {
     padding: 20,
     borderTopWidth: 1,
@@ -281,53 +305,5 @@ const styles = StyleSheet.create({
     backgroundColor: WayoraColors.taviPurple,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  sidebarTitle: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: WayoraColors.black,
-    marginBottom: 16,
-  },
-  topicCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: WayoraColors.white,
-    padding: 12,
-    borderRadius: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: WayoraColors.lightGray,
-  },
-  topicIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 10,
-    backgroundColor: WayoraColors.taviPurpleLight,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  topicTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: WayoraColors.black,
-  },
-  topicDesc: {
-    fontSize: 11,
-    color: WayoraColors.gray,
-  },
-  questionsList: {
-    gap: 10,
-  },
-  qChip: {
-    backgroundColor: WayoraColors.white,
-    padding: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: WayoraColors.lightGray,
-  },
-  qChipText: {
-    fontSize: 13,
-    color: WayoraColors.gray,
   },
 });
