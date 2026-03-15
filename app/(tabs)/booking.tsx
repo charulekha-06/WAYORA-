@@ -25,11 +25,6 @@ export default function BookingScreen() {
         
         <View style={styles.header}>
           <View style={styles.topRow}>
-            <Text style={styles.title}>Discover & Book</Text>
-            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Ionicons name="search-outline" size={24} color={WayoraColors.black} />
-              <Ionicons name="search-outline" size={24} color={WayoraColors.black} />
-            </TouchableOpacity>
           </View>
         </View>
 
