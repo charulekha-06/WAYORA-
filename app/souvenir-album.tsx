@@ -32,6 +32,7 @@ export default function SouvenirAlbumScreen() {
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('memories');
   const [imageError, setImageError] = useState<Record<string, boolean>>({});
+  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
 
   const handleImageLoad = (id: string) => {
     setImageLoading(prev => ({ ...prev, [id]: false }));
