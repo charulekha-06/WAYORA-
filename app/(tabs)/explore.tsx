@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, StyleSheet,
-  TextInput, StatusBar, Dimensions,
+  TextInput, StatusBar, Dimensions, Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { WayoraColors } from '@/constants/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -20,28 +19,44 @@ const categories = [
 
 const destinations = [
   { 
-    name: 'Tokyo', country: 'Japan', icon: 'business-outline' as const, 
-    iconBgColor: '#FF4D6D', pastelBgColor: '#FFF0F3', 
+    name: 'Tokyo', country: 'Japan', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
     rating: 4.9, price: '$1,200', category: 'Cultural', duration: '7 DAYS', 
-    desc: 'Ancient temples meet neon-lit streets.', catBgr: '#E0E7FF', catTxt: '#4338CA'
+    desc: 'Ancient temples meet neon-lit streets.'
   },
   { 
-    name: 'Santorini', country: 'Greece', icon: 'sunny-outline' as const, 
-    iconBgColor: '#F97316', pastelBgColor: '#FFF7ED', 
+    name: 'Santorini', country: 'Greece', image: 'https://images.unsplash.com/photo-1533105079780-92b9be482077?auto=format&fit=crop&w=800&q=80',
     rating: 4.8, price: '$1,800', category: 'Beach', duration: '5 DAYS', 
-    desc: 'White-washed buildings on volcanic cliffs.', catBgr: '#DBEAFE', catTxt: '#2563EB'
+    desc: 'White-washed buildings on volcanic cliffs.'
   },
   { 
-    name: 'Bali', country: 'Indonesia', icon: 'leaf-outline' as const, 
-    iconBgColor: '#10B981', pastelBgColor: '#ECFDF5', 
+    name: 'Bali', country: 'Indonesia', image: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=800&q=80',
     rating: 4.7, price: '$900', category: 'Wellness', duration: '10 DAYS', 
-    desc: 'Rice terraces, temples, and serenity.', catBgr: '#D1FAE5', catTxt: '#059669'
+    desc: 'Rice terraces, temples, and serenity.'
   },
   { 
-    name: 'Paris', country: 'France', icon: 'diamond-outline' as const, 
-    iconBgColor: '#8B5CF6', pastelBgColor: '#F5F3FF', 
+    name: 'Paris', country: 'France', image: 'https://images.unsplash.com/photo-1502602898657-3e907a5ea071?auto=format&fit=crop&w=800&q=80',
     rating: 4.9, price: '$2,100', category: 'Cultural', duration: '6 DAYS', 
-    desc: 'The city of light, love, and art.', catBgr: '#E0E7FF', catTxt: '#4338CA'
+    desc: 'The city of light, love, and art.'
+  },
+  { 
+    name: 'Machu Picchu', country: 'Peru', image: 'https://images.unsplash.com/photo-1526392060635-9d601988106a?auto=format&fit=crop&w=800&q=80',
+    rating: 4.8, price: '$1,500', category: 'Adventure', duration: '8 DAYS', 
+    desc: 'Lost city of the Incas in the Andes.'
+  },
+  { 
+    name: 'Maldives', country: 'Maldives', image: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?auto=format&fit=crop&w=800&q=80',
+    rating: 4.9, price: '$2,500', category: 'Beach', duration: '5 DAYS', 
+    desc: 'Crystal waters and overwater bungalows.'
+  },
+  { 
+    name: 'Kyoto', country: 'Japan', image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=800&q=80',
+    rating: 4.8, price: '$1,100', category: 'Cultural', duration: '5 DAYS', 
+    desc: 'Bamboo forests and 2,000 temples.'
+  },
+  { 
+    name: 'Swiss Alps', country: 'Switzerland', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=800&q=80',
+    rating: 4.9, price: '$2,800', category: 'Nature', duration: '7 DAYS', 
+    desc: 'Snow-capped peaks and alpine meadows.'
   },
 ];
 
@@ -62,12 +77,11 @@ export default function ExploreScreen() {
       <StatusBar barStyle="dark-content" />
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>Explore</Text>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color={WayoraColors.gray} />
+          <Ionicons name="search" size={18} color="#9CA3AF" />
           <TextInput
             placeholder="Search destinations..."
-            placeholderTextColor={WayoraColors.gray}
+            placeholderTextColor="#9CA3AF"
             style={styles.searchInput}
             value={search}
             onChangeText={setSearch}
@@ -85,7 +99,7 @@ export default function ExploreScreen() {
                 key={cat.name}
                 onPress={() => setActiveCategory(cat.name)}
                 style={[styles.catBtn, isActive && styles.catBtnActive]}>
-                <Ionicons name={cat.icon} size={16} color={isActive ? '#fff' : WayoraColors.darkGray} />
+                <Ionicons name={cat.icon} size={16} color={isActive ? '#fff' : '#6B7280'} />
                 <Text style={[styles.catText, isActive && styles.catTextActive]}>{cat.name}</Text>
               </TouchableOpacity>
             );
@@ -98,25 +112,18 @@ export default function ExploreScreen() {
         <Text style={styles.resultCount}>{filtered.length} destinations found</Text>
         
         {filtered.map((dest, idx) => (
-          <TouchableOpacity key={dest.name} style={styles.card} onPress={() => router.push('/planner' as any)}>
-            <View style={[styles.cardImage, { backgroundColor: dest.pastelBgColor }]}>
-              
-              {/* Duration Badge */}
-              <View style={styles.durationBadge}>
-                <Text style={styles.durationText}>{dest.duration}</Text>
+          <TouchableOpacity key={dest.name} style={styles.card} onPress={() => router.push('/itinerary' as any)}>
+            <View style={styles.cardImageContainer}>
+              <Image source={{ uri: dest.image }} style={styles.cardImage} />
+              <View style={styles.cardImageOverlay}>
+                <View style={styles.durationBadge}>
+                  <Text style={styles.durationText}>{dest.duration}</Text>
+                </View>
+                <View style={styles.ratingBadge}>
+                  <Ionicons name="star" size={14} color="#FBBF24" />
+                  <Text style={styles.ratingText}>{dest.rating}</Text>
+                </View>
               </View>
-
-              {/* Rating Badge */}
-              <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={10} color={WayoraColors.orange} />
-                <Text style={styles.ratingText}>{dest.rating}</Text>
-              </View>
-
-              {/* Centered Square Icon Wrapper */}
-              <View style={[styles.cardIconWrap, { backgroundColor: dest.pastelBgColor }]}>
-                 <Ionicons name={dest.icon} size={36} color={dest.iconBgColor} />
-              </View>
-              
             </View>
 
             <View style={styles.cardBody}>
@@ -124,7 +131,7 @@ export default function ExploreScreen() {
                 <View style={{ flex: 1 }}>
                   <Text style={styles.cardName}>{dest.name}</Text>
                   <View style={styles.locationRow}>
-                    <Ionicons name="location-outline" size={12} color={WayoraColors.gray} />
+                    <Ionicons name="location-outline" size={14} color="#6B7280" />
                     <Text style={styles.cardCountry}>{dest.country}</Text>
                   </View>
                 </View>
@@ -134,18 +141,11 @@ export default function ExploreScreen() {
               <Text style={styles.cardDesc}>{dest.desc}</Text>
               
               <View style={styles.cardBottom}>
-                <View style={[styles.catTag, { backgroundColor: dest.catBgr }]}>
-                  <Text style={[styles.catTagText, { color: dest.catTxt }]}>{dest.category}</Text>
+                <View style={styles.catTag}>
+                  <Text style={styles.catTagText}>{dest.category}</Text>
                 </View>
-                <TouchableOpacity style={styles.planBtnWrap}>
-                   {/* In the requested screenshot, Tokyo icon color was redish. So keeping the text button coral/red. */}
-                   <Text style={[styles.planBtn, { color: dest.iconBgColor }]}>Plan Trip →</Text>
-                   {/* For Santorini it has the large round orange message icon floating on top. */}
-                   {dest.name === 'Santorini' && (
-                     <View style={styles.santoriniFloatingChat}>
-                       <Ionicons name="chatbubble-ellipses" size={24} color="#FFF" />
-                     </View>
-                   )}
+                <TouchableOpacity style={styles.planBtnWrap} onPress={() => router.push('/itinerary' as any)}>
+                   <Text style={styles.planBtn}>Plan Trip →</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -157,50 +157,45 @@ export default function ExploreScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFFFFF' },
-  header: { paddingTop: 60, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: '#F9FAFC' },
-  title: { fontSize: 28, fontWeight: '900', color: '#111827' },
-  subtitle: { fontSize: 13, color: '#6B7280', marginTop: 4 },
-  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', borderRadius: 12, paddingHorizontal: 14, paddingVertical: 12, marginTop: 14, gap: 10, borderWidth: 1, borderColor: '#F3F4F6', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.02, shadowRadius: 4, elevation: 1 },
-  searchInput: { flex: 1, fontSize: 14, color: '#111827' },
+  container: { flex: 1, backgroundColor: '#F3F4F6' },
+  header: { paddingTop: 60, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: '#FFF' },
+  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFC', borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, gap: 10, borderWidth: 1, borderColor: '#E5E7EB' },
+  searchInput: { flex: 1, fontSize: 16, color: '#111827' },
   
-  catScroll: { maxHeight: 54, backgroundColor: '#F9FAFC' },
-  catContent: { paddingHorizontal: 20, gap: 8, alignItems: 'center', paddingBottom: 12 },
-  catBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#FFF', borderWidth: 1, borderColor: '#F3F4F6' },
-  catBtnActive: { backgroundColor: '#FF4D6D', borderColor: '#FF4D6D', shadowColor: '#FF4D6D', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4, elevation: 2 },
-  catText: { fontSize: 13, fontWeight: '600', color: '#4B5563' },
-  catTextActive: { color: '#fff' },
+  catScroll: { backgroundColor: '#FFF', paddingBottom: 10 },
+  catContent: { paddingHorizontal: 20, gap: 10, alignItems: 'center', paddingTop: 4 },
+  catBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 18, paddingVertical: 10, borderRadius: 24, backgroundColor: '#F9FAFC', borderWidth: 1, borderColor: '#E5E7EB' },
+  catBtnActive: { backgroundColor: '#FF5A36', borderColor: '#FF5A36' },
+  catText: { fontSize: 14, fontWeight: '600', color: '#6B7280' },
+  catTextActive: { color: '#FFF' },
   
-  results: { padding: 20, paddingBottom: 40, backgroundColor: '#F9FAFC' },
-  resultCount: { fontSize: 12, color: '#6B7280', fontWeight: '500', marginBottom: 12 },
+  results: { padding: 20, paddingBottom: 100 },
+  resultCount: { fontSize: 14, color: '#6B7280', fontWeight: '500', marginBottom: 16 },
   
-  card: { backgroundColor: '#FFF', borderRadius: 24, marginBottom: 16, overflow: 'visible', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 10, elevation: 3 },
-  cardImage: { height: 160, alignItems: 'center', justifyContent: 'center', position: 'relative', borderTopLeftRadius: 24, borderTopRightRadius: 24 },
+  card: { backgroundColor: '#FFF', borderRadius: 24, marginBottom: 24, shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.08, shadowRadius: 16, elevation: 4 },
+  cardImageContainer: { position: 'relative', width: '100%', height: 220 },
+  cardImage: { width: '100%', height: '100%', borderTopLeftRadius: 24, borderTopRightRadius: 24 },
+  cardImageOverlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, padding: 16, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'flex-start' },
   
-  cardIconWrap: { width: 72, height: 72, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  ratingBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: 'rgba(255, 255, 255, 0.95)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
+  ratingText: { fontSize: 13, fontWeight: '800', color: '#111827' },
   
-  ratingBadge: { position: 'absolute', top: 12, right: 12, flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#FFF', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 4, elevation: 1 },
-  ratingText: { fontSize: 12, fontWeight: '700', color: '#111827' },
-  
-  durationBadge: { position: 'absolute', top: 12, left: 12, backgroundColor: '#6B7280', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 12 },
-  durationText: { fontSize: 10, fontWeight: '800', color: '#fff', textTransform: 'uppercase' },
+  durationBadge: { backgroundColor: 'rgba(0, 0, 0, 0.6)', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12 },
+  durationText: { fontSize: 11, fontWeight: '800', color: '#FFF', textTransform: 'uppercase', letterSpacing: 0.5 },
   
   cardBody: { padding: 20 },
   cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  cardName: { fontSize: 18, fontWeight: '800', color: '#111827' },
-  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
-  cardCountry: { fontSize: 13, color: '#6B7280' },
-  cardPrice: { fontSize: 18, fontWeight: '800', color: '#FF4D6D' },
+  cardName: { fontSize: 22, fontWeight: '800', color: '#111827', marginBottom: 4 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  cardCountry: { fontSize: 14, color: '#6B7280', fontWeight: '500' },
+  cardPrice: { fontSize: 20, fontWeight: '800', color: '#FF5A36' },
   
-  cardDesc: { fontSize: 13, color: '#4B5563', marginTop: 12, lineHeight: 18 },
+  cardDesc: { fontSize: 15, color: '#4B5563', marginTop: 12, lineHeight: 22 },
   
-  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 16, position: 'relative' },
-  catTag: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8 },
-  catTagText: { fontSize: 11, fontWeight: '700' },
+  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 },
+  catTag: { backgroundColor: '#F3F4F6', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 10 },
+  catTagText: { fontSize: 12, fontWeight: '700', color: '#4B5563', textTransform: 'uppercase' },
   
-  planBtnWrap: { flexDirection: 'row', alignItems: 'center', position: 'relative' },
-  planBtn: { fontSize: 13, fontWeight: '700' },
-  
-  // Specific override for Santorini floating bubble that appears in user screenshot
-  santoriniFloatingChat: { position: 'absolute', bottom: -5, right: -15, width: 56, height: 56, borderRadius: 28, backgroundColor: '#F97316', alignItems: 'center', justifyContent: 'center', shadowColor: '#F97316', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.4, shadowRadius: 10, elevation: 6 },
+  planBtnWrap: { flexDirection: 'row', alignItems: 'center' },
+  planBtn: { fontSize: 15, fontWeight: '800', color: '#FF5A36' },
 });
