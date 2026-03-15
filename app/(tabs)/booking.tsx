@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  View, Text, StyleSheet, TouchableOpacity, ScrollView, 
-  StatusBar, TextInput, Image, Dimensions, ImageBackground 
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, StatusBar, TextInput, Image, Dimensions, ImageBackground } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { WayoraColors } from '@/constants/Colors';
+import { useRouter } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +15,7 @@ const TABS = [
 ];
 
 export default function BookingScreen() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('booking');
 
   return (
@@ -79,6 +78,7 @@ export default function BookingScreen() {
 
 // 1. Booking Tab Content
 function BookingTab() {
+  const router = useRouter();
   const categories = [
     { id: 'hotel', label: 'Hotels', icon: 'business', color: '#FF5A36' },
     { id: 'flight', label: 'Flights', icon: 'airplane', color: '#00A3FF' },
@@ -151,6 +151,7 @@ function BookingTab() {
 
 // 3. Artisan Tab Content
 function ArtisanTab() {
+  const router = useRouter();
   const artisanCats = [
     { name: 'Art', icon: 'color-palette-outline' as const, color: '#EC4899' },
     { name: 'Textiles', icon: 'shirt-outline' as const, color: '#8B5CF6' },
