@@ -16,8 +16,6 @@ const MEMORIES = [
   { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=60' },
   { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=70' },
   { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=500&q=60' },
-  { id: '5', title: 'Sacré-Cœur Peak', date: 'Oct 17, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1503917988258-f1978d442b10?w=500&q=60' },
-  { id: '6', title: 'Street Music', date: 'Oct 18, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1511732351157-1871f1ae058d?w=500&q=60' },
 ];
 
 const ACHIEVEMENTS = [
@@ -96,32 +94,33 @@ export default function SouvenirAlbumScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Souvenir Album</Text>
-        <TouchableOpacity style={styles.cameraBtn}>
-          <Ionicons name="camera" size={24} color={WayoraColors.taviPurple} />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.tabContainer}>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'memories' && styles.activeTab]}
-          onPress={() => setActiveTab('memories')}
-        >
-          <Text style={[styles.tabText, activeTab === 'memories' && styles.activeTabText]}>Memories</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'achievements' && styles.activeTab]}
-          onPress={() => setActiveTab('achievements')}
-        >
-          <Text style={[styles.tabText, activeTab === 'achievements' && styles.activeTabText]}>Achievements</Text>
-        </TouchableOpacity>
-      </View>
-
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+            <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Souvenir Album</Text>
+          <TouchableOpacity style={styles.cameraBtn}>
+            <Ionicons name="camera" size={24} color={WayoraColors.taviPurple} />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.tabContainer}>
+          <TouchableOpacity 
+            style={[styles.tab, activeTab === 'memories' && styles.activeTab]}
+            onPress={() => setActiveTab('memories')}
+          >
+            <Text style={[styles.tabText, activeTab === 'memories' && styles.activeTabText]}>Memories</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={[styles.tab, activeTab === 'achievements' && styles.activeTab]}
+            onPress={() => setActiveTab('achievements')}
+          >
+            <Text style={[styles.tabText, activeTab === 'achievements' && styles.activeTabText]}>Achievements</Text>
+          </TouchableOpacity>
+        </View>
+
         {activeTab === 'memories' ? (
           <View style={styles.grid}>
             {MEMORIES.map((m) => renderMemory({ item: m }))}
@@ -162,8 +161,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: { 
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', 
-    paddingHorizontal: 20, paddingTop: 60, paddingBottom: 15, backgroundColor: 'white',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
+    paddingHorizontal: 0, paddingTop: 20, paddingBottom: 15, backgroundColor: 'transparent',
   },
   backBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
   cameraBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: WayoraColors.taviBg, alignItems: 'center', justifyContent: 'center' },
@@ -175,7 +173,7 @@ const styles = StyleSheet.create({
   tabText: { fontSize: 15, fontWeight: '700', color: '#94A3B8' },
   activeTabText: { color: WayoraColors.taviPurple },
 
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 120, paddingTop: 40 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   memoryCard: { height: 210, borderRadius: 24, overflow: 'hidden', backgroundColor: '#E5E7EB', elevation: 4 },
   memoryImage: { width: '100%', height: '100%', resizeMode: 'cover' },
