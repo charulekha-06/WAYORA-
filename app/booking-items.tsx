@@ -52,6 +52,16 @@ export default function BookingItemsScreen() {
   const router = useRouter();
   const { categoryId, categoryName } = useLocalSearchParams<{ categoryId: keyof typeof BOOKING_DATA; categoryName: string }>();
   const [searchQuery, setSearchQuery] = useState('');
+  const [cart, setCart] = useState<Record<string, number>>({});
+
+  const cartCount = useMemo(() => Object.values(cart).reduce((sum, count) => sum + count, 0), [cart]);
+
+  const addToCart = (id: string) => {
+    setCart(prev => ({
+      ...prev,
+      [id]: (prev[id] || 0) + 1
+    }));
+  };
 
   const items = useMemo(() => {
     const categoryItems = BOOKING_DATA[categoryId] || [];
@@ -80,10 +90,11 @@ export default function BookingItemsScreen() {
       {/* Search Bar */}
       <View style={styles.searchSection}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color={WayoraColors.darkGray} />
+          <Ionicons name="search" size={20} color={WayoraColors.gray} />
           <TextInput 
             style={styles.searchInput}
             placeholder={`Search ${categoryName?.toLowerCase() || 'items'}...`}
+            placeholderTextColor="#94A3B8"
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -95,6 +106,7 @@ export default function BookingItemsScreen() {
           <TouchableOpacity 
             key={item.id} 
             style={styles.card}
+            activeOpacity={0.9}
             onPress={() => router.push({
               pathname: '/booking-details',
               params: { id: item.id, category: categoryId, name: item.name, price: item.price.toString(), image: item.image, location: item.location }
@@ -106,25 +118,46 @@ export default function BookingItemsScreen() {
             </View>
             <View style={styles.cardInfo}>
               <View style={styles.titleRow}>
-                <Text style={styles.cardName}>{item.name}</Text>
+                <Text style={styles.cardName} numberOfLines={1}>{item.name}</Text>
                 <TouchableOpacity>
-                  <Ionicons name="heart-outline" size={20} color={WayoraColors.gray} />
+                  <Ionicons name="heart-outline" size={22} color={WayoraColors.gray} />
                 </TouchableOpacity>
               </View>
               <View style={styles.locationRow}>
-                <Ionicons name="location-sharp" size={14} color={WayoraColors.coral} />
+                <Ionicons name="location-sharp" size={14} color={WayoraColors.taviPurple} />
                 <Text style={styles.locationText}>{item.location}</Text>
               </View>
               <View style={styles.cardBottom}>
                 <View style={styles.ratingBox}>
-                  <Ionicons name="star" size={14} color="#FBBF24" />
+                  <Ionicons name="star" size={15} color="#FBBF24" />
                   <Text style={styles.ratingText}>{item.rating}</Text>
                   <Text style={styles.reviewsText}>({item.reviews})</Text>
                 </View>
-                <Text style={styles.priceText}>
-                  <Text style={styles.priceAmount}>${item.price}</Text>
-                  <Text style={styles.priceUnit}> / {categoryId === 'hotel' ? 'night' : 'person'}</Text>
-                </Text>
+                
+                <View style={styles.priceAndAction}>
+                  <Text style={styles.priceText}>
+                    <Text style={styles.priceAmount}>${item.price}</Text>
+                    <Text style={styles.priceUnit}> / {categoryId === 'hotel' ? 'night' : 'person'}</Text>
+                  </Text>
+                  
+                  {categoryId === 'food' && (
+                    <TouchableOpacity 
+                      style={styles.addButton}
+                      onPress={(e) => {
+                        e.stopPropagation();
+                        addToCart(item.id);
+                      }}
+                    >
+                      <Ionicons name="add" size={18} color="white" />
+                      <Text style={styles.addButtonText}>Add</Text>
+                      {cart[item.id] > 0 && (
+                        <View style={styles.itemBadge}>
+                          <Text style={styles.itemBadgeText}>{cart[item.id]}</Text>
+                        </View>
+                      )}
+                    </TouchableOpacity>
+                  )}
+                </View>
               </View>
             </View>
           </TouchableOpacity>
@@ -132,7 +165,7 @@ export default function BookingItemsScreen() {
 
         {items.length === 0 && (
           <View style={styles.emptyState}>
-            <Ionicons name="search-outline" size={64} color={WayoraColors.lightGray} />
+            <Ionicons name="search-outline" size={64} color={WayoraColors.taviBg} />
             <Text style={styles.emptyText}>No results found for your search.</Text>
           </View>
         )}
@@ -144,10 +177,12 @@ export default function BookingItemsScreen() {
           style={styles.floatingCart}
           onPress={() => router.push('/payment' as any)}
         >
-          <Ionicons name="bag-handle" size={26} color="white" />
-          <View style={styles.floatingBadge}>
-            <Text style={styles.floatingBadgeText}>2</Text>
-          </View>
+          <Ionicons name="bag-handle" size={28} color="white" />
+          {cartCount > 0 && (
+            <View style={styles.floatingBadge}>
+              <Text style={styles.floatingBadgeText}>{cartCount}</Text>
+            </View>
+          )}
         </TouchableOpacity>
       )}
     </View>
@@ -155,100 +190,137 @@ export default function BookingItemsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
+  container: { flex: 1, backgroundColor: '#FAFAFB' },
   header: { 
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
     paddingHorizontal: 20, 
-    paddingTop: 20, 
-    paddingBottom: 15 
+    paddingTop: 60, 
+    paddingBottom: 15,
+    backgroundColor: 'white',
+    shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 10, elevation: 3
   },
-  backButton: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: WayoraColors.black },
-  filterButton: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  backButton: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: WayoraColors.black },
+  filterButton: { width: 44, height: 44, borderRadius: 14, backgroundColor: '#F3F4F6', alignItems: 'center', justifyContent: 'center' },
   
-  searchSection: { paddingHorizontal: 20, marginBottom: 15 },
+  searchSection: { paddingHorizontal: 20, marginTop: 20, marginBottom: 15 },
   searchBar: { 
     flexDirection: 'row', 
     alignItems: 'center', 
     backgroundColor: '#F3F4F6', 
-    borderRadius: 12, 
+    borderRadius: 16, 
     paddingHorizontal: 15, 
-    height: 48 
+    height: 52,
+    borderWidth: 1,
+    borderColor: '#E2E8F0'
   },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 15, color: WayoraColors.black },
+  searchInput: { flex: 1, marginLeft: 12, fontSize: 16, color: WayoraColors.black, fontWeight: '600' },
 
-  scrollContent: { paddingHorizontal: 20, paddingBottom: 40 },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
   card: { 
     backgroundColor: '#FFF', 
-    borderRadius: 20, 
+    borderRadius: 24, 
     marginBottom: 20, 
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 4,
   },
-  cardImage: { width: '100%', height: 200 },
+  cardImage: { width: '100%', height: 220 },
   tagBadge: { 
     position: 'absolute', 
     top: 15, 
     left: 15, 
-    backgroundColor: 'rgba(255, 255, 255, 0.9)', 
+    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
     paddingHorizontal: 12, 
     paddingVertical: 6, 
-    borderRadius: 20 
+    borderRadius: 12,
+    shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 5
   },
-  tagText: { fontSize: 11, fontWeight: '800', color: WayoraColors.black, textTransform: 'uppercase' },
-  cardInfo: { padding: 15 },
-  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 },
-  cardName: { fontSize: 16, fontWeight: '700', color: WayoraColors.black, flex: 1, marginRight: 10 },
-  locationRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  locationText: { fontSize: 13, color: WayoraColors.gray, marginLeft: 4 },
-  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  ratingBox: { flexDirection: 'row', alignItems: 'center' },
-  ratingText: { fontSize: 14, fontWeight: '700', color: WayoraColors.black, marginLeft: 4 },
-  reviewsText: { fontSize: 12, color: WayoraColors.gray, marginLeft: 2 },
-  priceText: { alignItems: 'flex-end' },
-  priceAmount: { fontSize: 18, fontWeight: '800', color: WayoraColors.coral },
-  priceUnit: { fontSize: 12, color: WayoraColors.gray },
+  tagText: { fontSize: 10, fontWeight: '900', color: WayoraColors.taviPurple, textTransform: 'uppercase', letterSpacing: 0.5 },
+  cardInfo: { padding: 18 },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
+  cardName: { fontSize: 18, fontWeight: '800', color: WayoraColors.black, flex: 1, marginRight: 10 },
+  locationRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  locationText: { fontSize: 14, color: WayoraColors.gray, marginLeft: 6, fontWeight: '500' },
+  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
+  ratingBox: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
+  ratingText: { fontSize: 15, fontWeight: '800', color: WayoraColors.black, marginLeft: 5 },
+  reviewsText: { fontSize: 13, color: WayoraColors.gray, marginLeft: 3, fontWeight: '500' },
+  
+  priceAndAction: { alignItems: 'flex-end' },
+  priceText: { marginBottom: 8 },
+  priceAmount: { fontSize: 20, fontWeight: '900', color: WayoraColors.taviPurple },
+  priceUnit: { fontSize: 13, color: WayoraColors.gray, fontWeight: '600' },
+
+  addButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: WayoraColors.taviPurple,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 14,
+    gap: 6,
+    position: 'relative'
+  },
+  addButtonText: { color: 'white', fontWeight: '800', fontSize: 14 },
+  itemBadge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#EF4444',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'white'
+  },
+  itemBadgeText: { color: 'white', fontSize: 10, fontWeight: '900' },
 
   emptyState: { alignItems: 'center', marginTop: 100 },
-  emptyText: { marginTop: 15, color: WayoraColors.gray, fontSize: 16 },
+  emptyText: { marginTop: 15, color: WayoraColors.gray, fontSize: 16, fontWeight: '600' },
 
   floatingCart: {
     position: 'absolute',
-    bottom: 160, // Above chatbot (which is at 90)
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FF8A00', // Orange
+    bottom: 30,
+    right: 25,
+    width: 68,
+    height: 68,
+    borderRadius: 34,
+    backgroundColor: WayoraColors.taviPurple,
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowColor: WayoraColors.taviPurple,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.4,
+    shadowRadius: 15,
+    elevation: 10,
+    borderWidth: 2,
+    borderColor: 'white'
   },
   floatingBadge: {
     position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'white',
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
+    top: -5,
+    right: -5,
+    backgroundColor: '#EF4444',
+    minWidth: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
+    borderWidth: 2,
+    borderColor: 'white'
   },
   floatingBadgeText: {
-    color: '#FF8A00',
-    fontSize: 10,
+    color: 'white',
+    fontSize: 12,
     fontWeight: '900',
   },
 });
