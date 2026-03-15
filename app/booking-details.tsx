@@ -112,10 +112,7 @@ export default function BookingDetailsScreen() {
         </View>
         <TouchableOpacity 
           style={styles.bookButton}
-          onPress={() => router.push({
-            pathname: '/payment',
-            params: { name: params.name, price: params.price, type: 'Booking' }
-          } as any)}
+          onPress={() => alert('Added to cart! Tap the cart icon to checkout.')}
         >
           <Text style={styles.bookButtonText}>{params.category === 'food' ? 'Add to Cart' : 'Book Now'}</Text>
           <Ionicons name={params.category === 'food' ? 'cart' : 'arrow-forward'} size={18} color="#FFF" />

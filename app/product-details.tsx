@@ -138,10 +138,7 @@ export default function ProductDetailsScreen() {
          </TouchableOpacity>
          <TouchableOpacity 
            style={styles.cartBtn} 
-           onPress={() => router.push({
-             pathname: '/payment',
-             params: { name, price: totalPrice.toString(), quantity: quantity.toString() }
-           } as any)}
+           onPress={() => alert('Added to cart! Tap the cart icon to checkout.')}
           >
             <Ionicons name="cart-outline" size={22} color="white" style={{ marginRight: 8 }} />
             <Text style={styles.cartBtnText}>Add to Cart</Text>
