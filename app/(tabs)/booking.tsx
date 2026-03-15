@@ -87,7 +87,14 @@ function BookingTab() {
     <View>
       <View style={styles.gridNav}>
         {categories.map(c => (
-          <TouchableOpacity key={c.id} style={styles.gridItem}>
+          <TouchableOpacity 
+            key={c.id} 
+            style={styles.gridItem}
+            onPress={() => router.push({
+              pathname: '/booking-items',
+              params: { categoryId: c.id, categoryName: c.label }
+            } as any)}
+          >
             <View style={[styles.gridIconBox, { backgroundColor: c.color }]}>
               <Ionicons name={c.icon as any} size={24} color="#FFF" />
             </View>

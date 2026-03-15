@@ -60,6 +60,8 @@ function RootLayoutNav() {
           <Stack.Screen name="post-generator" options={{ headerShown: false }} />
           <Stack.Screen name="currency" options={{ headerShown: false }} />
           <Stack.Screen name="souvenir-album" options={{ headerShown: false }} />
+          <Stack.Screen name="booking-items" options={{ headerShown: false }} />
+          <Stack.Screen name="booking-details" options={{ headerShown: false }} />
           <Stack.Screen name="product-details" options={{ title: 'Product Details', headerShown: false }} />
           <Stack.Screen name="payment" options={{ title: 'Checkout', headerShown: false, presentation: 'modal' }} />
         </Stack>

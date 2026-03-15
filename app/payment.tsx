@@ -12,11 +12,14 @@ export default function PaymentScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
 
-  const { name, price, quantity } = params as { 
+  const { name, price, quantity, type } = params as { 
     name: string; 
     price: string; 
-    quantity: string 
+    quantity?: string;
+    type?: string;
   };
+
+  const isBooking = type === 'Booking';
 
   return (
     <View style={styles.container}>
@@ -59,7 +62,7 @@ export default function PaymentScreen() {
              <View style={styles.orderItem}>
                 <View style={styles.itemInfo}>
                    <Text style={styles.itemName}>{name || "Product"}</Text>
-                   <Text style={styles.itemQty}>Quantity: {quantity || "1"}</Text>
+                   {!isBooking && <Text style={styles.itemQty}>Quantity: {quantity || "1"}</Text>}
                 </View>
                 <Text style={styles.itemPrice}>${price || "0"}</Text>
              </View>
@@ -69,7 +72,7 @@ export default function PaymentScreen() {
                 <Text style={styles.summaryValue}>${price || "0"}</Text>
              </View>
              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Shipping</Text>
+                <Text style={styles.summaryLabel}>{isBooking ? 'Service Fee' : 'Shipping'}</Text>
                 <Text style={[styles.summaryValue, { color: '#05C46B' }]}>FREE</Text>
              </View>
              <View style={styles.itemDivider} />
