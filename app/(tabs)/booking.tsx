@@ -387,9 +387,9 @@ function CultureTab() {
 // 5. Eco Tab Content
 const ECO_INITIATIVES = [
   { id: 'e1', name: 'Green Travel Guide', subtitle: 'Reduce your carbon footprint', image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80', action: 'Read More' },
-  { id: 'e2', name: 'Zero Waste Transit', subtitle: 'Eco-friendly commuting tips', image: 'https://images.unsplash.com/photo-1533240332313-0dbf2f65d38a?w=400&q=80', action: 'Explore' },
+  { id: 'e2', name: 'Zero Waste Transit', subtitle: 'Eco-friendly commuting tips', image: 'https://images.unsplash.com/photo-1556122071-e404be745493?w=400&q=80', action: 'Explore' },
   { id: 'e3', name: 'Wildlife Protection', subtitle: 'Respecting natural habitats', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80', action: 'Join Now' },
-  { id: 'e4', name: 'Re-forest France', subtitle: 'Planting trees in the Loire', image: 'https://images.unsplash.com/photo-1544136472-8874136472b5?w=400&q=80', action: 'Donate' },
+  { id: 'e4', name: 'Re-forest France', subtitle: 'Planting trees in the Loire', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80', action: 'Donate' },
   { id: 'e5', name: 'Plastic-Free Paris', subtitle: 'Find eco-friendly retailers', image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?w=400&q=80', action: 'View Map' },
 ];
 
