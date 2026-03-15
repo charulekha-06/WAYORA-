@@ -8,6 +8,8 @@ import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
+const { width } = Dimensions.get('window');
+
 const TONES = [
   { 
     label: 'Adventurous', value: 'adventurous', icon: 'compass-outline' as const, 
@@ -119,11 +121,11 @@ export default function PostGeneratorScreen() {
                   >
                     <Ionicons 
                       name={t.icon} 
-                      size={16} 
+                      size={20} 
                       color={isActive ? 'white' : t.text} 
-                      style={{ marginRight: 6 }}
+                      style={{ marginBottom: 6 }}
                     />
-                    <Text style={[styles.toneLabel, { color: isActive ? 'white' : t.text }]}>{t.label}</Text>
+                    <Text style={[styles.toneLabel, { color: isActive ? 'white' : t.text, textAlign: 'center' }]}>{t.label}</Text>
                   </TouchableOpacity>
                 );
               })}
@@ -185,8 +187,15 @@ const styles = StyleSheet.create({
   inputCard: { backgroundColor: 'white', padding: 25, borderRadius: 24, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
   label: { fontSize: 13, fontWeight: '700', color: WayoraColors.gray, marginBottom: 8, marginTop: 15 },
   input: { backgroundColor: '#F8FAFC', borderRadius: 16, padding: 16, fontSize: 14, color: WayoraColors.black, borderWidth: 1, borderColor: '#F1F5F9' },
-  toneGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 10 },
-  toneChip: { paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, backgroundColor: '#EFF6FF', borderWidth: 1, borderColor: '#DBEAFE' },
+  toneGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginTop: 10 },
+  toneChip: { 
+    width: (width - 40 - 25 * 2 - 12) / 2, // Accounting for screen padding, card padding, and gap
+    paddingVertical: 16, 
+    borderRadius: 16, 
+    alignItems: 'center', 
+    justifyContent: 'center',
+    borderWidth: 1.5,
+  },
   toneChipActive: { backgroundColor: '#3B82F6', borderColor: '#3B82F6' },
   toneLabel: { fontSize: 12, fontWeight: '700', color: '#1E40AF' },
 
