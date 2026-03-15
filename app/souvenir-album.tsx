@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  StatusBar, Image, Dimensions, FlatList
+  StatusBar, Image, Dimensions, FlatList, useWindowDimensions,
+  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const { width } = Dimensions.get('window');
+// Removed static Dimensions calculation
 
 const MEMORIES = [
   { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&q=80' },
@@ -26,13 +27,27 @@ const ACHIEVEMENTS = [
   { id: '6', title: 'Hidden Gem Hunter', icon: 'search-outline', unlocked: false },
 ];
 
-export default function SouvenirAlbumScreen() {
-  const router = useRouter();
+  const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('memories');
+  const [imageLoading, setImageLoading] = useState<Record<string, boolean>>({});
+
+  const handleImageLoad = (id: string) => {
+    setImageLoading(prev => ({ ...prev, [id]: false }));
+  };
 
   const renderMemory = ({ item }: { item: typeof MEMORIES[0] }) => (
-    <View style={styles.memoryCard}>
-      <Image source={{ uri: item.image }} style={styles.memoryImage} />
+    <View style={[styles.memoryCard, { width: (width - 52) / 2 }]}>
+      <Image 
+        source={{ uri: item.image }} 
+        style={styles.memoryImage}
+        onLoadStart={() => setImageLoading(prev => ({ ...prev, [item.id]: true }))}
+        onLoad={() => handleImageLoad(item.id)}
+      />
+      {imageLoading[item.id] && (
+        <View style={styles.imageLoader}>
+          <ActivityIndicator size="small" color={WayoraColors.black} />
+        </View>
+      )}
       <LinearGradient
         colors={['transparent', 'rgba(0,0,0,0.8)']}
         style={styles.memoryOverlay}
@@ -91,7 +106,7 @@ export default function SouvenirAlbumScreen() {
         {activeTab === 'memories' ? (
           <View style={styles.grid}>
             {MEMORIES.map((m) => renderMemory({ item: m }))}
-            <TouchableOpacity style={styles.captureNew}>
+            <TouchableOpacity style={[styles.captureNew, { width: (width - 52) / 2 }]}>
                <LinearGradient colors={['rgba(0,0,0,0.02)', 'rgba(0,0,0,0.05)']} style={styles.captureGradient}>
                   <Ionicons name="camera" size={32} color="rgba(0,0,0,0.2)" />
                   <Text style={styles.captureText}>Capture Moment</Text>
@@ -101,7 +116,7 @@ export default function SouvenirAlbumScreen() {
         ) : (
           <View style={styles.badgeGrid}>
             {ACHIEVEMENTS.map((a) => (
-              <View key={a.id} style={styles.badgeWrapper}>
+              <View key={a.id} style={[styles.badgeWrapper, { width: (width - 70) / 3 }]}>
                 {renderAchievement(a)}
               </View>
             ))}
@@ -148,19 +163,20 @@ const styles = StyleSheet.create({
 
   scrollContent: { paddingHorizontal: 20, paddingBottom: 100 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  memoryCard: { width: (width - 52) / 2, height: 200, borderRadius: 20, overflow: 'hidden', backgroundColor: '#E5E7EB' },
+  memoryCard: { height: 200, borderRadius: 20, overflow: 'hidden', backgroundColor: '#E5E7EB' },
   memoryImage: { width: '100%', height: '100%', resizeMode: 'cover' },
+  imageLoader: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F1F5F9' },
   memoryOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', padding: 12 },
   memoryTitle: { color: 'white', fontSize: 14, fontWeight: '800' },
   memoryInfo: { flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 },
   memoryDate: { color: 'rgba(255,255,255,0.8)', fontSize: 10, fontWeight: '600' },
 
-  captureNew: { width: (width - 52) / 2, height: 200, borderRadius: 20, borderStyle: 'dashed', borderWidth: 2, borderColor: '#CBD5E1' },
+  captureNew: { height: 200, borderRadius: 20, borderStyle: 'dashed', borderWidth: 2, borderColor: '#CBD5E1' },
   captureGradient: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   captureText: { color: '#94A3B8', fontSize: 13, fontWeight: '700', marginTop: 10 },
 
   badgeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 15 },
-  badgeWrapper: { width: (width - 70) / 3 },
+  badgeWrapper: { },
   badgeCard: { alignItems: 'center' },
   badgeIcon: { 
     width: 68, height: 68, borderRadius: 34, 
