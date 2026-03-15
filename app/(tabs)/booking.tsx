@@ -154,15 +154,32 @@ function BookingTab() {
 
 
 
+const ARTISAN_PRODUCTS = [
+  { id: '1', name: "Marie's Pottery Studio", price: '45', artisan: 'Marie Dubois', product: 'Ceramic Vases', category: 'Pottery', rating: '4.9', sold: '156', image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&q=80' },
+  { id: '2', name: "Parisian Leather Co.", price: '120', artisan: 'Jean-Pierre Laurent', product: 'Leather Bags', category: 'Textiles', rating: '5.0', sold: '89', image: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=400&q=80' },
+  { id: '3', name: "Atelier des Parfums", price: '65', artisan: 'Sophie Martin', product: 'Fragrance Blends', category: 'Jewelry', rating: '4.8', sold: '203', image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80' },
+  { id: '4', name: "Silk & Stones", price: '85', artisan: 'Elena Rossi', product: 'Hand-woven Scarves', category: 'Textiles', rating: '4.7', sold: '112', image: 'https://images.unsplash.com/photo-1520903920243-00d872a2d1c9?w=400&q=80' },
+  { id: '5', name: "Lumière Glass", price: '55', artisan: 'Marc Chen', product: 'Stained Glass Art', category: 'Art', rating: '4.9', sold: '45', image: 'https://images.unsplash.com/photo-1541844053589-3462d48344cd?w=400&q=80' },
+  { id: '6', name: "Terra Cotta Collective", price: '38', artisan: 'Ana Silva', product: 'Rustic Planters', category: 'Pottery', rating: '4.6', sold: '310', image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400&q=80' },
+  { id: '7', name: "Bijoux de Paris", price: '150', artisan: 'Chloé Bernard', product: 'Gold Necklaces', category: 'Jewelry', rating: '5.0', sold: '72', image: 'https://images.unsplash.com/photo-1515562141521-7a1dd0db7941?w=400&q=80' },
+  { id: '8', name: "Abstract Soul", price: '210', artisan: 'Sacha Vogel', product: 'Oil on Canvas', category: 'Art', rating: '4.8', sold: '28', image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=400&q=80' },
+];
+
 // 3. Artisan Tab Content
 function ArtisanTab() {
   const router = useRouter();
+  const [selectedCat, setSelectedCat] = useState('All');
+  
   const artisanCats = [
     { name: 'Art', icon: 'color-palette-outline' as const, color: '#EC4899' },
     { name: 'Textiles', icon: 'shirt-outline' as const, color: '#8B5CF6' },
     { name: 'Pottery', icon: 'cafe-outline' as const, color: '#D97706' },
     { name: 'Jewelry', icon: 'diamond-outline' as const, color: '#0D9488' },
   ];
+
+  const filteredProducts = selectedCat === 'All' 
+    ? ARTISAN_PRODUCTS 
+    : ARTISAN_PRODUCTS.filter(p => p.category === selectedCat);
 
   return (
     <View>
@@ -177,77 +194,66 @@ function ArtisanTab() {
 
       {/* Category Grid */}
       <View style={styles.artisanGrid}>
-        {artisanCats.map(c => (
-           <TouchableOpacity key={c.name} style={styles.artisanCatCard}>
-             <View style={[styles.artisanIconWrap, { backgroundColor: c.color + '18' }]}>
-               <Ionicons name={c.icon} size={24} color={c.color} />
-             </View>
-             <Text style={styles.artisanCatName}>{c.name}</Text>
-           </TouchableOpacity>
-        ))}
+        {artisanCats.map(c => {
+          const isActive = selectedCat === c.name;
+          return (
+            <TouchableOpacity 
+              key={c.name} 
+              style={[styles.artisanCatCard, isActive && { borderColor: c.color, borderWidth: 2 }]}
+              onPress={() => setSelectedCat(isActive ? 'All' : c.name)}
+            >
+              <View style={[styles.artisanIconWrap, { backgroundColor: c.color + (isActive ? '30' : '18') }]}>
+                <Ionicons name={c.icon} size={24} color={c.color} />
+              </View>
+              <Text style={[styles.artisanCatName, isActive && { fontWeight: '800' }]}>{c.name}</Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
-      <Text style={styles.sectionTitle}>Featured Artisans</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 28, marginBottom: 16 }}>
+        <Text style={[styles.sectionTitle, { marginTop: 0, marginBottom: 0 }]}>
+          {selectedCat === 'All' ? 'Featured Artisans' : `${selectedCat} Collection`}
+        </Text>
+        {selectedCat !== 'All' && (
+          <TouchableOpacity onPress={() => setSelectedCat('All')}>
+             <Text style={{ fontSize: 13, color: WayoraColors.gray, fontWeight: '600' }}>Clear Filter</Text>
+          </TouchableOpacity>
+        )}
+      </View>
 
-      {/* Artisan Card 1 */}
-      <TouchableOpacity 
-        style={styles.artisanDealCard}
-        onPress={() => router.push({
-          pathname: '/product-details',
-          params: { id: '1', name: "Marie's Pottery Studio", price: '45', artisan: 'Marie Dubois', image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=600&q=80' }
-        } as any)}
-      >
-        <Image source={{ uri: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
-        <View style={styles.dealInfo}>
-          <Text style={styles.artisanName}>Marie's Pottery Studio</Text>
-          <Text style={styles.artisanBy}>by Marie Dubois</Text>
-          <Text style={styles.artisanProduct}>Hand-painted Ceramic Vases</Text>
-          
-          <View style={styles.artisanBottomRow}>
-            <View style={styles.ratingInline}>
-              <Ionicons name="star" size={14} color="#FBBF24" />
-              <Text style={styles.ratingNumber}>4.9 <Text style={styles.ratingCount}>(156 sold)</Text></Text>
+      {filteredProducts.map((item) => (
+        <TouchableOpacity 
+          key={item.id}
+          style={styles.artisanDealCard}
+          onPress={() => router.push({
+            pathname: '/product-details',
+            params: { id: item.id, name: item.name, price: item.price, artisan: item.artisan, image: item.image }
+          } as any)}
+        >
+          <Image source={{ uri: item.image }} style={styles.dealImage} />
+          <View style={styles.dealInfo}>
+            <Text style={styles.artisanName}>{item.name}</Text>
+            <Text style={styles.artisanBy}>by {item.artisan}</Text>
+            <Text style={styles.artisanProduct}>{item.product}</Text>
+            
+            <View style={styles.artisanBottomRow}>
+              <View style={styles.ratingInline}>
+                <Ionicons name="star" size={14} color="#FBBF24" />
+                <Text style={styles.ratingNumber}>{item.rating} <Text style={styles.ratingCount}>({item.sold} sold)</Text></Text>
+              </View>
+              <Text style={styles.artisanPrice}>${item.price}</Text>
             </View>
-            <Text style={styles.artisanPrice}>$45</Text>
           </View>
+        </TouchableOpacity>
+      ))}
+
+      {filteredProducts.length === 0 && (
+        <View style={{ padding: 40, alignItems: 'center' }}>
+           <Ionicons name="search-outline" size={48} color={WayoraColors.gray} />
+           <Text style={{ marginTop: 10, color: WayoraColors.gray }}>No products found in this category.</Text>
         </View>
-      </TouchableOpacity>
-      
-      {/* Artisan Card 2 */}
-      <TouchableOpacity 
-        style={styles.artisanDealCard}
-        onPress={() => router.push({
-          pathname: '/product-details',
-          params: { id: '2', name: "Parisian Leather Co.", price: '120', artisan: 'Jean-Pierre Laurent', image: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=600&q=80' }
-        } as any)}
-      >
-        <Image source={{ uri: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
-        <View style={styles.dealInfo}>
-          <Text style={styles.artisanName}>Parisian Leather Co.</Text>
-          <Text style={styles.artisanBy}>by Jean-Pierre Laurent</Text>
-          <Text style={styles.artisanProduct}>Handcrafted Leather Bags</Text>
-          
-          <View style={styles.artisanBottomRow}>
-            <View style={styles.ratingInline}>
-              <Ionicons name="star" size={14} color="#FBBF24" />
-              <Text style={styles.ratingNumber}>5.0 <Text style={styles.ratingCount}>(89 sold)</Text></Text>
-            </View>
-            <Text style={styles.artisanPrice}>$120</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-      
-      {/* Artisan Card 3 */}
-      <TouchableOpacity 
-        style={styles.artisanDealCard}
-        onPress={() => router.push({
-          pathname: '/product-details',
-          params: { id: '3', name: "Atelier des Parfums", price: '65', artisan: 'Sophie Martin', image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=600&q=80' }
-        } as any)}
-      >
-        <Image source={{ uri: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?auto=format&fit=crop&w=300&q=80' }} style={styles.dealImage} />
-        <View style={styles.dealInfo}>
-          <Text style={styles.artisanName}>Atelier des Parfums</Text>
+      )}
           <Text style={styles.artisanBy}>by Sophie Martin</Text>
           <Text style={styles.artisanProduct}>Custom Fragrance Blends</Text>
           
