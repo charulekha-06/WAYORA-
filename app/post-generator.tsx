@@ -9,10 +9,22 @@ import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const TONES = [
-  { label: 'Adventurous', value: 'adventurous', icon: 'compass-outline' as const },
-  { label: 'Whimsical', value: 'whimsical', icon: 'sparkles-outline' as const },
-  { label: 'Relaxed', value: 'relaxed', icon: 'leaf-outline' as const },
-  { label: 'Professional', value: 'professional', icon: 'business-outline' as const },
+  { 
+    label: 'Adventurous', value: 'adventurous', icon: 'compass-outline' as const, 
+    active: '#F59E0B', inactive: '#FEF3C7', text: '#92400E' 
+  },
+  { 
+    label: 'Whimsical', value: 'whimsical', icon: 'sparkles-outline' as const, 
+    active: '#8B5CF6', inactive: '#EDE9FE', text: '#5B21B6' 
+  },
+  { 
+    label: 'Relaxed', value: 'relaxed', icon: 'leaf-outline' as const, 
+    active: '#10B981', inactive: '#D1FAE5', text: '#065F46' 
+  },
+  { 
+    label: 'Professional', value: 'professional', icon: 'business-outline' as const, 
+    active: '#4F46E5', inactive: '#E0E7FF', text: '#3730A3' 
+  },
 ];
 
 export default function PostGeneratorScreen() {
@@ -94,21 +106,27 @@ export default function PostGeneratorScreen() {
 
             <Text style={styles.label}>Choose a Tone</Text>
             <View style={styles.toneGrid}>
-              {TONES.map((t) => (
-                <TouchableOpacity 
-                  key={t.value} 
-                  style={[styles.toneChip, tone === t.value && styles.toneChipActive]}
-                  onPress={() => setTone(t.value)}
-                >
-                  <Ionicons 
-                    name={t.icon} 
-                    size={16} 
-                    color={tone === t.value ? 'white' : '#1E40AF'} 
-                    style={{ marginRight: 6 }}
-                  />
-                  <Text style={[styles.toneLabel, tone === t.value && { color: 'white' }]}>{t.label}</Text>
-                </TouchableOpacity>
-              ))}
+              {TONES.map((t) => {
+                const isActive = tone === t.value;
+                return (
+                  <TouchableOpacity 
+                    key={t.value} 
+                    style={[
+                      styles.toneChip, 
+                      { backgroundColor: isActive ? t.active : t.inactive, borderColor: isActive ? t.active : t.inactive }
+                    ]}
+                    onPress={() => setTone(t.value)}
+                  >
+                    <Ionicons 
+                      name={t.icon} 
+                      size={16} 
+                      color={isActive ? 'white' : t.text} 
+                      style={{ marginRight: 6 }}
+                    />
+                    <Text style={[styles.toneLabel, { color: isActive ? 'white' : t.text }]}>{t.label}</Text>
+                  </TouchableOpacity>
+                );
+              })}
             </View>
 
             <TouchableOpacity 
@@ -116,7 +134,7 @@ export default function PostGeneratorScreen() {
               onPress={generatePost}
               disabled={!dest || isGenerating}
             >
-              <LinearGradient colors={['#34D399', '#10B981']} style={styles.genGradient}>
+              <LinearGradient colors={['#F27471', '#EF4444']} style={styles.genGradient}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   {isGenerating ? (
                     <ActivityIndicator size="small" color="white" />
