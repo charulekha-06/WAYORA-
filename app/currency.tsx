@@ -51,14 +51,17 @@ export default function CurrencyScreen() {
         <View style={styles.card}>
           <View style={styles.inputSection}>
             <Text style={styles.label}>Amount to Convert</Text>
-            <View style={styles.amountInputRow}>
-              <Text style={styles.currencySymbol}>{from.symbol}</Text>
+            <View style={styles.amountBox}>
+              <View style={styles.symbolBox}>
+                <Text style={styles.boxSymbol}>{from.symbol}</Text>
+              </View>
               <TextInput 
                 style={styles.amountInput}
                 keyboardType="numeric"
                 value={amount}
                 onChangeText={setAmount}
                 placeholder="0.00"
+                placeholderTextColor="#94A3B8"
               />
             </View>
           </View>
@@ -132,9 +135,33 @@ const styles = StyleSheet.create({
   card: { backgroundColor: 'white', borderRadius: 24, padding: 25, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 10, elevation: 3 },
   label: { fontSize: 13, fontWeight: '700', color: WayoraColors.gray, marginBottom: 10 },
   inputSection: { marginBottom: 25 },
-  amountInputRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  currencySymbol: { fontSize: 40, fontWeight: '300', color: WayoraColors.black, marginTop: 4, marginRight: 8 },
-  amountInput: { fontSize: 48, fontWeight: '800', color: WayoraColors.black, flex: 1 },
+  amountBox: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    backgroundColor: '#F8FAFC', 
+    borderRadius: 20, 
+    padding: 12, 
+    borderWidth: 1.5, 
+    borderColor: '#E2E8F0' 
+  },
+  symbolBox: { 
+    width: 48, 
+    height: 48, 
+    borderRadius: 14, 
+    backgroundColor: 'white', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 5, elevation: 1
+  },
+  boxSymbol: { fontSize: 22, fontWeight: '700', color: '#111827' },
+  amountInput: { 
+    flex: 1, 
+    fontSize: 32, 
+    fontWeight: '800', 
+    color: '#111827', 
+    marginLeft: 15,
+    paddingVertical: 8
+  },
 
   converterGrid: { gap: 15 },
   pickerBox: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
