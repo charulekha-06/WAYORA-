@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, Image, Alert,
+  StatusBar, Image, Alert, TextInput,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -44,6 +44,9 @@ const menu = [
 
 export default function ProfileScreen() {
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
+  const [userName, setUserName] = useState('Alex Traveler');
+  const [editingName, setEditingName] = useState(false);
+  const nameInputRef = useRef<TextInput>(null);
 
   const handleEditAvatar = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -86,7 +89,33 @@ export default function ProfileScreen() {
             </View>
           </TouchableOpacity>
 
-          <Text style={styles.userName}>Alex Traveler</Text>
+          {/* Editable Name */}
+          <View style={styles.nameRow}>
+            {editingName ? (
+              <TextInput
+                ref={nameInputRef}
+                value={userName}
+                onChangeText={setUserName}
+                style={styles.nameInput}
+                onBlur={() => setEditingName(false)}
+                onSubmitEditing={() => setEditingName(false)}
+                autoFocus
+                returnKeyType="done"
+                selectTextOnFocus
+              />
+            ) : (
+              <Text style={styles.userName}>{userName}</Text>
+            )}
+            <TouchableOpacity
+              onPress={() => {
+                setEditingName(true);
+                setTimeout(() => nameInputRef.current?.focus(), 50);
+              }}
+              style={styles.editIcon}
+            >
+              <Ionicons name="pencil" size={14} color="rgba(255,255,255,0.85)" />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.userLevel}>Wandrix Level: Explorer II · 750 pts</Text>
 
           <View style={styles.stats}>
@@ -192,6 +221,9 @@ const styles = StyleSheet.create({
   cameraBadge: { position: 'absolute', bottom: 2, right: 2, width: 28, height: 28, borderRadius: 14, backgroundColor: '#5B21B6', alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#FFF' },
   
   userName: { fontSize: 22, fontWeight: '800', color: '#fff' },
+  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 2 },
+  nameInput: { fontSize: 22, fontWeight: '800', color: '#fff', borderBottomWidth: 1.5, borderBottomColor: 'rgba(255,255,255,0.6)', minWidth: 160, textAlign: 'center', paddingVertical: 2 },
+  editIcon: { padding: 4, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.15)' },
   userLevel: { fontSize: 12, color: 'rgba(255,255,255,0.75)', marginTop: 4 },
   stats: { flexDirection: 'row', alignItems: 'center', gap: 28, marginTop: 22 },
   stat: { alignItems: 'center' },
