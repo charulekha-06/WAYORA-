@@ -81,8 +81,14 @@ export default function HomeScreen() {
 
           {/* Search Bar */}
           <TouchableOpacity style={styles.searchBar} onPress={() => router.push('/explore' as any)}>
-            <Ionicons name="search" size={18} color={WayoraColors.gray} />
-            <Text style={styles.searchText}>Where do you want to go?</Text>
+            <View style={styles.searchBarContent}>
+              <Ionicons name="search" size={18} color={WayoraColors.gray} />
+              <Text style={styles.searchText}>Where do you want to go?</Text>
+            </View>
+            <View style={styles.locationContainer}>
+              <View style={styles.verticalDivider} />
+              <Ionicons name="location-outline" size={20} color={WayoraColors.coral} />
+            </View>
           </TouchableOpacity>
         </LinearGradient>
 
@@ -226,7 +232,10 @@ const styles = StyleSheet.create({
   userName: { fontSize: 24, fontWeight: '800', color: WayoraColors.black, marginTop: 2 },
   notifBtn: { width: 44, height: 44, borderRadius: 14, backgroundColor: WayoraColors.white, alignItems: 'center', justifyContent: 'center', shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 },
   notifBadge: { position: 'absolute', top: 10, right: 10, width: 8, height: 8, borderRadius: 4, backgroundColor: WayoraColors.coral },
-  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: WayoraColors.white, borderRadius: 16, paddingHorizontal: 16, paddingVertical: 14, gap: 10, shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 },
+  searchBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: WayoraColors.white, borderRadius: 16, paddingLeft: 16, paddingRight: 8, paddingVertical: 10, shadowColor: WayoraColors.black, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8, elevation: 3 },
+  searchBarContent: { flexDirection: 'row', alignItems: 'center', gap: 10, flex: 1 },
+  locationContainer: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, gap: 12 },
+  verticalDivider: { width: 1, height: 20, backgroundColor: WayoraColors.lightGray },
   searchText: { fontSize: 14, color: WayoraColors.gray },
   section: { marginTop: 24, paddingHorizontal: 20 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
