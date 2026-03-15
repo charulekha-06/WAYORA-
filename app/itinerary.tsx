@@ -34,6 +34,23 @@ export default function ItineraryScreen() {
     );
   };
 
+  const handleGenerate = () => {
+    if (!dest.trim()) {
+      alert('Please enter a destination');
+      return;
+    }
+    router.push({
+      pathname: '/itinerary-result',
+      params: {
+        dest,
+        days,
+        budget,
+        group,
+        interests: selectedInterests.join(','),
+      }
+    });
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -47,7 +64,7 @@ export default function ItineraryScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.formContainer}>
         {/* Destination */}
         <View style={styles.labelRow}>
-          <Ionicons name="location-outline" size={16} color={WayoraColors.coral} />
+          <Ionicons name="location-sharp" size={18} color={WayoraColors.taviPurple} />
           <Text style={styles.label}>Where do you want to go?</Text>
         </View>
         <TextInput 
@@ -62,7 +79,7 @@ export default function ItineraryScreen() {
         <View style={styles.row}>
           <View style={{ flex: 1 }}>
             <View style={styles.labelRow}>
-              <Ionicons name="calendar-outline" size={16} color={WayoraColors.blue} />
+              <Ionicons name="calendar" size={18} color={WayoraColors.taviPurple} />
               <Text style={styles.label}>Days</Text>
             </View>
             <TextInput 
@@ -74,7 +91,7 @@ export default function ItineraryScreen() {
           </View>
           <View style={{ flex: 1 }}>
             <View style={styles.labelRow}>
-              <Ionicons name="wallet-outline" size={16} color={WayoraColors.orange} />
+              <Ionicons name="wallet" size={18} color={WayoraColors.taviPurple} />
               <Text style={styles.label}>Budget ($)</Text>
             </View>
             <TextInput 
@@ -88,7 +105,7 @@ export default function ItineraryScreen() {
 
         {/* Group Type */}
         <View style={styles.labelRow}>
-          <Ionicons name="people-outline" size={16} color={WayoraColors.purple} />
+          <Ionicons name="people" size={18} color={WayoraColors.taviPurple} />
           <Text style={styles.label}>Group Type</Text>
         </View>
         <View style={styles.chipRow}>
@@ -105,7 +122,7 @@ export default function ItineraryScreen() {
 
         {/* Interests */}
         <View style={styles.labelRow}>
-          <Ionicons name="heart-outline" size={16} color={WayoraColors.coral} />
+          <Ionicons name="heart" size={18} color={WayoraColors.taviPurple} />
           <Text style={styles.label}>Interests</Text>
         </View>
         <View style={styles.interestGrid}>
@@ -121,20 +138,20 @@ export default function ItineraryScreen() {
               <Ionicons 
                 name={i.icon} 
                 size={16} 
-                color={selectedInterests.includes(i.id) ? WayoraColors.coral : i.color} 
+                color={selectedInterests.includes(i.id) ? WayoraColors.taviPurple : WayoraColors.gray} 
               />
               <Text style={[
                 styles.interestLabel, 
-                selectedInterests.includes(i.id) && { color: WayoraColors.coral }
+                selectedInterests.includes(i.id) && { color: WayoraColors.taviPurple }
               ]}>{i.label}</Text>
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Generate Button */}
-        <TouchableOpacity style={styles.generateBtnContainer}>
+        <TouchableOpacity style={styles.generateBtnContainer} onPress={handleGenerate}>
           <LinearGradient 
-            colors={[WayoraColors.coral, WayoraColors.orange]} 
+            colors={[WayoraColors.taviPurple, '#A78BFA']} 
             style={styles.generateBtn} 
             start={{ x: 0, y: 0 }} 
             end={{ x: 1, y: 0 }}
@@ -151,24 +168,28 @@ export default function ItineraryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFC', // slightly softer background to match image
+    backgroundColor: '#F9FAFB',
   },
   header: {
-    paddingTop: 10,
+    paddingTop: 60,
     paddingHorizontal: 20,
     paddingBottom: 20,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFC',
+    backgroundColor: '#F9FAFB',
   },
   backBtn: {
     marginRight: 16,
-    padding: 4,
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '800',
-    color: '#1B1B2F',
+    color: WayoraColors.black,
   },
   formContainer: {
     paddingHorizontal: 20,
@@ -177,29 +198,24 @@ const styles = StyleSheet.create({
   labelRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
     marginTop: 24,
-    marginBottom: 10,
+    marginBottom: 12,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1B1B2F',
+    fontSize: 15,
+    fontWeight: '700',
+    color: WayoraColors.black,
   },
   input: {
     backgroundColor: '#FFF',
-    borderRadius: 14,
+    borderRadius: 16,
     paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: '#1B1B2F',
+    paddingVertical: 15,
+    fontSize: 16,
+    color: WayoraColors.black,
     borderWidth: 1,
-    borderColor: '#ECECEC',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.02,
-    shadowRadius: 4,
-    elevation: 1,
+    borderColor: '#F3F4F6',
   },
   row: {
     flexDirection: 'row',
@@ -211,21 +227,21 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   chip: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 22,
     paddingVertical: 12,
-    borderRadius: 20,
+    borderRadius: 16,
     backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: '#F3F4F6',
   },
   chipActive: {
-    backgroundColor: '#E65C7B', // Match coral-pink from image
-    borderColor: '#E65C7B',
+    backgroundColor: WayoraColors.taviPurple,
+    borderColor: WayoraColors.taviPurple,
   },
   chipText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#555',
+    color: WayoraColors.gray,
   },
   chipTextActive: {
     color: '#FFF',
@@ -238,42 +254,42 @@ const styles = StyleSheet.create({
   interestChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 14,
+    gap: 10,
+    paddingHorizontal: 16,
     paddingVertical: 12,
-    borderRadius: 14,
+    borderRadius: 16,
     backgroundColor: '#FFF',
     borderWidth: 1,
-    borderColor: '#ECECEC',
+    borderColor: '#F3F4F6',
   },
   interestActive: {
-    backgroundColor: 'rgba(230,92,123,0.06)', // Very faint pink background
-    borderColor: '#E65C7B',
+    backgroundColor: WayoraColors.taviPurpleLight,
+    borderColor: WayoraColors.taviPurple,
   },
   interestLabel: {
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#555',
+    color: WayoraColors.gray,
   },
   generateBtnContainer: {
     marginTop: 40,
-    shadowColor: '#F28C38', // Orange glow
+    shadowColor: WayoraColors.taviPurple,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 6,
+    shadowRadius: 12,
+    elevation: 8,
   },
   generateBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 10,
+    gap: 12,
     paddingVertical: 18,
-    borderRadius: 16,
+    borderRadius: 20,
   },
   generateText: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
     color: '#FFF',
   },
 });

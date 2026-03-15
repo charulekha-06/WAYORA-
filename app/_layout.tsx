@@ -55,6 +55,7 @@ function RootLayoutNav() {
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="itinerary" options={{ headerShown: false }} />
+          <Stack.Screen name="itinerary-result" options={{ headerShown: false }} />
           <Stack.Screen name="todo" options={{ headerShown: false }} />
           <Stack.Screen name="emergency" options={{ headerShown: false }} />
           <Stack.Screen name="post-generator" options={{ headerShown: false }} />
