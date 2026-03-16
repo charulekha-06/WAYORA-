@@ -1,51 +1,91 @@
-# 🌍 Wayora — Travel Beyond Maps, Explore Beyond Limits
+# 🌍 Wayora — Travel Reimagined
 
-**Wayora** is an AI-powered, all-in-one travel platform built with **React Native (Expo)**. It provides personalized trip planning, smart budgeting, safety tools, and gamified exploration.
+**Wayora** is a premium, AI-driven all-in-one travel companion designed to bridge the gap between planning and exploring. Built with **React Native (Expo)** and powered by **Supabase**, Wayora provides real-time safety, personalized itineraries, and smart task management for the modern traveler.
 
-![React Native](https://img.shields.io/badge/React_Native-Expo_55-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
-![License](https://img.shields.io/badge/License-MIT-green)
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 🏠 **Home Dashboard** | Real-time location detection (City/Country), upcoming trips, and budget progress. |
-| 🛡️ **Emergency Finder** | Real-time discovery of Hospitals, Pharmacies, and Restrooms within 25km via Overpass API. |
-| 🗺️ **Explore Nearby** | GPS-based local attractions and curated global destinations. |
-| 📍 **Smart Directions** | One-tap navigation to any discovered POI via Google Maps deep linking. |
-| ✅ **Hybrid To-Do List** | Smart task management with Supabase Cloud Sync and Local-only fallback for guests. |
-| 🤖 **AI Itinerary Planner** | Personalized day-wise itineraries by budget, interests, and group type. |
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Framework** | React Native (Expo SDK 55) |
-| **Navigation** | Expo Router (file-based) |
-| **Backend** | **Supabase** (Authentication & Database) |
-| **Location** | `expo-location` (GPS & Reverse Geocoding) |
-| **Data Sources** | **Overpass API (OpenStreetMap)** with Mirror Fallback |
-| **Maps** | Google Maps (Deep Linking) |
-| **UI** | React Native StyleSheet, LinearGradient, Ionicons |
-| **Language** | TypeScript |
-
-## 🚀 ROADMAP
-
-- [x] Home Dashboard (Location-Aware)
-- [x] Explore Destinations (Real-time Attractions)
-- [x] Emergency Finder (Overpass API + Google Maps)
-- [x] Smart To-Do List (Cloud + Local Mode)
-- [x] Supabase Authentication
-- [x] AI Itinerary Planner
-- [ ] OpenAI GPT Itinerary API Integration
-- [ ] OCR Bill Scanning
-- [ ] Artisan Marketplace
-
-## 📝 License
-
-MIT License
+![React Native](https://img.shields.io/badge/React_Native-Expo_55-61DAFB?logo=react&style=for-the-badge)
+![Supabase](https://img.shields.io/badge/Supabase-Database_&_Auth-3ECF8E?logo=supabase&style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?logo=typescript&style=for-the-badge)
 
 ---
 
-<p align="center">Made with ❤️ for travelers worldwide<br/><strong>Wayora</strong> — Travel, Reimagined.</p>
+## ✨ Core Features
+
+### 🏠 Intelligent Dashboard
+- **Location Awareness**: Automatically detects your current city and country via `expo-location`.
+- **Budget Pulse**: Instant visual feedback on your trip spend and readiness.
+- **Quick Discovery**: One-tap access to emergency services and trending destinations.
+
+### 🛡️ Emergency Finder (25km Radius)
+- **Real-Time POIs**: Fetches live data for **Hospitals**, **Pharmacies**, and **Restrooms** using the **Overpass API (OpenStreetMap)**.
+- **Mirror Fallback System**: High availability with multiple Overpass server mirrors to ensure data even when primary servers go down.
+- **Smart Directions**: Deep-link integration with **Google Maps** for precise navigation to coordinates.
+
+### ✅ Hybrid To-Do List
+- **Dual Mode**: Seamlessly switches between **Cloud Sync** (when logged in) and **Local-Only Mode** (for guests).
+- **Advanced Classification**: Organize tasks by Priority (High/Med/Low) and Trip Phase (Pre/On/After).
+- **Visual Progress**: Real-time "Trip Readiness" bar that reacts to your task completion.
+
+### 🤖 AI Itinerary Planner & Budgeting
+- **Personalized Logic**: Generate itineraries tailored to your budget, interests, and traveler group.
+- **Expense Breakdown**: Categorized spending tracking with visual analytics.
+
+### 🗺️ Explore & Wandrix Badges
+- **Curated Destinations**: Browse global landmarks with interactive tags and search.
+- **Gamified Achievements**: Earn **Wandrix Badges** as you reach new milestones and explore the world.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer | Technology | Purpose |
+|-------|-----------|---------|
+| **Core** | **React Native (Expo 55)** | Cross-platform performance & DX |
+| **Backend** | **Supabase** | Real-time Database and Authentication |
+| **Navigation** | **Expo Router** | Type-safe, file-based routing |
+| **Location** | **Expo Location** | GPS tracking and Reverse Geocoding |
+| **Data** | **Overpass API (OSM)** | Real-world Point of Interest data |
+| **Maps** | **Google Maps** | Navigation and Routing |
+| **UI/UX** | **Linear Gradient** | Premium brand aesthetics |
+| **Types** | **TypeScript** | Robust, error-free development |
+
+---
+
+## 🚀 Installation & Setup
+
+1. **Clone the Repo**
+   ```bash
+   git clone https://github.com/charulekha-06/WAYORA-.git
+   cd WAYORA-
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure Environment**
+   Create a `.env` file with your Supabase credentials:
+   ```env
+   EXPO_PUBLIC_SUPABASE_URL=your_url
+   EXPO_PUBLIC_SUPABASE_ANON_KEY=your_key
+   ```
+
+4. **Launch Application**
+   ```bash
+   npx expo start
+   ```
+
+---
+
+## 🎨 Design Language
+Wayora uses a high-contrast, premium design system:
+- **Primary Gradient**: `Coral (#E8637A)` to `Orange (#F28C38)` 
+- **Typography**: Heavyweights (800+) for visibility in the sun.
+- **Safety Colors**: Red Pulse (`#EF4444`) for emergency actions.
+
+---
+
+<p align="center">
+  Made with ❤️ for travelers worldwide <br/>
+  <strong>Wayora — Travel Beyond Limits.</strong>
+</p>
