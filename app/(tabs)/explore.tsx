@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, StyleSheet,
   TextInput, StatusBar, Dimensions, Image
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { getCurrentLocation } from '@/lib/location';
 
 const { width } = Dimensions.get('window');
 
@@ -64,6 +65,22 @@ export default function ExploreScreen() {
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('All');
   const [search, setSearch] = useState('');
+  const [currentCity, setCurrentCity] = useState<string | null>(null);
+  const [locLoading, setLocLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchLoc() {
+      setLocLoading(true);
+      const loc = await getCurrentLocation();
+      if (loc && loc.city) {
+        setCurrentCity(loc.city);
+      } else {
+        setCurrentCity('Nearby');
+      }
+      setLocLoading(false);
+    }
+    fetchLoc();
+  }, []);
 
   const filtered = destinations.filter(d => {
     const matchCat = activeCategory === 'All' || d.category === activeCategory;
@@ -109,7 +126,15 @@ export default function ExploreScreen() {
           </ScrollView>
         </View>
 
-        <Text style={styles.resultCount}>{filtered.length} destinations found</Text>
+        <View style={{ marginBottom: 16 }}>
+          <View style={styles.locationTag}>
+            <Ionicons name={locLoading ? "sync" : "location"} size={14} color="#FF5A36" />
+            <Text style={styles.locationTagText}>
+              {locLoading ? "Discovering location..." : `Discover near ${currentCity || "Nearby"}`}
+            </Text>
+          </View>
+          <Text style={styles.resultCount}>{filtered.length} destinations found</Text>
+        </View>
         
         {filtered.map((dest, idx) => (
           <TouchableOpacity key={dest.name} style={styles.card} onPress={() => router.push('/itinerary' as any)}>
@@ -198,4 +223,6 @@ const styles = StyleSheet.create({
   
   planBtnWrap: { flexDirection: 'row', alignItems: 'center' },
   planBtn: { fontSize: 15, fontWeight: '800', color: '#FF5A36' },
+  locationTag: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8, backgroundColor: '#FFF', alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: '#FF5A36' },
+  locationTagText: { fontSize: 12, fontWeight: '700', color: '#FF5A36' },
 });

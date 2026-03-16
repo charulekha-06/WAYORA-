@@ -6,6 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
+import { getCurrentLocation } from '@/lib/location';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
@@ -194,6 +195,21 @@ export default function EmergencyScreen() {
   const [searching, setSearching] = useState<string | null>(null);
   const [results, setResults] = useState<ServiceInfo[] | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<string>('Set Location');
+  const [locLoading, setLocLoading] = useState(false);
+
+  useEffect(() => {
+    fetchLocation();
+  }, []);
+
+  async function fetchLocation() {
+    setLocLoading(true);
+    const loc = await getCurrentLocation();
+    if (loc) {
+      setCurrentLocation(loc.formattedAddress);
+    }
+    setLocLoading(false);
+  }
 
   const handleServicePress = (service: string) => {
     setSearching(service);
@@ -300,10 +316,21 @@ export default function EmergencyScreen() {
               <Text style={styles.sosSubtext}>Tap for Emergency</Text>
             </LinearGradient>
           </TouchableOpacity>
-          <View style={styles.locationBadge}>
-            <Ionicons name="location" size={14} color={WayoraColors.gray} />
-            <Text style={styles.locationText}>Location: Active (Paris, France)</Text>
-          </View>
+          <TouchableOpacity 
+            style={styles.locationBadge} 
+            onPress={fetchLocation}
+            disabled={locLoading}
+          >
+            <Ionicons 
+              name={locLoading ? "sync" : "location"} 
+              size={14} 
+              color={WayoraColors.gray} 
+              style={locLoading ? { transform: [{ rotate: '0deg' }] } : {}}
+            />
+            <Text style={styles.locationText}>
+              {locLoading ? "Updating Location..." : `Location: Active (${currentLocation})`}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Improved Service Grid */}
@@ -414,14 +441,24 @@ const styles = StyleSheet.create({
 
   gridSection: { paddingHorizontal: 20 },
   gridTitle: { fontSize: 18, fontWeight: '800', color: WayoraColors.black },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  grid: { 
+    flexDirection: 'row', 
+    flexWrap: 'wrap', 
+    justifyContent: 'space-between',
+    gap: 12
+  },
   serviceCard: { 
-    width: (width - 55) / 2, 
-    padding: 20, 
+    width: '48%', 
+    paddingHorizontal: 15,
+    paddingVertical: 20,
     borderRadius: 24, 
-    marginBottom: 15, 
+    marginBottom: 4, 
     alignItems: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.03, shadowRadius: 10, elevation: 2
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 4 }, 
+    shadowOpacity: 0.03, 
+    shadowRadius: 10, 
+    elevation: 2
   },
   iconBox: { width: 56, height: 56, borderRadius: 20, alignItems: 'center', justifyContent: 'center', marginBottom: 15, shadowColor: '#000', shadowOpacity: 0.05, shadowRadius: 8, elevation: 3 },
   serviceName: { fontSize: 15, fontWeight: '700', color: WayoraColors.black, marginBottom: 4 },

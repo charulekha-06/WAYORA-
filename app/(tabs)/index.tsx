@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { supabase } from '@/lib/supabase';
+import { getCurrentLocation } from '@/lib/location';
 
 const { width } = Dimensions.get('window');
 
@@ -46,10 +47,24 @@ export default function HomeScreen() {
     { id: '2', name: 'Swiss Alps', date: 'Mar 5-12, 2025', status: 'Saved', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=150&q=80' },
   ]);
   const [userName, setUserName] = useState('Traveler');
+  const [currentLocation, setCurrentLocation] = useState<string | null>(null);
+  const [locLoading, setLocLoading] = useState(false);
 
   useEffect(() => {
     fetchProfile();
+    fetchLocation();
   }, []);
+
+  async function fetchLocation() {
+    setLocLoading(true);
+    const loc = await getCurrentLocation();
+    if (loc) {
+      setCurrentLocation(loc.formattedAddress);
+    } else {
+      setCurrentLocation('Set Location');
+    }
+    setLocLoading(false);
+  }
 
   async function fetchProfile() {
     try {
@@ -101,6 +116,19 @@ export default function HomeScreen() {
             <View>
               <Text style={styles.greeting}>Welcome back! </Text>
               <Text style={styles.userName}>{userName}</Text>
+              <TouchableOpacity 
+                style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}
+                onPress={fetchLocation}
+              >
+                <Ionicons 
+                  name={locLoading ? "sync" : "location"} 
+                  size={12} 
+                  color={WayoraColors.gray} 
+                />
+                <Text style={{ fontSize: 12, color: WayoraColors.gray, fontWeight: '600' }}>
+                  {locLoading ? "Detecting location..." : (currentLocation || "Set Location")}
+                </Text>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.notifBtn}>
               <Ionicons name="notifications-outline" size={22} color={WayoraColors.darkGray} />
