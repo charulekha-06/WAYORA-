@@ -55,7 +55,7 @@ export default function BookingScreen() {
       {activeTab === 'artisan' && (
         <TouchableOpacity 
           style={styles.floatingCart}
-          onPress={() => router.push('/payment' as any)} // For demo, let's go to payment or a cart page
+          onPress={() => router.push('/payment' as any)}
         >
           <Ionicons name="bag-handle" size={26} color="white" />
           <View style={styles.floatingBadge}>
@@ -79,7 +79,6 @@ const FEATURED_DEALS = [
   { id: 'd5', name: 'Louvre Explorer', subtitle: 'Activity', price: '35', unit: '/person', rating: '4.8', image: 'https://images.unsplash.com/photo-1544413647-b51463ddffb3?w=400&q=80', type: 'activities' },
 ];
 
-// 1. Booking Tab Content
 function BookingTab() {
   const router = useRouter();
   const categories = [
@@ -91,26 +90,36 @@ function BookingTab() {
     { id: 'food', label: 'Food', icon: 'fast-food', color: '#8854D0' },
   ];
 
+  const rows = [];
+  for (let i = 0; i < categories.length; i += 3) {
+    rows.push(categories.slice(i, i + 3));
+  }
+
   return (
-    <View>
-      <View style={styles.gridNav}>
-        {categories.map(c => (
-          <TouchableOpacity 
-            key={c.id} 
-            style={styles.gridItem}
-            activeOpacity={0.7}
-            onPress={() => router.push({
-              pathname: '/booking-items',
-              params: { categoryId: c.id, categoryName: c.label }
-            } as any)}
-          >
-            <View style={[styles.gridIconBox, { backgroundColor: c.color }]}>
-              <Ionicons name={c.icon as any} size={24} color="#FFF" />
-            </View>
-            <Text style={styles.gridItemLabel}>{c.label}</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+    <View style={{ width: '100%' }}>
+      {rows.map((row, rowIndex) => (
+        <View key={rowIndex} style={styles.gridRow}>
+          {row.map(c => (
+            <TouchableOpacity 
+              key={c.id} 
+              style={styles.gridItem}
+              activeOpacity={0.7}
+              onPress={() => router.push({
+                pathname: '/booking-items',
+                params: { categoryId: c.id, categoryName: c.label }
+              } as any)}
+            >
+              <View style={[styles.gridIconBox, { backgroundColor: c.color }]}>
+                <Ionicons name={c.icon as any} size={24} color="#FFF" />
+              </View>
+              <Text style={styles.gridItemLabel}>{c.label}</Text>
+            </TouchableOpacity>
+          ))}
+          {row.length < 3 && Array(3 - row.length).fill(0).map((_, i) => (
+            <View key={`filler-${i}`} style={[styles.gridItem, { backgroundColor: 'transparent', borderWidth: 0, shadowOpacity: 0, elevation: 0 }]} />
+          ))}
+        </View>
+      ))}
 
       <Text style={styles.sectionTitle}>Featured Deals</Text>
       
@@ -130,7 +139,7 @@ function BookingTab() {
               <Ionicons name="heart-outline" size={18} color="#D1D5DB" />
             </View>
             <Text style={styles.dealSubtitle}>{deal.subtitle}</Text>
-            <View style={styles.ratingRow}>
+            <View style={styles.ratingRow as any}>
               <Ionicons name="star" size={14} color="#FBBF24" />
               <Text style={styles.ratingText}>{deal.rating}</Text>
             </View>
@@ -149,8 +158,6 @@ function BookingTab() {
   );
 }
 
-
-
 const ARTISAN_PRODUCTS = [
   { id: '1', name: "Marie's Pottery Studio", price: '45', artisan: 'Marie Dubois', product: 'Ceramic Vases', category: 'Pottery', rating: '4.9', sold: '156', image: 'https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=400&q=80' },
   { id: '2', name: "Parisian Leather Co.", price: '120', artisan: 'Jean-Pierre Laurent', product: 'Leather Bags', category: 'Textiles', rating: '5.0', sold: '89', image: 'https://images.unsplash.com/photo-1605733160314-4fc7dac4bb16?w=400&q=80' },
@@ -164,25 +171,19 @@ const ARTISAN_PRODUCTS = [
   { id: '10', name: "Azure Ceramics", price: '58', artisan: 'Lia Costa', product: 'Blue Glazed Plates', category: 'Pottery', rating: '4.7', sold: '88', image: 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400&q=80' },
 ];
 
-// 3. Artisan Tab Content
 function ArtisanTab() {
   const router = useRouter();
   const [selectedCat, setSelectedCat] = useState('All');
-  
   const artisanCats = [
     { name: 'Art', icon: 'color-palette-outline' as const, color: '#EC4899' },
     { name: 'Textiles', icon: 'shirt-outline' as const, color: '#8B5CF6' },
     { name: 'Pottery', icon: 'cafe-outline' as const, color: '#D97706' },
     { name: 'Jewelry', icon: 'diamond-outline' as const, color: '#0D9488' },
   ];
-
-  const filteredProducts = selectedCat === 'All' 
-    ? ARTISAN_PRODUCTS 
-    : ARTISAN_PRODUCTS.filter(p => p.category === selectedCat);
+  const filteredProducts = selectedCat === 'All' ? ARTISAN_PRODUCTS : ARTISAN_PRODUCTS.filter(p => p.category === selectedCat);
 
   return (
     <View>
-      {/* Banner */}
       <View style={styles.artisanBanner}>
         <View style={styles.bannerTop}>
            <Ionicons name="storefront-outline" size={20} color="#D97706" style={{ marginRight: 8 }} />
@@ -190,17 +191,11 @@ function ArtisanTab() {
         </View>
         <Text style={styles.bannerDesc}>Discover authentic handcrafted products from local creators</Text>
       </View>
-
-      {/* Category Grid */}
       <View style={styles.artisanGrid}>
         {artisanCats.map(c => {
           const isActive = selectedCat === c.name;
           return (
-            <TouchableOpacity 
-              key={c.name} 
-              style={[styles.artisanCatCard, isActive && { borderColor: c.color, borderWidth: 2 }]}
-              onPress={() => setSelectedCat(isActive ? 'All' : c.name)}
-            >
+            <TouchableOpacity key={c.name} style={[styles.artisanCatCard, isActive && { borderColor: c.color, borderWidth: 2 }]} onPress={() => setSelectedCat(isActive ? 'All' : c.name)}>
               <View style={[styles.artisanIconWrap, { backgroundColor: c.color + (isActive ? '30' : '18') }]}>
                 <Ionicons name={c.icon} size={24} color={c.color} />
               </View>
@@ -209,188 +204,62 @@ function ArtisanTab() {
           );
         })}
       </View>
-
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 28, marginBottom: 16 }}>
-        <Text style={[styles.sectionTitle, { marginTop: 0, marginBottom: 0 }]}>
-          {selectedCat === 'All' ? 'Featured Artisans' : `${selectedCat} Collection`}
-        </Text>
-        {selectedCat !== 'All' && (
-          <TouchableOpacity onPress={() => setSelectedCat('All')}>
-             <Text style={{ fontSize: 13, color: WayoraColors.gray, fontWeight: '600' }}>Clear Filter</Text>
-          </TouchableOpacity>
-        )}
+        <Text style={[styles.sectionTitle, { marginTop: 0, marginBottom: 0 }]}>{selectedCat === 'All' ? 'Featured Artisans' : `${selectedCat} Collection`}</Text>
+        {selectedCat !== 'All' && <TouchableOpacity onPress={() => setSelectedCat('All')}><Text style={{ fontSize: 13, color: WayoraColors.gray, fontWeight: '600' }}>Clear Filter</Text></TouchableOpacity>}
       </View>
-
       {filteredProducts.map((item) => (
-        <TouchableOpacity 
-          key={item.id}
-          style={styles.artisanDealCard}
-          onPress={() => router.push({
-            pathname: '/product-details',
-            params: { id: item.id, name: item.name, price: item.price, artisan: item.artisan, image: item.image }
-          } as any)}
-        >
+        <TouchableOpacity key={item.id} style={styles.artisanDealCard} onPress={() => router.push({ pathname: '/product-details', params: { id: item.id, name: item.name, price: item.price, artisan: item.artisan, image: item.image } } as any)}>
           <Image source={{ uri: item.image }} style={styles.dealImage} />
           <View style={styles.dealInfo}>
             <Text style={styles.artisanName}>{item.name}</Text>
             <Text style={styles.artisanBy}>by {item.artisan}</Text>
             <Text style={styles.artisanProduct}>{item.product}</Text>
-            
             <View style={styles.artisanBottomRow}>
-              <View style={styles.ratingInline}>
-                <Ionicons name="star" size={14} color="#FBBF24" />
-                <Text style={styles.ratingNumber}>{item.rating} <Text style={styles.ratingCount}>({item.sold} sold)</Text></Text>
-              </View>
+              <View style={styles.ratingInline}><Ionicons name="star" size={14} color="#FBBF24" /><Text style={styles.ratingNumber}>{item.rating} <Text style={styles.ratingCount}>({item.sold} sold)</Text></Text></View>
               <Text style={styles.artisanPrice}>${item.price}</Text>
             </View>
           </View>
         </TouchableOpacity>
       ))}
-
-      {filteredProducts.length === 0 && (
-        <View style={{ padding: 40, alignItems: 'center' }}>
-           <Ionicons name="search-outline" size={48} color={WayoraColors.gray} />
-           <Text style={{ marginTop: 10, color: WayoraColors.gray }}>No products found in this category.</Text>
-        </View>
-      )}
-
-      {/* Artisan Markets Banner */}
       <View style={styles.marketsBanner}>
          <Text style={styles.marketsTitle}>Visit Local Artisan Markets</Text>
          <Text style={styles.marketsDesc}>Explore weekend markets and meet artisans in person</Text>
-         <TouchableOpacity style={styles.marketsBtn}>
-            <Ionicons name="location-outline" size={16} color="#FF6B00" style={{ marginRight: 6 }} />
-            <Text style={styles.marketsBtnText}>Find Markets Near You</Text>
-         </TouchableOpacity>
+         <TouchableOpacity style={styles.marketsBtn}><Ionicons name="location-outline" size={16} color="#FF6B00" style={{ marginRight: 6 }} /><Text style={styles.marketsBtnText}>Find Markets Near You</Text></TouchableOpacity>
       </View>
     </View>
   );
 }
 
-// 4. Culture Tab Content
 function CultureTab() {
   return (
     <View>
-      {/* Culture Banner */}
       <View style={[styles.artisanBanner, { backgroundColor: '#F9F5FF', borderColor: '#E9D5FF' }]}>
-        <View style={styles.bannerTop}>
-           <Ionicons name="library" size={20} color="#9333EA" style={{ marginRight: 8 }} />
-           <Text style={styles.bannerTitle}>Cultural & Heritage Experiences</Text>
-        </View>
+        <View style={styles.bannerTop}><Ionicons name="library" size={20} color="#9333EA" style={{ marginRight: 8 }} /><Text style={styles.bannerTitle}>Cultural Experiences</Text></View>
         <Text style={styles.bannerDesc}>Immerse yourself in local history and traditions</Text>
       </View>
-
       <Text style={styles.sectionTitle}>Must-Visit Heritage Sites</Text>
-
-      {/* Culture Card 1 */}
       <TouchableOpacity style={styles.cultureCard}>
-        <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1549144511-f099e773c147?auto=format&fit=crop&w=800&q=80' }} // Notre dame representation
-          style={styles.cultureCardImage}
-          imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-        >
+        <ImageBackground source={{ uri: 'https://images.unsplash.com/photo-1549144511-f099e773c147?w=800' }} style={styles.cultureCardImage} imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
           <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.cultureCardOverlay}>
-             <View style={styles.purpleTag}><Text style={styles.purpleTagText}>UNESCO World Heritage</Text></View>
-             
-             <View style={styles.cultureBottomText}>
-                <Text style={styles.largeCardTitle}>Notre-Dame Cathedral</Text>
-                <Text style={styles.cultureStyleText}>Medieval Gothic</Text>
-             </View>
+             <View style={styles.purpleTag}><Text style={styles.purpleTagText}>UNESCO Heritage</Text></View>
+             <View style={styles.cultureBottomText}><Text style={styles.largeCardTitle}>Notre-Dame Cathedral</Text></View>
           </LinearGradient>
         </ImageBackground>
-
         <View style={styles.cultureCardBody}>
            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-               <Ionicons name="time-outline" size={14} color="#6B7280" />
-               <Text style={styles.timeText}>2 hours</Text>
-             </View>
+             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Ionicons name="time-outline" size={14} color="#6B7280" /><Text style={styles.timeText}>2 hours</Text></View>
              <Text style={styles.freeText}>Free</Text>
            </View>
-           
-           <View style={styles.interactiveBadge}>
-              <Ionicons name="phone-portrait-outline" size={14} color="#374151" />
-              <Text style={styles.interactiveText}>Interactive AR Tour</Text>
-           </View>
         </View>
       </TouchableOpacity>
-
-      {/* Culture Card 2 */}
-      <TouchableOpacity style={styles.cultureCard}>
-        <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1554941068-a252680d25d9?auto=format&fit=crop&w=800&q=80' }} // Louvre representation
-          style={styles.cultureCardImage}
-          imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-        >
-          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.cultureCardOverlay}>
-             <View style={styles.purpleTag}><Text style={styles.purpleTagText}>World's Largest Museum</Text></View>
-             
-             <View style={styles.cultureBottomText}>
-                <Text style={styles.largeCardTitle}>The Louvre</Text>
-                <Text style={styles.cultureStyleText}>Art and Antiquities</Text>
-             </View>
-          </LinearGradient>
-        </ImageBackground>
-
-        <View style={styles.cultureCardBody}>
-           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-               <Ionicons name="time-outline" size={14} color="#6B7280" />
-               <Text style={styles.timeText}>3-4 hours</Text>
-             </View>
-             <Text style={[styles.freeText, { color: WayoraColors.black }]}>$17</Text>
-           </View>
-           
-           <View style={styles.interactiveBadge}>
-              <Ionicons name="volume-medium-outline" size={14} color="#374151" />
-              <Text style={styles.interactiveText}>Audio Guide Available</Text>
-           </View>
-        </View>
-      </TouchableOpacity>
-
-      {/* Culture Card 3 */}
-      <TouchableOpacity style={styles.cultureCard}>
-        <ImageBackground 
-          source={{ uri: 'https://images.unsplash.com/photo-1503917988258-f87a78e3c995?auto=format&fit=crop&w=800&q=80' }} // Montmartre
-          style={styles.cultureCardImage}
-          imageStyle={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-        >
-          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.cultureCardOverlay}>
-             <View style={styles.purpleTag}><Text style={styles.purpleTagText}>Artist Quarter</Text></View>
-             
-             <View style={styles.cultureBottomText}>
-                <Text style={styles.largeCardTitle}>Sacré-Cœur & Montmartre</Text>
-                <Text style={styles.cultureStyleText}>Bohemian Heritage</Text>
-             </View>
-          </LinearGradient>
-        </ImageBackground>
-
-        <View style={styles.cultureCardBody}>
-           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-               <Ionicons name="walk-outline" size={14} color="#6B7280" />
-               <Text style={styles.timeText}>Flexible</Text>
-             </View>
-             <Text style={styles.freeText}>Free</Text>
-           </View>
-           
-           <View style={styles.interactiveBadge}>
-              <Ionicons name="brush-outline" size={14} color="#374151" />
-              <Text style={styles.interactiveText}>Local Portrait Artists</Text>
-           </View>
-        </View>
-      </TouchableOpacity>
-
     </View>
   );
 }
 
-// 5. Eco Tab Content
 const ECO_INITIATIVES = [
-  { id: 'e1', name: 'Green Travel Guide', subtitle: 'Reduce your carbon footprint', image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&q=80', action: 'Read More', description: 'Sustainable travel is about making smarter choices. Learn how to reduce your carbon footprint while exploring the world, from choosing eco-friendly transport to supporting local green businesses.' },
-  { id: 'e3', name: 'Wildlife Protection', subtitle: 'Respecting natural habitats', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80', action: 'Join Now', description: 'Our protection programs focus on preserving the delicate ecosystems of the French countryside. Join us in respecting local flora and fauna and ensuring these natural wonders remain for generations.' },
-  { id: 'e4', name: 'Re-forest France', subtitle: 'Planting trees in the Loire', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80', action: 'Donate', description: 'The Loire Valley is the heart of France. Contribute to our reforestation efforts and help us plant thousands of native trees to combat climate change and restore biodiversity.' },
-  { id: 'e5', name: 'Plastic-Free Paris', subtitle: 'Find eco-friendly retailers', image: 'https://images.unsplash.com/photo-1591189863430-ab87e120f312?w=400&q=80', action: 'View Map', description: 'Say no to single-use plastics! Use our interactive map to find bulk-buy stores, water fountain locations, and retailers committed to zero-waste packaging in the city.' },
+  { id: 'e1', name: 'Green Travel Guide', subtitle: 'Reduce your carbon footprint', image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400', action: 'Read More' },
+  { id: 'e3', name: 'Wildlife Protection', subtitle: 'Respecting natural habitats', image: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400', action: 'Join Now' },
 ];
 
 function EcoTab() {
@@ -398,23 +267,12 @@ function EcoTab() {
   return (
     <View>
       <View style={[styles.artisanBanner, { backgroundColor: '#F0FDF4', borderColor: '#BBF7D0' }]}>
-        <View style={styles.bannerTop}>
-           <Ionicons name="leaf" size={20} color="#16A34A" style={{ marginRight: 8 }} />
-           <Text style={styles.bannerTitle}>ECO INTELLIGENCE</Text>
-        </View>
-        <Text style={styles.bannerDesc}>Encourages sustainable travel, crowd control, and protection of eco-sensitive areas.</Text>
+        <View style={styles.bannerTop}><Ionicons name="leaf" size={20} color="#16A34A" style={{ marginRight: 8 }} /><Text style={styles.bannerTitle}>ECO INTELLIGENCE</Text></View>
+        <Text style={styles.bannerDesc}>Encourages sustainable travel and protection of eco-sensitive areas.</Text>
       </View>
-
       <Text style={styles.sectionTitle}>Eco-Friendly Initiatives</Text>
       {ECO_INITIATIVES.map(item => (
-        <TouchableOpacity 
-          key={item.id} 
-          style={styles.dealCard}
-          onPress={() => router.push({
-            pathname: '/eco-details',
-            params: { id: item.id, name: item.name, subtitle: item.subtitle, image: item.image, description: item.description }
-          } as any)}
-        >
+        <TouchableOpacity key={item.id} style={styles.dealCard} onPress={() => router.push({ pathname: '/eco-details', params: { id: item.id, name: item.name } } as any)}>
           <Image source={{ uri: item.image }} style={styles.dealImage} />
           <View style={styles.dealInfo}>
             <Text style={styles.dealName}>{item.name}</Text>
@@ -427,63 +285,20 @@ function EcoTab() {
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                   STYLES                                   */
-/* -------------------------------------------------------------------------- */
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF' },
-  header: { paddingTop: 60, paddingHorizontal: 20, paddingBottom: 16, backgroundColor: '#FFF' },
-  topRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-  title: { fontSize: 24, fontWeight: '800', color: WayoraColors.black },
-  
-  searchBarContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#F9FAFB', borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, borderWidth: 1, borderColor: '#F3F4F6' },
-  searchInput: { flex: 1, marginLeft: 10, fontSize: 14, color: WayoraColors.black },
-  
   tabsContainerWrapper: { backgroundColor: '#FFF', paddingBottom: 16, paddingTop: 10 },
   tabsScrollContent: { paddingHorizontal: 20, gap: 10, alignItems: 'center' },
   tabBtn: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, backgroundColor: '#F9FAFB', borderWidth: 1, borderColor: '#F3F4F6' },
   tabBtnActive: { backgroundColor: '#FFF', borderColor: '#E5E7EB', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
   tabLabel: { fontSize: 13, fontWeight: '600', color: WayoraColors.darkGray },
   tabLabelActive: { color: WayoraColors.black },
-  
   contentArea: { paddingHorizontal: 20, paddingBottom: 40 },
-  
-  // Booking Tab Styles
-  gridNav: { 
-    flexDirection: 'row', 
-    flexWrap: 'wrap', 
-    justifyContent: 'space-between', 
-    marginTop: 10, 
-    gap: 12 
-  },
-  gridItem: { 
-    width: (width - 40 - 24) / 3, 
-    backgroundColor: '#FFF', 
-    borderRadius: 20, 
-    paddingVertical: 20, 
-    paddingHorizontal: 12,
-    alignItems: 'center', 
-    justifyContent: 'center',
-    borderWidth: 1, 
-    borderColor: '#F1F5F9',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.05,
-    shadowRadius: 12,
-    elevation: 3
-  },
-  gridIconBox: { 
-    width: 50, 
-    height: 50, 
-    borderRadius: 16, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
-    marginBottom: 10 
-  },
+  gridRow: { flexDirection: 'row', justifyContent: 'space-between', width: '100%', marginBottom: 12 },
+  gridItem: { width: '32%', backgroundColor: '#FFF', borderRadius: 20, paddingVertical: 20, paddingHorizontal: 8, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#F1F5F9', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 12, elevation: 3 },
+  gridIconBox: { width: 50, height: 50, borderRadius: 16, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
   gridItemLabel: { fontSize: 13, fontWeight: '700', color: WayoraColors.black, textAlign: 'center' },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: WayoraColors.black, marginTop: 28, marginBottom: 16 },
-  
   dealCard: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 16, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: '#F3F4F6' },
   dealImage: { width: 100, height: 100, borderRadius: 12 },
   dealInfo: { flex: 1, marginLeft: 16, justifyContent: 'center' },
@@ -497,16 +312,6 @@ const styles = StyleSheet.create({
   priceAmount: { fontSize: 16, fontWeight: '800', color: '#FF5A36' },
   discountBadge: { backgroundColor: '#FF5A36', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
   discountText: { fontSize: 10, fontWeight: '800', color: '#FFF' },
-
-
-
-  // Common Shared Styles (formerly in Stays)
-  ratingInline: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  ratingNumber: { fontSize: 14, fontWeight: '700', color: WayoraColors.black },
-  ratingCount: { fontSize: 12, fontWeight: '400', color: WayoraColors.gray },
-  largeCardTitle: { fontSize: 18, fontWeight: '700', color: '#FFF', marginBottom: 4 },
-
-  // Artisan Styles
   artisanBanner: { backgroundColor: '#FFFDF0', borderWidth: 1, borderColor: '#FEF3C7', padding: 20, borderRadius: 12, marginTop: 10 },
   bannerTop: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   bannerTitle: { fontSize: 16, fontWeight: '700', color: WayoraColors.black },
@@ -515,74 +320,31 @@ const styles = StyleSheet.create({
   artisanCatCard: { flex: 1, paddingVertical: 16, backgroundColor: '#FFF', borderRadius: 12, borderWidth: 1, borderColor: '#F3F4F6', alignItems: 'center' },
   artisanIconWrap: { width: 44, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
   artisanCatName: { fontSize: 12, fontWeight: '600', color: WayoraColors.black },
-  
   artisanDealCard: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 12, padding: 12, marginBottom: 16, borderWidth: 1, borderColor: '#F3F4F6' },
   artisanName: { fontSize: 15, fontWeight: '700', color: WayoraColors.black },
   artisanBy: { fontSize: 11, color: '#9CA3AF', marginTop: 2, marginBottom: 6 },
   artisanProduct: { fontSize: 12, fontWeight: '600', color: '#374151', marginBottom: 10 },
   artisanBottomRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   artisanPrice: { fontSize: 16, fontWeight: '800', color: '#FF5A36' },
-  
   marketsBanner: { backgroundColor: '#FF8A00', borderRadius: 16, padding: 20, marginTop: 10 },
   marketsTitle: { fontSize: 18, fontWeight: '800', color: '#FFF', marginBottom: 16 },
   marketsDesc: { fontSize: 14, color: '#FFF', lineHeight: 20, marginBottom: 24 },
   marketsBtn: { backgroundColor: '#FFF', borderRadius: 12, paddingVertical: 14, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
   marketsBtnText: { fontSize: 15, fontWeight: '700', color: '#FF6B00' },
-
-  // Culture Styles
   cultureCard: { backgroundColor: '#FFF', borderRadius: 16, borderWidth: 1, borderColor: '#F3F4F6', marginBottom: 20 },
   cultureCardImage: { width: '100%', height: 180 },
   cultureCardOverlay: { flex: 1, justifyContent: 'space-between', padding: 16 },
   purpleTag: { alignSelf: 'flex-start', backgroundColor: '#A855F7', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 6 },
   purpleTagText: { color: '#FFF', fontSize: 11, fontWeight: '700' },
   cultureBottomText: { gap: 4 },
-  cultureStyleText: { fontSize: 13, fontWeight: '600', color: '#FCD34D' },
   cultureCardBody: { padding: 16 },
   timeText: { fontSize: 12, color: '#6B7280' },
   freeText: { fontSize: 14, fontWeight: '700', color: '#A855F7' },
-  interactiveBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 8, alignSelf: 'flex-start' },
-  interactiveText: { fontSize: 12, fontWeight: '600', color: '#374151' },
-
-  cartBadge: {
-    position: 'absolute', top: -5, right: -5,
-    backgroundColor: WayoraColors.coral,
-    width: 16, height: 16, borderRadius: 8,
-    alignItems: 'center', justifyContent: 'center',
-    borderWidth: 2, borderColor: 'white'
-  },
-  cartBadgeText: { color: 'white', fontSize: 8, fontWeight: '900' },
-
-  floatingCart: {
-    position: 'absolute',
-    bottom: 160, // Above chatbot (which is at 90)
-    right: 20,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FF8A00', // Orange
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  floatingBadge: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'white',
-    minWidth: 18,
-    height: 18,
-    borderRadius: 9,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 4,
-  },
-  floatingBadgeText: {
-    color: '#FF8A00',
-    fontSize: 10,
-    fontWeight: '900',
-  },
+  ratingInline: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  ratingNumber: { fontSize: 14, fontWeight: '700', color: WayoraColors.black },
+  ratingCount: { fontSize: 12, fontWeight: '400', color: WayoraColors.gray },
+  largeCardTitle: { fontSize: 18, fontWeight: '700', color: '#FFF', marginBottom: 4 },
+  floatingCart: { position: 'absolute', bottom: 160, right: 20, width: 56, height: 56, borderRadius: 28, backgroundColor: '#FF8A00', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8, elevation: 6 },
+  floatingBadge: { position: 'absolute', top: 5, right: 5, backgroundColor: 'white', minWidth: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 },
+  floatingBadgeText: { color: '#FF8A00', fontSize: 10, fontWeight: '900' },
 });

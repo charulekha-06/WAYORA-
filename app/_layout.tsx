@@ -8,14 +8,15 @@ import 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { useSegments } from 'expo-router';
+import FloatingChatbot from '@/components/FloatingChatbot';
+import GlobalHeader from '@/components/GlobalHeader';
 
 export {
   ErrorBoundary,
 } from 'expo-router';
 
-export const unstable_settings = {
-  initialRouteName: '(tabs)',
-};
+// Initial route logic will be handled by root index
 
 SplashScreen.preventAutoHideAsync();
 
@@ -42,16 +43,16 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-import FloatingChatbot from '@/components/FloatingChatbot';
-import GlobalHeader from '@/components/GlobalHeader';
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const segments = useSegments();
+  const isAuthPage = segments && segments.length > 0 && segments[0] === 'auth';
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <GlobalHeader />
-      <View style={{ flex: 1, paddingTop: 60 }}>
+      {!isAuthPage && <GlobalHeader />}
+      <View style={{ flex: 1, marginTop: isAuthPage ? 0 : 60 }}>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="itinerary" options={{ headerShown: false }} />
@@ -61,6 +62,7 @@ function RootLayoutNav() {
           <Stack.Screen name="post-generator" options={{ headerShown: false }} />
           <Stack.Screen name="currency" options={{ headerShown: false }} />
           <Stack.Screen name="souvenir-album" options={{ headerShown: false }} />
+          <Stack.Screen name="auth" options={{ headerShown: false }} />
           <Stack.Screen name="booking-items" options={{ headerShown: false }} />
           <Stack.Screen name="booking-details" options={{ headerShown: false }} />
           <Stack.Screen name="eco-details" options={{ headerShown: false, presentation: 'modal' }} />
@@ -68,7 +70,7 @@ function RootLayoutNav() {
           <Stack.Screen name="payment" options={{ title: 'Checkout', headerShown: false, presentation: 'modal' }} />
         </Stack>
       </View>
-      <FloatingChatbot />
+      {!isAuthPage && <FloatingChatbot />}
     </ThemeProvider>
   );
 }

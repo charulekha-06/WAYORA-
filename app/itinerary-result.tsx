@@ -1,33 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar, Image, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { supabase } from '@/lib/supabase';
 
 export default function ItineraryResultScreen() {
   const router = useRouter();
   const { dest, days, budget, group, interests } = useLocalSearchParams();
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     // Simulate generation delay
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <StatusBar barStyle="dark-content" />
-        <LinearGradient colors={[WayoraColors.taviPurple, '#A78BFA']} style={styles.loadingCircle}>
-          <Ionicons name="sparkles" size={40} color="#fff" />
-        </LinearGradient>
-        <Text style={styles.loadingText}>Crafting your perfect {dest} escape...</Text>
-        <Text style={styles.loadingSubtext}>Optimizing for {group} travelers</Text>
-      </View>
-    );
-  }
 
   const interestList = (interests as string || '').split(',');
   const dayCount = parseInt(days as string) || 3;
@@ -59,6 +48,60 @@ export default function ItineraryResultScreen() {
     return selectedPlan;
   };
 
+  const handleSaveTrip = async () => {
+    setSaving(true);
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      Alert.alert('Login Required', 'Please sign in to save your travel plans!', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Sign In', onPress: () => router.push('/auth') }
+      ]);
+      setSaving(false);
+      return;
+    }
+
+    const fullItinerary = Array.from({ length: dayCount }).map((_, i) => ({
+      day: i + 1,
+      activities: getDayPlan(i + 1)
+    }));
+
+    const { error } = await supabase
+      .from('trips')
+      .insert([
+        {
+          user_id: user.id,
+          destination: dest,
+          budget: parseFloat(budget as string) || 0,
+          interests: interestList,
+          itinerary_data: fullItinerary,
+          start_date: new Date().toISOString(), // Mocking start date as today
+        }
+      ]);
+
+    if (error) {
+       Alert.alert('Error', error.message);
+    } else {
+       Alert.alert('Success', 'Trip saved to your profile!', [
+         { text: 'Great', onPress: () => router.replace('/(tabs)') }
+       ]);
+    }
+    setSaving(false);
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <StatusBar barStyle="dark-content" />
+        <LinearGradient colors={[WayoraColors.taviPurple, '#A78BFA']} style={styles.loadingCircle}>
+          <Ionicons name="sparkles" size={40} color="#fff" />
+        </LinearGradient>
+        <Text style={styles.loadingText}>Crafting your perfect {dest} escape...</Text>
+        <Text style={styles.loadingSubtext}>Optimizing for {group} travelers</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
@@ -69,8 +112,8 @@ export default function ItineraryResultScreen() {
           <Ionicons name="close" size={24} color={WayoraColors.black} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Your Itinerary</Text>
-        <TouchableOpacity style={styles.saveBtn}>
-          <Text style={styles.saveBtnText}>Save</Text>
+        <TouchableOpacity style={styles.saveBtn} onPress={handleSaveTrip} disabled={saving}>
+          {saving ? <ActivityIndicator size="small" color={WayoraColors.taviPurple} /> : <Text style={styles.saveBtnText}>Save</Text>}
         </TouchableOpacity>
       </View>
 
@@ -132,8 +175,12 @@ export default function ItineraryResultScreen() {
           ))}
         </View>
 
-        <TouchableOpacity style={styles.confirmBtn}>
-          <Text style={styles.confirmBtnText}>Add to My Trips</Text>
+        <TouchableOpacity style={[styles.confirmBtn, saving && { opacity: 0.7 }]} onPress={handleSaveTrip} disabled={saving}>
+          {saving ? (
+            <ActivityIndicator color="#FFF" />
+          ) : (
+            <Text style={styles.confirmBtnText}>Add to My Trips</Text>
+          )}
         </TouchableOpacity>
       </ScrollView>
     </View>

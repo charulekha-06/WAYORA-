@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, StyleSheet,
-  StatusBar, Dimensions, Modal, TextInput, KeyboardAvoidingView, Platform
+  StatusBar, Dimensions, Modal, TextInput, KeyboardAvoidingView, Platform, Alert, ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -35,18 +35,14 @@ const CATEGORY_ICONS = {
   'After-Trip': 'flag-outline' as const,
 };
 
+import { supabase } from '@/lib/supabase';
+
 export default function TodoScreen() {
   const router = useRouter();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
-  const [todos, setTodos] = useState<TodoItem[]>([
-    { id: '1', task: 'Check passport validity', completed: true, category: 'Pre-Trip', priority: 'High', classification: 'Docs', description: 'Expiry date must be at least 6 months after return.' },
-    { id: '2', task: 'Book flight tickets', completed: true, category: 'Pre-Trip', priority: 'High', classification: 'Booking' },
-    { id: '3', task: 'Pack lightweight clothing', completed: false, category: 'Pre-Trip', priority: 'Medium', classification: 'Packing', description: 'Focus on breathable fabrics for humid weather.' },
-    { id: '4', task: 'Exchange local currency', completed: false, category: 'On-Trip', priority: 'Medium', classification: 'Finance' },
-    { id: '5', task: 'Visit the main museum', completed: false, category: 'On-Trip', priority: 'Low', classification: 'Activities' },
-    { id: '6', task: 'Sort trip photos', completed: false, category: 'After-Trip', priority: 'Low', classification: 'Memories' },
-  ]);
+  const [todos, setTodos] = useState<TodoItem[]>([]);
 
   // Modal State
   const [newTask, setNewTask] = useState('');
@@ -55,6 +51,33 @@ export default function TodoScreen() {
   const [newPriority, setNewPriority] = useState<Priority>('Medium');
   const [newClass, setNewClass] = useState('');
 
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  async function fetchTodos() {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from('todos')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching todos:', error);
+    } else {
+      setTodos(data || []);
+    }
+    setLoading(false);
+  }
+
   const toggleExpand = (id: string) => {
     const next = new Set(expandedIds);
     if (next.has(id)) next.delete(id);
@@ -62,18 +85,43 @@ export default function TodoScreen() {
     setExpandedIds(next);
   };
 
-  const toggleTodo = (id: string) => {
-    setTodos(todos.map(t => t.id === id ? { ...t, completed: !t.completed } : t));
+  const toggleTodo = async (id: string, currentStatus: boolean) => {
+    const { error } = await supabase
+      .from('todos')
+      .update({ completed: !currentStatus })
+      .eq('id', id);
+
+    if (error) {
+      Alert.alert('Error', 'Could not update task');
+    } else {
+      setTodos(todos.map(t => t.id === id ? { ...t, completed: !currentStatus } : t));
+    }
   };
 
-  const deleteTodo = (id: string) => {
-    setTodos(todos.filter(t => t.id !== id));
+  const deleteTodo = async (id: string) => {
+    const { error } = await supabase
+      .from('todos')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      Alert.alert('Error', 'Could not delete task');
+    } else {
+      setTodos(todos.filter(t => t.id !== id));
+    }
   };
 
-  const addTask = () => {
+  const addTask = async () => {
     if (!newTask.trim()) return;
-    const item: TodoItem = {
-      id: Date.now().toString(),
+    
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      Alert.alert('Error', 'You must be logged in to add tasks');
+      return;
+    }
+
+    const newItem = {
+      user_id: user.id,
       task: newTask,
       description: newDesc,
       category: newCat,
@@ -81,9 +129,20 @@ export default function TodoScreen() {
       classification: newClass || 'Misc',
       completed: false,
     };
-    setTodos([item, ...todos]);
-    setShowAddModal(false);
-    setNewTask(''); setNewDesc(''); setNewCat('Pre-Trip'); setNewPriority('Medium'); setNewClass('');
+
+    const { data, error } = await supabase
+      .from('todos')
+      .insert([newItem])
+      .select()
+      .single();
+
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      setTodos([data, ...todos]);
+      setShowAddModal(false);
+      setNewTask(''); setNewDesc(''); setNewCat('Pre-Trip'); setNewPriority('Medium'); setNewClass('');
+    }
   };
 
   const renderSection = (title: string, cat: Category) => {
@@ -99,7 +158,7 @@ export default function TodoScreen() {
         {items.map(item => (
           <View key={item.id} style={[styles.todoCard, { borderLeftColor: PRIORITY_COLORS[item.priority] }]}>
             <TouchableOpacity
-              onPress={() => toggleTodo(item.id)}
+              onPress={() => toggleTodo(item.id, item.completed)}
               style={styles.todoMain}
               activeOpacity={0.7}
             >
@@ -163,25 +222,41 @@ export default function TodoScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Progress Card */}
-        <View style={styles.progressContainer}>
-          <LinearGradient colors={[WayoraColors.taviPurple, '#A78BFA']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.progressCard}>
-            <View style={styles.progressTop}>
-              <View>
-                <Text style={styles.progressLabel}>Trip Readiness</Text>
-                <Text style={styles.progressCount}>{completedCount} of {todos.length} completed</Text>
-              </View>
-              <Text style={styles.progressPercent}>{Math.round(progress)}%</Text>
+        {loading ? (
+          <View style={{ marginTop: 100 }}>
+            <ActivityIndicator size="large" color={WayoraColors.taviPurple} />
+            <Text style={{ textAlign: 'center', marginTop: 10, color: WayoraColors.gray }}>Syncing with cloud...</Text>
+          </View>
+        ) : (
+          <>
+            {/* Progress Card */}
+            <View style={styles.progressContainer}>
+              <LinearGradient colors={[WayoraColors.taviPurple, '#A78BFA']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.progressCard}>
+                <View style={styles.progressTop}>
+                  <View>
+                    <Text style={styles.progressLabel}>Trip Readiness</Text>
+                    <Text style={styles.progressCount}>{completedCount} of {todos.length} completed</Text>
+                  </View>
+                  <Text style={styles.progressPercent}>{Math.round(progress)}%</Text>
+                </View>
+                <View style={styles.progressTrack}>
+                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                </View>
+              </LinearGradient>
             </View>
-            <View style={styles.progressTrack}>
-              <View style={[styles.progressFill, { width: `${progress}%` }]} />
-            </View>
-          </LinearGradient>
-        </View>
 
-        {renderSection('Before Trip', 'Pre-Trip')}
-        {renderSection('On Trip', 'On-Trip')}
-        {renderSection('After Trip', 'After-Trip')}
+            {renderSection('Before Trip', 'Pre-Trip')}
+            {renderSection('On Trip', 'On-Trip')}
+            {renderSection('After Trip', 'After-Trip')}
+            
+            {todos.length === 0 && (
+              <View style={{ marginTop: 100, alignItems: 'center' }}>
+                <Ionicons name="list-outline" size={60} color="#E5E7EB" />
+                <Text style={{ color: WayoraColors.gray, marginTop: 10, fontWeight: '600' }}>Your task list is empty</Text>
+              </View>
+            )}
+          </>
+        )}
       </ScrollView>
 
       {/* Add Task Modal */}

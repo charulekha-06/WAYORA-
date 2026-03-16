@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ScrollView, View, Text, TouchableOpacity, StyleSheet,
   StatusBar, Dimensions, ImageBackground, Image, Modal, TextInput
@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
+import { supabase } from '@/lib/supabase';
 
 const { width } = Dimensions.get('window');
 
@@ -44,6 +45,34 @@ export default function HomeScreen() {
     { id: '1', name: 'Tokyo, Japan', date: 'Jan 10-20, 2025', status: 'Planning', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=150&q=80' },
     { id: '2', name: 'Swiss Alps', date: 'Mar 5-12, 2025', status: 'Saved', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=150&q=80' },
   ]);
+  const [userName, setUserName] = useState('Traveler');
+
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  async function fetchProfile() {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // First try the profiles table
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        
+        if (data && data.full_name) {
+          setUserName(data.full_name);
+        } else if (user.user_metadata?.full_name) {
+          // Fallback to metadata if profile entry isn't synchronized yet
+          setUserName(user.user_metadata.full_name);
+        }
+      }
+    } catch (err) {
+      console.log('Error fetching profile:', err);
+    }
+  }
 
   const handleAddTrip = () => {
     if (newTripProps.name && newTripProps.date) {
@@ -71,7 +100,7 @@ export default function HomeScreen() {
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.greeting}>Welcome back! </Text>
-              <Text style={styles.userName}>Alex Traveler</Text>
+              <Text style={styles.userName}>{userName}</Text>
             </View>
             <TouchableOpacity style={styles.notifBtn}>
               <Ionicons name="notifications-outline" size={22} color={WayoraColors.darkGray} />

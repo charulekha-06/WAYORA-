@@ -8,6 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { WayoraColors } from '@/constants/Colors';
+import { supabase } from '@/lib/supabase';
+import { useEffect } from 'react';
+import { useRouter } from 'expo-router';
 
 // New color palette — deep purple/indigo/teal
 const PALETTE = {
@@ -45,12 +48,109 @@ const menu = [
 ];
 
 export default function ProfileScreen() {
+  const router = useRouter();
   const [avatarUri, setAvatarUri] = useState<string | null>(null);
   const [userName, setUserName] = useState('Alex Traveler');
   const [userLocation, setUserLocation] = useState('France');
   const [fetchingLocation, setFetchingLocation] = useState(false);
   const [editingName, setEditingName] = useState(false);
+  const [loading, setLoading] = useState(true);
   const nameInputRef = useRef<TextInput>(null);
+
+  const [userTrips, setUserTrips] = useState<any[]>([]);
+
+  useEffect(() => {
+    getProfile();
+    fetchTrips();
+  }, []);
+
+  async function getProfile() {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    const { data, error, status } = await supabase
+      .from('profiles')
+      .select(`username, full_name, avatar_url, location`)
+      .eq('id', user.id)
+      .single();
+
+    if (error && status !== 406) {
+      Alert.alert('Error', error.message);
+    }
+
+    if (data) {
+      setUserName(data.full_name || data.username || 'Traveler');
+      setAvatarUri(data.avatar_url);
+      setUserLocation(data.location || 'Unknown');
+    } else if (user.user_metadata?.full_name) {
+      setUserName(user.user_metadata.full_name);
+    }
+    setLoading(false);
+  }
+
+  async function fetchTrips() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('trips')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('start_date', { ascending: false });
+
+    if (error) {
+       console.error('Error fetching trips:', error.message);
+    } else {
+       setUserTrips(data || []);
+    }
+  }
+
+  async function updateProfile({
+    username,
+    full_name,
+    avatar_url,
+    location,
+  }: {
+    username?: string;
+    full_name?: string;
+    avatar_url?: string;
+    location?: string;
+  }) {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) throw new Error('No user on the session!');
+
+    const updates = {
+      id: user.id,
+      username,
+      full_name,
+      avatar_url,
+      location,
+      updated_at: new Date(),
+    };
+
+    const { error } = await supabase.from('profiles').upsert(updates);
+
+    if (error) {
+      Alert.alert('Error', error.message);
+    }
+    setLoading(false);
+  }
+
+  async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      Alert.alert('Error', error.message);
+    } else {
+      router.replace('/auth');
+    }
+  }
 
   const handleEditAvatar = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -90,6 +190,7 @@ export default function ProfileScreen() {
       if (address) {
         const locationStr = `${address.city || address.region}, ${address.country}`;
         setUserLocation(locationStr);
+        updateProfile({ location: locationStr });
       }
     } catch (error) {
       Alert.alert('Error', 'Could not fetch location.');
@@ -128,8 +229,14 @@ export default function ProfileScreen() {
                 value={userName}
                 onChangeText={setUserName}
                 style={styles.nameInput}
-                onBlur={() => setEditingName(false)}
-                onSubmitEditing={() => setEditingName(false)}
+                onBlur={() => {
+                  setEditingName(false);
+                   updateProfile({ full_name: userName });
+                }}
+                onSubmitEditing={() => {
+                  setEditingName(false);
+                  updateProfile({ full_name: userName });
+                }}
                 autoFocus
                 returnKeyType="done"
                 selectTextOnFocus
@@ -151,7 +258,7 @@ export default function ProfileScreen() {
 
           <View style={styles.stats}>
             <View style={styles.stat}>
-              <Text style={styles.statNum}>12</Text>
+              <Text style={styles.statNum}>{userTrips.length}</Text>
               <Text style={styles.statLabel}>Trips</Text>
             </View>
             <View style={styles.statDivider} />
@@ -192,24 +299,26 @@ export default function ProfileScreen() {
           <Text style={styles.cardTitle}>
             <Ionicons name="calendar-outline" size={16} color="#7C3AED" />{' '}Trip History
           </Text>
-          {trips.map(trip => (
-            <View key={trip.dest} style={styles.tripItem}>
-              <View style={[styles.tripIconWrap, { backgroundColor: trip.iconColor + '18' }]}>
-                <Ionicons name={trip.icon} size={20} color={trip.iconColor} />
+          {userTrips.map(trip => (
+            <View key={trip.id} style={styles.tripItem}>
+              <View style={[styles.tripIconWrap, { backgroundColor: PALETTE.gradientStart + '18' }]}>
+                <Ionicons name="map-outline" size={20} color={PALETTE.gradientStart} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.tripDest}>{trip.dest}</Text>
-                <Text style={styles.tripDates}>{trip.dates}</Text>
+                <Text style={styles.tripDest}>{trip.destination}</Text>
+                <Text style={styles.tripDates}>{new Date(trip.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</Text>
               </View>
-              {trip.status === 'Active' ? (
-                <View style={styles.activeBadge}>
-                  <Text style={styles.activeBadgeText}>{trip.daysLeft} days left</Text>
-                </View>
-              ) : (
-                <Text style={styles.completedText}>Completed</Text>
-              )}
+              <View style={styles.activeBadge}>
+                <Text style={styles.activeBadgeText}>View Details</Text>
+              </View>
             </View>
           ))}
+          {userTrips.length === 0 && (
+             <View style={{ padding: 20, alignItems: 'center' }}>
+                <Ionicons name="airplane-outline" size={32} color="#CBD5E1" />
+                <Text style={{ marginTop: 8, color: WayoraColors.gray, fontSize: 13 }}>No trips planned yet.</Text>
+             </View>
+          )}
         </View>
 
         {/* Settings */}
@@ -240,7 +349,7 @@ export default function ProfileScreen() {
               <Ionicons name="chevron-forward" size={16} color="#D1D5DB" />
             </TouchableOpacity>
           ))}
-          <TouchableOpacity style={styles.menuItem}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
             <Ionicons name="log-out-outline" size={20} color="#DC2626" />
             <Text style={[styles.menuLabel, { color: '#DC2626' }]}>Log Out</Text>
           </TouchableOpacity>

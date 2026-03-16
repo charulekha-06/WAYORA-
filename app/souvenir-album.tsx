@@ -2,51 +2,95 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
   StatusBar, Image, Dimensions, FlatList, useWindowDimensions,
-  ActivityIndicator
+  ActivityIndicator, Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as ImagePicker from 'expo-image-picker';
 
 // Removed static Dimensions calculation
 
-const MEMORIES = [
-  { id: '1', title: 'Sunset at Eiffel', date: 'Oct 12, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500&q=60' },
-  { id: '2', title: 'Louvre Morning', date: 'Oct 14, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&q=60' },
-  { id: '3', title: 'Café Culture', date: 'Oct 15, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=500&q=70' },
-  { id: '4', title: 'Riverside Walk', date: 'Oct 16, 2025', location: 'Paris, France', image: 'https://images.unsplash.com/photo-1440778303588-435521a205bc?w=500&q=60' },
+const STATIC_ACHIEVEMENTS = [
+  { id: '1', title: 'Paris Explorer', icon: 'map-outline' },
+  { id: '2', title: 'Art Connoisseur', icon: 'color-palette-outline' },
+  { id: '3', title: 'Local Foodie', icon: 'restaurant-outline' },
+  { id: '4', title: 'Eco Warrior', icon: 'leaf-outline' },
+  { id: '5', title: 'Global Nomad', icon: 'airplane-outline' },
+  { id: '6', title: 'Photo Master', icon: 'camera-outline' },
+  { id: '7', title: 'Hidden Gem Hunter', icon: 'search-outline' },
+  { id: '8', title: 'Budget Pro', icon: 'wallet-outline' },
+  { id: '9', title: 'Museum Buff', icon: 'business-outline' },
+  { id: '10', title: 'Night Owl', icon: 'moon-outline' },
+  { id: '11', title: 'Wellness Guru', icon: 'heart-outline' },
+  { id: '12', title: 'Artisan Scout', icon: 'hammer-outline' },
 ];
 
-const ACHIEVEMENTS = [
-  { id: '1', title: 'Paris Explorer', icon: 'map-outline', unlocked: true },
-  { id: '2', title: 'Art Connoisseur', icon: 'color-palette-outline', unlocked: true },
-  { id: '3', title: 'Local Foodie', icon: 'restaurant-outline', unlocked: true },
-  { id: '4', title: 'Eco Warrior', icon: 'leaf-outline', unlocked: true },
-  { id: '5', title: 'Global Nomad', icon: 'airplane-outline', unlocked: false },
-  { id: '6', title: 'Photo Master', icon: 'camera-outline', unlocked: false },
-  { id: '7', title: 'Hidden Gem Hunter', icon: 'search-outline', unlocked: false },
-  { id: '8', title: 'Budget Pro', icon: 'wallet-outline', unlocked: false },
-  { id: '9', title: 'Museum Buff', icon: 'business-outline', unlocked: false },
-  { id: '10', title: 'Night Owl', icon: 'moon-outline', unlocked: false },
-  { id: '11', title: 'Wellness Guru', icon: 'heart-outline', unlocked: false },
-  { id: '12', title: 'Artisan Scout', icon: 'hammer-outline', unlocked: false },
-];
+import { supabase } from '@/lib/supabase';
+import { useEffect } from 'react';
 
 export default function SouvenirAlbumScreen() {
   const router = useRouter();
   const { width } = useWindowDimensions();
   const [activeTab, setActiveTab] = useState('memories');
+  const [loading, setLoading] = useState(true);
+  const [memories, setMemories] = useState<any[]>([]);
+  const [achievements, setAchievements] = useState<any[]>([]);
   const [imageError, setImageError] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  async function fetchData() {
+    setLoading(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Use mock/static data for demo if not logged in
+      const mergedAchievements = STATIC_ACHIEVEMENTS.map(staticAch => ({
+        ...staticAch,
+        unlocked: false
+      }));
+      setAchievements(mergedAchievements);
+      setLoading(false);
+      return;
+    }
+
+    // Fetch Memories
+    const { data: memData } = await supabase
+      .from('memories')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false });
+    
+    setMemories(memData || []);
+
+    // Fetch Achievements (unlocked ones)
+    const { data: achData } = await supabase
+      .from('achievements')
+      .select('*')
+      .eq('user_id', user.id);
+    
+    // Merge with static list to show locked ones
+    const mergedAchievements = STATIC_ACHIEVEMENTS.map(staticAch => ({
+      ...staticAch,
+      unlocked: achData?.some((a: any) => a.badge_type === staticAch.title) || false
+    }));
+    
+    setAchievements(mergedAchievements);
+    setLoading(false);
+  }
 
   const handleImageError = (id: string) => {
     setImageError(prev => ({ ...prev, [id]: true }));
   };
 
-  const renderMemory = ({ item }: { item: typeof MEMORIES[0] }) => (
+  const renderMemory = ({ item }: { item: any }) => (
     <View key={item.id} style={[styles.memoryCard, { width: (width - 52) / 2 }]}>
       <Image 
-        source={{ uri: item.image }} 
+        source={{ uri: item.image_url }} 
         style={styles.memoryImage}
         onError={() => handleImageError(item.id)}
       />
@@ -68,7 +112,7 @@ export default function SouvenirAlbumScreen() {
     </View>
   );
 
-  const renderAchievement = (item: typeof ACHIEVEMENTS[0]) => (
+  const renderAchievement = (item: any) => (
     <View style={[styles.badgeCard, !item.unlocked && { opacity: 0.45 }]}>
       <View style={[styles.badgeIcon, !item.unlocked && styles.badgeLocked]}>
         <View style={[styles.badgeInner, item.unlocked && styles.badgeInnerUnlocked]}>
@@ -88,7 +132,60 @@ export default function SouvenirAlbumScreen() {
     </View>
   );
 
-  const unlockedCount = ACHIEVEMENTS.filter(a => a.unlocked).length;
+  const unlockedCount = achievements.filter(a => a.unlocked).length;
+
+  const [saving, setSaving] = useState(false);
+
+  const handleAddMemory = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission denied', 'We need photo library access to add memories!');
+      return;
+    }
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      router.push('/auth');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setSaving(true);
+      const imageUri = result.assets[0].uri;
+      
+      // In a real app, we'd upload imageUri to Supabase Storage here.
+      // For this implementation, we'll use a high-quality placeholder or the local URI 
+      // (noting that local URIs aren't truly persistent in the cloud, but valid for the UI demo)
+      // or we can simulate an upload to a public image service.
+      
+      const { error } = await supabase
+        .from('memories')
+        .insert([
+          {
+            user_id: user.id,
+            title: 'New Memory', // User would normally input this via a modal
+            location: 'Nearby',   // User would normally input this
+            image_url: imageUri,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+          }
+        ]);
+
+      if (error) {
+        Alert.alert('Error', error.message);
+      } else {
+        fetchData(); // Refresh list
+        Alert.alert('Success', 'Moment captured in your Souvenir Album!');
+      }
+      setSaving(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -101,8 +198,8 @@ export default function SouvenirAlbumScreen() {
             <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Souvenir Album</Text>
-          <TouchableOpacity style={styles.cameraBtn}>
-            <Ionicons name="camera" size={24} color={WayoraColors.taviPurple} />
+          <TouchableOpacity style={styles.cameraBtn} onPress={handleAddMemory} disabled={saving}>
+            {saving ? <ActivityIndicator size="small" color={WayoraColors.taviPurple} /> : <Ionicons name="camera" size={24} color={WayoraColors.taviPurple} />}
           </TouchableOpacity>
         </View>
 
@@ -121,30 +218,45 @@ export default function SouvenirAlbumScreen() {
           </TouchableOpacity>
         </View>
 
-        {activeTab === 'memories' ? (
-          <View style={styles.grid}>
-            {MEMORIES.map((m) => renderMemory({ item: m }))}
+        {loading ? (
+          <View style={{ marginTop: 100 }}>
+            <ActivityIndicator size="large" color={WayoraColors.taviPurple} />
+            <Text style={{ textAlign: 'center', marginTop: 10, color: WayoraColors.gray }}>Opening Album...</Text>
           </View>
         ) : (
-          <View style={styles.badgeGrid}>
-            {ACHIEVEMENTS.map((a) => (
-              <View key={a.id} style={[styles.badgeWrapper, { width: (width - 70) / 3 }]}>
-                {renderAchievement(a)}
+          <>
+            {activeTab === 'memories' ? (
+              <View style={styles.grid}>
+                {memories.map((m) => renderMemory({ item: m }))}
+                {memories.length === 0 && (
+                   <View style={{ flex: 1, height: 300, alignItems: 'center', justifyContent: 'center' }}>
+                      <Ionicons name="camera-outline" size={48} color="#CBD5E1" />
+                      <Text style={{ marginTop: 12, color: WayoraColors.gray, fontWeight: '600' }}>No memories captured yet.</Text>
+                   </View>
+                )}
               </View>
-            ))}
-          </View>
+            ) : (
+              <View style={styles.badgeGrid}>
+                {achievements.map((a) => (
+                  <View key={a.id} style={[styles.badgeWrapper, { width: (width - 70) / 3 }]}>
+                    {renderAchievement(a)}
+                  </View>
+                ))}
+              </View>
+            )}
+          </>
         )}
       </ScrollView>
 
       {/* Stats Summary Section */}
       <View style={styles.statsBar}>
          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{MEMORIES.length}</Text>
+            <Text style={styles.statValue}>{memories.length}</Text>
             <Text style={styles.statLabel}>Memories</Text>
          </View>
          <View style={styles.statDivider} />
          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{unlockedCount}/{ACHIEVEMENTS.length}</Text>
+            <Text style={styles.statValue}>{achievements.filter(a => a.unlocked).length}/{achievements.length}</Text>
             <Text style={styles.statLabel}>Badges</Text>
          </View>
          <View style={styles.statDivider} />
