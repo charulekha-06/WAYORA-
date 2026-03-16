@@ -10,61 +10,12 @@
 
 | Feature | Description |
 |---------|-------------|
-| 🏠 **Home Dashboard** | Upcoming trips with budget progress, quick actions, trending destinations |
-| 🤖 **AI Itinerary Planner** | Personalized day-wise itineraries by budget, interests, group type |
-| 💰 **Smart Budget Tracker** | Real-time expense tracking with category breakdowns and OCR scan |
-| 🗺️ **Explore Destinations** | Browse 10+ destinations with search & category filters |
-| 🏆 **Wandrix Badges** | Gamified badges earned by visiting sites and completing goals |
-| 👤 **User Profile** | Stats, trip history, settings, and badge showcase |
-
-## 🎨 Design
-
-- **Brand:** Coral `#E8637A` → Orange `#F28C38` gradient
-- **Active Nav:** Orange for tab bar active icons
-- **Emergency:** Soft Red `#E85D6F` for critical UI
-- **Status:** Green `#3CB371` for active indicators
-- **Typography:** System fonts with 800-weight headings
-
-## 🚀 Quick Start
-
-```bash
-# Clone
-git clone https://github.com/charulekha-06/WAYORA-.git
-cd WAYORA-
-
-# Install
-npm install
-
-# Run
-npx expo start
-```
-
-Then scan the QR code with **Expo Go** (iOS/Android), or press:
-- `i` for iOS Simulator
-- `a` for Android Emulator  
-- `w` for Web
-
-## 📁 Project Structure
-
-```
-wayora/
-├── app/
-│   ├── (tabs)/
-│   │   ├── _layout.tsx     # Tab navigation (5 tabs)
-│   │   ├── index.tsx       # Home screen
-│   │   ├── explore.tsx     # Explore destinations
-│   │   ├── planner.tsx     # AI Itinerary Planner
-│   │   ├── budget.tsx      # Smart Budget Tracker
-│   │   └── profile.tsx     # User Profile & Badges
-│   ├── _layout.tsx         # Root layout
-│   └── +not-found.tsx      # 404 screen
-├── constants/
-│   └── Colors.ts           # Wayora brand color palette
-├── components/             # Shared components
-├── assets/                 # Images, fonts
-├── app.json                # Expo config
-└── package.json
-```
+| 🏠 **Home Dashboard** | Real-time location detection (City/Country), upcoming trips, and budget progress. |
+| 🛡️ **Emergency Finder** | Real-time discovery of Hospitals, Pharmacies, and Restrooms within 25km via Overpass API. |
+| 🗺️ **Explore Nearby** | GPS-based local attractions and curated global destinations. |
+| 📍 **Smart Directions** | One-tap navigation to any discovered POI via Google Maps deep linking. |
+| ✅ **Hybrid To-Do List** | Smart task management with Supabase Cloud Sync and Local-only fallback for guests. |
+| 🤖 **AI Itinerary Planner** | Personalized day-wise itineraries by budget, interests, and group type. |
 
 ## 🛠️ Tech Stack
 
@@ -72,23 +23,24 @@ wayora/
 |-------|-----------|
 | **Framework** | React Native (Expo SDK 55) |
 | **Navigation** | Expo Router (file-based) |
-| **UI** | React Native StyleSheet, LinearGradient |
-| **Icons** | @expo/vector-icons (Ionicons) |
+| **Backend** | **Supabase** (Authentication & Database) |
+| **Location** | `expo-location` (GPS & Reverse Geocoding) |
+| **Data Sources** | **Overpass API (OpenStreetMap)** with Mirror Fallback |
+| **Maps** | Google Maps (Deep Linking) |
+| **UI** | React Native StyleSheet, LinearGradient, Ionicons |
 | **Language** | TypeScript |
 
-## 🛣️ Roadmap
+## 🚀 ROADMAP
 
-- [x] Home Dashboard
-- [x] Explore Destinations
+- [x] Home Dashboard (Location-Aware)
+- [x] Explore Destinations (Real-time Attractions)
+- [x] Emergency Finder (Overpass API + Google Maps)
+- [x] Smart To-Do List (Cloud + Local Mode)
+- [x] Supabase Authentication
 - [x] AI Itinerary Planner
-- [x] Smart Budget Tracker
-- [x] User Profile & Wandrix Badges
-- [ ] Firebase Authentication
-- [ ] OpenAI GPT Itinerary API
-- [ ] Google Places Emergency Finder
+- [ ] OpenAI GPT Itinerary API Integration
 - [ ] OCR Bill Scanning
 - [ ] Artisan Marketplace
-- [ ] Crowd Density Analysis
 
 ## 📝 License
 
