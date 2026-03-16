@@ -217,36 +217,54 @@ export default function EmergencyScreen() {
   const handleServicePress = async (service: string) => {
     setSearching(service);
     setSelectedCategory(service);
+    setResults(null); // Reset results
     
-    if (userLoc) {
+    let currentLoc = userLoc;
+    
+    // Attempt to re-fetch if location is missing
+    if (!currentLoc) {
+      const loc = await getCurrentLocation();
+      if (loc) {
+        currentLoc = loc;
+        setUserLoc(loc);
+        setCurrentLocation(loc.formattedAddress);
+      }
+    }
+    
+    if (currentLoc) {
       try {
-        const places = await fetchNearbyServices(userLoc.latitude, userLoc.longitude, service);
+        const places = await fetchNearbyServices(currentLoc.latitude, currentLoc.longitude, service, 5000);
         
         if (places.length > 0) {
-          const mappedResults: ServiceInfo[] = places.map((p, idx) => ({
+          const mappedResults: ServiceInfo[] = places.map((p) => ({
             id: p.id,
             name: p.name,
             category: p.category,
-            distance: 'Nearby', // We could calculate real distance here
+            distance: 'Nearby', 
             status: 'Open',
             address: p.address || 'Local area',
             rating: (4 + Math.random()).toFixed(1),
             reviews: Math.floor(Math.random() * 500).toString(),
             phone: 'N/A',
-            tags: Object.keys(p.tags || {}).slice(0, 3),
+            tags: Object.keys(p.tags || {}).slice(0, 3).filter(t => !t.startsWith('addr:') && !t.startsWith('osm_')),
             icon: 'location'
           }));
           setResults(mappedResults);
         } else {
-          // Fallback to mock if no results
-          setResults(MOCK_RESULTS[service] || []);
+          setResults([]); 
         }
       } catch (err) {
         console.error('Error fetching real services:', err);
-        setResults(MOCK_RESULTS[service] || []);
+        setResults([]);
       }
     } else {
-      setResults(MOCK_RESULTS[service] || []);
+      setSearching(null);
+      Alert.alert(
+        "Location Needed",
+        "We couldn't detect your location. Please check your GPS settings and try again.",
+        [{ text: "OK" }]
+      );
+      setResults([]);
     }
     
     setSearching(null);
@@ -420,21 +438,46 @@ export default function EmergencyScreen() {
             <View style={styles.resultsHeader}>
               <View>
                 <Text style={styles.resultsHeading}>Nearby {selectedCategory}</Text>
-                <Text style={styles.resultsCount}>{results?.length} found matches</Text>
+                <Text style={styles.resultsCount}>
+                  {results && results.length > 0 
+                    ? `${results.length} found matches` 
+                    : "No matches found nearby"}
+                </Text>
               </View>
               <TouchableOpacity onPress={() => setResults(null)} style={styles.closeResultsBtn}>
                 <Ionicons name="close" size={24} color={WayoraColors.black} />
               </TouchableOpacity>
             </View>
 
-            <FlatList
-              data={results}
-              renderItem={renderResultItem}
-              keyExtractor={(item) => item.id}
-              contentContainerStyle={{ padding: 20, paddingTop: 0 }}
-              showsVerticalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
-            />
+            {results && results.length === 0 ? (
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40 }}>
+                <Ionicons name="search-outline" size={64} color={WayoraColors.lightGray} />
+                <Text style={{ fontSize: 18, fontWeight: '700', color: WayoraColors.darkGray, marginTop: 20, textAlign: 'center' }}>
+                  No {selectedCategory} Found
+                </Text>
+                <Text style={{ fontSize: 14, color: WayoraColors.gray, textAlign: 'center', marginTop: 10 }}>
+                  We couldn't find any results within 10km of your current location. Try moving to a different area or check your internet connection.
+                </Text>
+                <TouchableOpacity 
+                  style={[styles.getDirectionsBtn, { marginTop: 30, paddingHorizontal: 30 }]}
+                  onPress={() => {
+                    setResults(null);
+                    fetchLocation();
+                  }}
+                >
+                  <Text style={styles.getDirectionsText}>Retry Location</Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <FlatList
+                data={results}
+                renderItem={renderResultItem}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{ padding: 20, paddingTop: 0 }}
+                showsVerticalScrollIndicator={false}
+                ItemSeparatorComponent={() => <View style={{ height: 15 }} />}
+              />
+            )}
           </View>
         </View>
       </Modal>
