@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  StatusBar, Dimensions, Alert, ActivityIndicator, Modal, FlatList
+  StatusBar, Dimensions, Alert, ActivityIndicator, Modal, FlatList, Linking
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -21,9 +21,10 @@ interface ServiceInfo {
   address: string;
   rating: string;
   reviews: string;
-  phone: string;
   tags: string[];
   icon: string;
+  lat?: number;
+  lon?: number;
 }
 
 const EMERGENCY_SERVICES = [
@@ -44,7 +45,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '185 Rue Raymond Losserand, 75014 Paris',
       rating: '4.1',
       reviews: '654 reviews',
-      phone: '+33 1 44 12 33 33',
       tags: ['Emergency', 'Surgery', 'Cardiology'],
       icon: 'business'
     },
@@ -57,7 +57,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '47-83 Bd de l\'Hôpital, 75013 Paris',
       rating: '4.3',
       reviews: '1.2k reviews',
-      phone: '+33 1 42 16 00 00',
       tags: ['Cardiology', 'Neurology', 'Urgences'],
       icon: 'medical'
     }
@@ -72,7 +71,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '12 Rue de Rivoli, 75004 Paris',
       rating: '4.5',
       reviews: '128 reviews',
-      phone: '+33 1 42 72 34 56',
       tags: ['Prescriptions', 'Vaccinations', 'English'],
       icon: 'medkit'
     },
@@ -85,7 +83,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '26 Rue du Four, 75006 Paris',
       rating: '4.4',
       reviews: '3.5k reviews',
-      phone: '+33 1 46 33 20 81',
       tags: ['Cosmetics', 'Expert Staff', 'Large Stock'],
       icon: 'bandage'
     }
@@ -100,7 +97,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '45 Boulevard Saint-Germain, 75005 Paris',
       rating: '3.8',
       reviews: '42 reviews',
-      phone: '3477',
       tags: ['24h Access', 'Withdrawal', 'English'],
       icon: 'cash'
     },
@@ -113,7 +109,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '12 Place de la Bastille, 75011 Paris',
       rating: '4.0',
       reviews: '15 reviews',
-      phone: '3933',
       tags: ['Touch Screen', 'Receipts', 'Safe'],
       icon: 'card'
     },
@@ -126,7 +121,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '52 Avenue des Champs-Élysées, 75008 Paris',
       rating: '4.2',
       reviews: '88 reviews',
-      phone: '+33 810 246 810',
       tags: ['Global Cards', 'Multi-Currency'],
       icon: 'card'
     }
@@ -141,7 +135,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: 'Place de la Concorde, 75008 Paris',
       rating: '3.5',
       reviews: '210 reviews',
-      phone: 'N/A',
       tags: ['Accessible', 'Self-Cleaning', 'Free'],
       icon: 'water'
     },
@@ -154,7 +147,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: 'Palais Royal, 75001 Paris',
       rating: '4.2',
       reviews: '50 reviews',
-      phone: 'N/A',
       tags: ['Clean', 'Infant Care', 'Paid'],
       icon: 'water'
     }
@@ -169,7 +161,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '9 Boulevard du Palais, 75004 Paris',
       rating: '4.0',
       reviews: '85 reviews',
-      phone: '17',
       tags: ['Passport Loss', 'Security', 'Urgences'],
       icon: 'shield-half'
     }
@@ -184,7 +175,6 @@ const MOCK_RESULTS: Record<string, ServiceInfo[]> = {
       address: '2 Avenue Gabriel, 75008 Paris',
       rating: '4.2',
       reviews: '150 reviews',
-      phone: '+33 1 43 12 22 22',
       tags: ['Visas', 'Passport Services', 'Citizenship'],
       icon: 'flag'
     }
@@ -233,7 +223,7 @@ export default function EmergencyScreen() {
     
     if (currentLoc) {
       try {
-        const places = await fetchNearbyServices(currentLoc.latitude, currentLoc.longitude, service, 5000);
+        const places = await fetchNearbyServices(currentLoc.latitude, currentLoc.longitude, service, 25000);
         
         if (places.length > 0) {
           const mappedResults: ServiceInfo[] = places.map((p) => ({
@@ -245,9 +235,10 @@ export default function EmergencyScreen() {
             address: p.address || 'Local area',
             rating: (4 + Math.random()).toFixed(1),
             reviews: Math.floor(Math.random() * 500).toString(),
-            phone: 'N/A',
             tags: Object.keys(p.tags || {}).slice(0, 3).filter(t => !t.startsWith('addr:') && !t.startsWith('osm_')),
-            icon: 'location'
+            icon: 'location',
+            lat: p.lat,
+            lon: p.lon
           }));
           setResults(mappedResults);
         } else {
@@ -268,6 +259,18 @@ export default function EmergencyScreen() {
     }
     
     setSearching(null);
+  };
+
+  const handleGetDirections = (item: ServiceInfo) => {
+    if (item.lat && item.lon) {
+      const url = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lon}`;
+      Linking.openURL(url).catch(err => {
+        console.error('Failed to open maps:', err);
+        Alert.alert("Error", "Could not open map application.");
+      });
+    } else {
+      Alert.alert("Location missing", "No coordinates available for this location.");
+    }
   };
 
   const handleSOS = () => {
@@ -311,9 +314,6 @@ export default function EmergencyScreen() {
         <Text style={styles.infoText}>
           <Text style={{ fontWeight: '700', color: WayoraColors.black }}>{item.rating}</Text> ({item.reviews})
         </Text>
-        <View style={{ width: 12 }} />
-        <Ionicons name="call" size={16} color={WayoraColors.black} />
-        <Text style={styles.infoText}>{item.phone}</Text>
       </View>
 
       <View style={styles.tagRow}>
@@ -325,12 +325,11 @@ export default function EmergencyScreen() {
       </View>
 
       <View style={styles.footerActions}>
-        <TouchableOpacity style={styles.getDirectionsBtn}>
+        <TouchableOpacity 
+          style={styles.getDirectionsBtn} 
+          onPress={() => handleGetDirections(item)}
+        >
           <Text style={styles.getDirectionsText}>Get Directions</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.callNowBtn}>
-          <Ionicons name="call-outline" size={18} color="#4F46E5" />
-          <Text style={styles.callNowText}>Call Now</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{ padding: 10 }}>
           <Text style={styles.detailsText}>Details</Text>
@@ -456,17 +455,8 @@ export default function EmergencyScreen() {
                   No {selectedCategory} Found
                 </Text>
                 <Text style={{ fontSize: 14, color: WayoraColors.gray, textAlign: 'center', marginTop: 10 }}>
-                  We couldn't find any results within 10km of your current location. Try moving to a different area or check your internet connection.
+                  We couldn't find any results within 25km of your location. Try a different category or area.
                 </Text>
-                <TouchableOpacity 
-                  style={[styles.getDirectionsBtn, { marginTop: 30, paddingHorizontal: 30 }]}
-                  onPress={() => {
-                    setResults(null);
-                    fetchLocation();
-                  }}
-                >
-                  <Text style={styles.getDirectionsText}>Retry Location</Text>
-                </TouchableOpacity>
               </View>
             ) : (
               <FlatList

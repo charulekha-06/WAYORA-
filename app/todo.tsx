@@ -50,6 +50,7 @@ export default function TodoScreen() {
   const [newCat, setNewCat] = useState<Category>('Pre-Trip');
   const [newPriority, setNewPriority] = useState<Priority>('Medium');
   const [newClass, setNewClass] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     fetchTodos();
@@ -86,42 +87,61 @@ export default function TodoScreen() {
   };
 
   const toggleTodo = async (id: string, currentStatus: boolean) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      // Local mode
+      setTodos(todos.map(t => t.id === id ? { ...t, completed: !currentStatus } : t));
+      return;
+    }
+
     const { error } = await supabase
       .from('todos')
       .update({ completed: !currentStatus })
       .eq('id', id);
 
     if (error) {
-      Alert.alert('Error', 'Could not update task');
+      console.error('Error updating todo:', error);
+      Alert.alert('Cloud Sync Error', 'Could not update task on cloud, but updated locally.');
+      // Still update locally for UX
+      setTodos(todos.map(t => t.id === id ? { ...t, completed: !currentStatus } : t));
     } else {
       setTodos(todos.map(t => t.id === id ? { ...t, completed: !currentStatus } : t));
     }
   };
 
   const deleteTodo = async (id: string) => {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      // Local mode
+      setTodos(todos.filter(t => t.id !== id));
+      return;
+    }
+
     const { error } = await supabase
       .from('todos')
       .delete()
       .eq('id', id);
 
     if (error) {
-      Alert.alert('Error', 'Could not delete task');
+      console.error('Error deleting todo:', error);
+      Alert.alert('Cloud Sync Error', 'Could not delete task from cloud.');
     } else {
       setTodos(todos.filter(t => t.id !== id));
     }
   };
 
   const addTask = async () => {
-    if (!newTask.trim()) return;
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      Alert.alert('Error', 'You must be logged in to add tasks');
+    if (!newTask.trim()) {
+      Alert.alert('Required', 'Please enter a task name');
       return;
     }
-
-    const newItem = {
-      user_id: user.id,
+    
+    setSubmitting(true);
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    const newItemData = {
       task: newTask,
       description: newDesc,
       category: newCat,
@@ -130,19 +150,47 @@ export default function TodoScreen() {
       completed: false,
     };
 
-    const { data, error } = await supabase
-      .from('todos')
-      .insert([newItem])
-      .select()
-      .single();
-
-    if (error) {
-      Alert.alert('Error', error.message);
-    } else {
-      setTodos([data, ...todos]);
-      setShowAddModal(false);
-      setNewTask(''); setNewDesc(''); setNewCat('Pre-Trip'); setNewPriority('Medium'); setNewClass('');
+    if (!user) {
+      // Guest Mode / Local Fallback
+      const localItem: TodoItem = {
+        ...newItemData,
+        id: Math.random().toString(36).substr(2, 9),
+      };
+      setTodos([localItem, ...todos]);
+      resetModal();
+      return;
     }
+
+    try {
+      const { data, error } = await supabase
+        .from('todos')
+        .insert([{ ...newItemData, user_id: user.id }])
+        .select()
+        .single();
+
+      if (error) throw error;
+      
+      setTodos([data, ...todos]);
+      resetModal();
+    } catch (error: any) {
+      console.error('Error adding task:', error);
+      Alert.alert('Cloud Sync Error', error.message || 'Could not save to cloud. Task added locally.');
+      // Add locally anyway for guest-like experience if sync fails
+      const localItem: TodoItem = {
+        ...newItemData,
+        id: Math.random().toString(36).substr(2, 9),
+      };
+      setTodos([localItem, ...todos]);
+      resetModal();
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const resetModal = () => {
+    setShowAddModal(false);
+    setNewTask(''); setNewDesc(''); setNewCat('Pre-Trip'); setNewPriority('Medium'); setNewClass('');
+    setSubmitting(false);
   };
 
   const renderSection = (title: string, cat: Category) => {
@@ -279,7 +327,7 @@ export default function TodoScreen() {
 
               <View style={styles.inputRow}>
                 <View style={{ flex: 1, marginRight: 12 }}>
-                  <Text style={styles.inputLabel}>Category</Text>
+                  <Text style={styles.inputLabel}>Tag / Classification</Text>
                   <TextInput style={styles.input} placeholder="e.g. Gear" value={newClass} onChangeText={setNewClass} />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -311,8 +359,16 @@ export default function TodoScreen() {
                 ))}
               </View>
 
-              <TouchableOpacity style={styles.submitBtn} onPress={addTask}>
-                <Text style={styles.submitBtnText}>Add Task</Text>
+              <TouchableOpacity 
+                style={[styles.submitBtn, submitting && { opacity: 0.7 }]} 
+                onPress={addTask}
+                disabled={submitting}
+              >
+                {submitting ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text style={styles.submitBtnText}>Add Task</Text>
+                )}
               </TouchableOpacity>
             </ScrollView>
           </View>

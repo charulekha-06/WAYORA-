@@ -84,7 +84,7 @@ export async function fetchNearbyServices(
 export async function fetchNearbyAttractions(
   lat: number,
   lon: number,
-  radius: number = 10000
+  radius: number = 25000
 ): Promise<Place[]> {
   const query = `
     [out:json][timeout:15];
