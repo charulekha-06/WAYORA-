@@ -5,7 +5,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { getCurrentLocation } from '@/lib/location';
+import { getCurrentLocation, UserLocation } from '@/lib/location';
+import { fetchNearbyAttractions, Place } from '@/lib/places';
 
 const { width } = Dimensions.get('window');
 
@@ -66,20 +67,28 @@ export default function ExploreScreen() {
   const [activeCategory, setActiveCategory] = useState('All');
   const [search, setSearch] = useState('');
   const [currentCity, setCurrentCity] = useState<string | null>(null);
+  const [nearbyPlaces, setNearbyPlaces] = useState<Place[]>([]);
   const [locLoading, setLocLoading] = useState(false);
 
-  useEffect(() => {
-    async function fetchLoc() {
-      setLocLoading(true);
-      const loc = await getCurrentLocation();
-      if (loc && loc.city) {
-        setCurrentCity(loc.city);
-      } else {
-        setCurrentCity('Nearby');
+  async function fetchLocAndData() {
+    setLocLoading(true);
+    const loc = await getCurrentLocation();
+    if (loc) {
+      setCurrentCity(loc.city || 'Nearby');
+      try {
+        const attractions = await fetchNearbyAttractions(loc.latitude, loc.longitude);
+        setNearbyPlaces(attractions);
+      } catch (err) {
+        console.error('Error fetching attractions:', err);
       }
-      setLocLoading(false);
+    } else {
+      setCurrentCity('Nearby');
     }
-    fetchLoc();
+    setLocLoading(false);
+  }
+
+  useEffect(() => {
+    fetchLocAndData();
   }, []);
 
   const filtered = destinations.filter(d => {
@@ -127,14 +136,38 @@ export default function ExploreScreen() {
         </View>
 
         <View style={{ marginBottom: 16 }}>
-          <View style={styles.locationTag}>
+          <TouchableOpacity 
+            style={styles.locationTag} 
+            onPress={fetchLocAndData}
+            disabled={locLoading}
+          >
             <Ionicons name={locLoading ? "sync" : "location"} size={14} color="#FF5A36" />
             <Text style={styles.locationTagText}>
               {locLoading ? "Discovering location..." : `Discover near ${currentCity || "Nearby"}`}
             </Text>
-          </View>
-          <Text style={styles.resultCount}>{filtered.length} destinations found</Text>
+          </TouchableOpacity>
+          <Text style={styles.resultCount}>{filtered.length} curated destinations found</Text>
         </View>
+
+        {/* Real-time Nearby Places */}
+        {nearbyPlaces.length > 0 && (
+          <View style={{ marginBottom: 30 }}>
+            <Text style={[styles.resultCount, { fontSize: 18, color: '#111827', fontWeight: '800' }]}>
+              Real-time Nearby Attractions
+            </Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 10 }}>
+              {nearbyPlaces.map((place) => (
+                <View key={place.id} style={styles.nearbyPlaceItem}>
+                  <View style={styles.nearbyIconBox}>
+                    <Ionicons name="map-outline" size={20} color="#FF5A36" />
+                  </View>
+                  <Text style={styles.nearbyPlaceName} numberOfLines={1}>{place.name}</Text>
+                  <Text style={styles.nearbyPlaceType}>{place.category}</Text>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
+        )}
         
         {filtered.map((dest, idx) => (
           <TouchableOpacity key={dest.name} style={styles.card} onPress={() => router.push('/itinerary' as any)}>
@@ -225,4 +258,8 @@ const styles = StyleSheet.create({
   planBtn: { fontSize: 15, fontWeight: '800', color: '#FF5A36' },
   locationTag: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8, backgroundColor: '#FFF', alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: '#FF5A36' },
   locationTagText: { fontSize: 12, fontWeight: '700', color: '#FF5A36' },
+  nearbyPlaceItem: { width: 140, marginRight: 15, backgroundColor: '#FFF', padding: 15, borderRadius: 20, borderWidth: 1, borderColor: '#E5E7EB' },
+  nearbyIconBox: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#FFF0ED', alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
+  nearbyPlaceName: { fontSize: 13, fontWeight: '700', color: '#111827' },
+  nearbyPlaceType: { fontSize: 11, color: '#6B7280', marginTop: 2, textTransform: 'capitalize' },
 });
