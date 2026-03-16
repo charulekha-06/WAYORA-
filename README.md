@@ -1,99 +1,72 @@
-# 🌍 Wayora — Travel Beyond Maps, Explore Beyond Limits
+# 🌍 Wayora: The Ultimate Real-Time Travel Companion
 
-**Wayora** is an AI-powered, all-in-one travel platform built with **React Native (Expo)**. It provides personalized trip planning, smart budgeting, safety tools, and gamified exploration.
-
-![React Native](https://img.shields.io/badge/React_Native-Expo_55-61DAFB?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
-![License](https://img.shields.io/badge/License-MIT-green)
-
-## ✨ Features
-
-| Feature | Description |
-|---------|-------------|
-| 🏠 **Home Dashboard** | Upcoming trips with budget progress, quick actions, trending destinations |
-| 🤖 **AI Itinerary Planner** | Personalized day-wise itineraries by budget, interests, group type |
-| 💰 **Smart Budget Tracker** | Real-time expense tracking with category breakdowns and OCR scan |
-| 🗺️ **Explore Destinations** | Browse 10+ destinations with search & category filters |
-| 🏆 **Wandrix Badges** | Gamified badges earned by visiting sites and completing goals |
-| 👤 **User Profile** | Stats, trip history, settings, and badge showcase |
-
-## 🎨 Design
-
-- **Brand:** Coral `#E8637A` → Orange `#F28C38` gradient
-- **Active Nav:** Orange for tab bar active icons
-- **Emergency:** Soft Red `#E85D6F` for critical UI
-- **Status:** Green `#3CB371` for active indicators
-- **Typography:** System fonts with 800-weight headings
-
-## 🚀 Quick Start
-
-```bash
-# Clone
-git clone https://github.com/charulekha-06/WAYORA-.git
-cd WAYORA-
-
-# Install
-npm install
-
-# Run
-npx expo start
-```
-
-Then scan the QR code with **Expo Go** (iOS/Android), or press:
-- `i` for iOS Simulator
-- `a` for Android Emulator  
-- `w` for Web
-
-## 📁 Project Structure
-
-```
-wayora/
-├── app/
-│   ├── (tabs)/
-│   │   ├── _layout.tsx     # Tab navigation (5 tabs)
-│   │   ├── index.tsx       # Home screen
-│   │   ├── explore.tsx     # Explore destinations
-│   │   ├── planner.tsx     # AI Itinerary Planner
-│   │   ├── budget.tsx      # Smart Budget Tracker
-│   │   └── profile.tsx     # User Profile & Badges
-│   ├── _layout.tsx         # Root layout
-│   └── +not-found.tsx      # 404 screen
-├── constants/
-│   └── Colors.ts           # Wayora brand color palette
-├── components/             # Shared components
-├── assets/                 # Images, fonts
-├── app.json                # Expo config
-└── package.json
-```
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| **Framework** | React Native (Expo SDK 55) |
-| **Navigation** | Expo Router (file-based) |
-| **UI** | React Native StyleSheet, LinearGradient |
-| **Icons** | @expo/vector-icons (Ionicons) |
-| **Language** | TypeScript |
-
-## 🛣️ Roadmap
-
-- [x] Home Dashboard
-- [x] Explore Destinations
-- [x] AI Itinerary Planner
-- [x] Smart Budget Tracker
-- [x] User Profile & Wandrix Badges
-- [ ] Firebase Authentication
-- [ ] OpenAI GPT Itinerary API
-- [ ] Google Places Emergency Finder
-- [ ] OCR Bill Scanning
-- [ ] Artisan Marketplace
-- [ ] Crowd Density Analysis
-
-## 📝 License
-
-MIT License
+**Wayora** is a high-performance, safety-first travel management application developed with **React Native (Expo)** and **Supabase**. Unlike static planners, Wayora focuses on **real-time resilience**—providing travelers with critical information and task persistence even in unpredictable environments.
 
 ---
 
-<p align="center">Made with ❤️ for travelers worldwide<br/><strong>Wayora</strong> — Travel, Reimagined.</p>
+## 🚀 The Core Idea
+Wayora was born from the need for a travel app that doesn't just plan, but **protects and adapts**. Whether you are looking for a hospital in an unfamiliar city or managing trip tasks without a stable internet connection, Wayora is built to be your reliable "Digital Travel Partner."
+
+---
+
+## ✨ Key Technical Features
+
+### 📡 Emergency Finder (Live POI Integration)
+The crown jewel of Wayora's safety suite. It doesn't rely on static databases or expensive proprietary APIs.
+*   **Overpass API (OpenStreetMap)**: Utilizes live OSM data to find Hospitals, Pharmacies, and Restrooms within a **25km radius**.
+*   **Multi-Mirror Fallback**: Implements a robust "Mirror Logic" that automatically cycles through multiple global Overpass servers (kumiho, harmonia, etc.) to ensure zero downtime.
+*   **Smart Directions**: Seamlessly hands over coordinates to **Google Maps** via deep-linking for precise, multi-modal navigation.
+
+### ✅ Hybrid Task Management (Cloud + Local)
+A smart persistence layer designed for the fluid nature of travel.
+*   **Supabase Real-Time**: Instant cloud synchronization for logged-in users.
+*   **Local-First Architecture**: When offline or as a guest, the app maintains your data in local state, ensuring you never lose your "Trip Readiness" status.
+*   **Priority & Phase Logic**: Categorizes tasks into **Pre-Trip**, **On-Trip**, and **After-Trip** to keep your focus on what matters now.
+
+### 🏠 Contextual Dashboard
+*   **Reverse Geocoding**: Uses `expo-location` to translate GPS coordinates into readable City/Country data.
+*   **Progressive UI**: Dynamic progress bars and budget trackers that update in real-time as you cross off tasks or add expenses.
+
+---
+
+## 🛠️ Tech Stack & APIs
+
+| Layer | Technology | Usage |
+|-------|-----------|-------|
+| **Frontend** | **React Native / Expo 55** | Cross-platform UI with native performance. |
+| **Backend** | **Supabase** | Cloud Database (PostgreSQL) & Authentication. |
+| **PGRS Error Handling** | **SQL Schema** | Optimized `todos` table with RLS (Row Level Security). |
+| **Location** | **Expo Location** | GPS & Geocoding services. |
+| **Data API** | **Overpass API (OSM)** | Real-time Point of Interest (POI) discovery. |
+| **Navigation** | **Google Maps API** | Deep-link routing for emergency directions. |
+| **Styling** | **Linear Gradient** | Premium visual branding and 800-weight typography. |
+
+---
+
+## 🎨 Design System
+*   **Branding**: `Coral #E8637A` ↔ `Orange #F28C38` (Optimized for outdoor legibility).
+*   **UX Pattern**: Minimalist, card-based grid systems for rapid one-handed use during travel.
+
+---
+
+## 🛠️ Setup Instructions
+
+1.  **Clone & Install**
+    ```bash
+    git clone https://github.com/charulekha-06/WAYORA-.git
+    cd WAYORA-
+    npm install
+    ```
+2.  **Environment Variables**
+    Add `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` to your `.env`.
+3.  **Database Migration**
+    Run the `schema.sql` found in the root directory in your Supabase SQL editor.
+4.  **Launch**
+    `npx expo start`
+
+---
+
+<p align="center">
+  **Wayora — Travel Beyond Limits.** <br/>
+  Powered by Open Data. Protected by Real-Time Tech.
+</p>
