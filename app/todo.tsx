@@ -261,7 +261,16 @@ export default function TodoScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+          <TouchableOpacity 
+            onPress={() => {
+              if (router.canGoBack()) {
+                router.back();
+              } else {
+                router.replace('/');
+              }
+            }} 
+            style={styles.backBtn}
+          >
             <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>To Do List</Text>

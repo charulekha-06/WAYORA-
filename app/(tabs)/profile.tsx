@@ -84,7 +84,7 @@ export default function ProfileScreen() {
     }
 
     if (data) {
-      setUserName(data.full_name || data.username || 'Traveler');
+      setUserName(data.full_name || data.username || user.user_metadata?.full_name || 'Traveler');
       setAvatarUri(data.avatar_url);
       setUserLocation(data.location || 'Unknown');
     } else if (user.user_metadata?.full_name) {

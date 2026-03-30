@@ -1,0 +1,1 @@
+Error data: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'totally_fake_column' column of 'trips' in the schema cache"}

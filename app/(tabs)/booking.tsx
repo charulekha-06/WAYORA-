@@ -4,6 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { WayoraColors } from '@/constants/Colors';
 import { useRouter } from 'expo-router';
+import { supabase } from '@/lib/supabase';
+import { fetchBookingItems } from '@/lib/places';
+import { geocodeCityNominatim } from '@/lib/location';
+import { ActivityIndicator } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -81,6 +85,49 @@ const FEATURED_DEALS = [
 
 function BookingTab() {
   const router = useRouter();
+  const [deals, setDeals] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [destination, setDestination] = React.useState('Paris, France');
+
+  React.useEffect(() => {
+    const loadDeals = async () => {
+      try {
+        let dest = 'Paris, France';
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+          const { data } = await supabase.from('trips').select('destination').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(1);
+          if (data && data.length > 0 && data[0].destination) {
+            dest = data[0].destination;
+          }
+        }
+        setDestination(dest);
+
+        const geocoded = await geocodeCityNominatim(dest);
+        if (geocoded) {
+          const liveData = await fetchBookingItems(geocoded.latitude, geocoded.longitude, 'hotel');
+          const fallbackImg = 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=400&q=80';
+          const formatted = liveData.slice(0, 5).map((item: any, i: number) => ({
+            id: item.id,
+            name: item.name,
+            subtitle: 'Featured Deal',
+            price: item.price,
+            unit: '/night',
+            rating: item.rating,
+            image: `${fallbackImg}&random=deal${i}`,
+            type: 'hotel',
+            location: dest
+          }));
+          setDeals(formatted);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDeals();
+  }, []);
+
   const categories = [
     { id: 'hotel', label: 'Hotels', icon: 'business', color: '#FF5A36' },
     { id: 'flight', label: 'Flights', icon: 'airplane', color: '#00A3FF' },
@@ -121,39 +168,47 @@ function BookingTab() {
         </View>
       ))}
 
-      <Text style={styles.sectionTitle}>Featured Deals</Text>
+      <Text style={styles.sectionTitle}>Featured Deals ({destination})</Text>
       
-      {FEATURED_DEALS.map(deal => (
-        <TouchableOpacity 
-          key={deal.id} 
-          style={styles.dealCard}
-          onPress={() => router.push({
-            pathname: '/booking-details',
-            params: { id: deal.id, category: deal.type, name: deal.name, price: deal.price, image: deal.image, location: 'Paris, France' }
-          } as any)}
-        >
-          <Image source={{ uri: deal.image }} style={styles.dealImage} />
-          <View style={styles.dealInfo}>
-            <View style={styles.dealTitleRow}>
-              <Text style={styles.dealName}>{deal.name}</Text>
-              <Ionicons name="heart-outline" size={18} color="#D1D5DB" />
+      {loading ? (
+        <View style={{ marginTop: 20, alignItems: 'center' }}>
+          <ActivityIndicator size="small" color={WayoraColors.taviPurple} />
+          <Text style={{ marginTop: 10, color: WayoraColors.gray }}>Loading live deals...</Text>
+        </View>
+      ) : (
+        deals.map(deal => (
+          <TouchableOpacity 
+            key={deal.id} 
+            style={styles.dealCard}
+            activeOpacity={0.9}
+            onPress={() => router.push({
+              pathname: '/booking-details',
+              params: { id: deal.id, category: deal.type, name: deal.name, price: String(deal.price), image: deal.image, location: deal.location }
+            } as any)}
+          >
+            <Image source={{ uri: deal.image }} style={styles.dealImage} />
+            <View style={styles.dealInfo}>
+              <View style={styles.dealTitleRow}>
+                <Text style={styles.dealName} numberOfLines={1}>{deal.name}</Text>
+                <Ionicons name="heart-outline" size={18} color="#D1D5DB" />
+              </View>
+              <Text style={styles.dealSubtitle}>{deal.subtitle}</Text>
+              <View style={styles.ratingRow as any}>
+                <Ionicons name="star" size={14} color="#FBBF24" />
+                <Text style={styles.ratingText}>{deal.rating}</Text>
+              </View>
+              <View style={styles.priceRow}>
+                <Text style={styles.priceText}><Text style={styles.priceAmount}>${deal.price}</Text>{deal.unit}</Text>
+                {deal.discount && (
+                  <View style={styles.discountBadge}>
+                    <Text style={styles.discountText}>{deal.discount}</Text>
+                  </View>
+                )}
+              </View>
             </View>
-            <Text style={styles.dealSubtitle}>{deal.subtitle}</Text>
-            <View style={styles.ratingRow as any}>
-              <Ionicons name="star" size={14} color="#FBBF24" />
-              <Text style={styles.ratingText}>{deal.rating}</Text>
-            </View>
-            <View style={styles.priceRow}>
-              <Text style={styles.priceText}><Text style={styles.priceAmount}>${deal.price}</Text>{deal.unit}</Text>
-              {deal.discount && (
-                <View style={styles.discountBadge}>
-                  <Text style={styles.discountText}>{deal.discount}</Text>
-                </View>
-              )}
-            </View>
-          </View>
-        </TouchableOpacity>
-      ))}
+          </TouchableOpacity>
+        ))
+      )}
     </View>
   );
 }

@@ -42,10 +42,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const [showAddTrip, setShowAddTrip] = useState(false);
   const [newTripProps, setNewTripProps] = useState({ name: '', date: '' });
-  const [upcomingTrips, setUpcomingTrips] = useState([
-    { id: '1', name: 'Tokyo, Japan', date: 'Jan 10-20, 2025', status: 'Planning', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=150&q=80' },
-    { id: '2', name: 'Swiss Alps', date: 'Mar 5-12, 2025', status: 'Saved', image: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?auto=format&fit=crop&w=150&q=80' },
-  ]);
+  const [upcomingTrips, setUpcomingTrips] = useState<any[]>([]);
   const [userName, setUserName] = useState('Traveler');
   const [currentLocation, setCurrentLocation] = useState<string | null>(null);
   const [locLoading, setLocLoading] = useState(false);
@@ -53,7 +50,29 @@ export default function HomeScreen() {
   useEffect(() => {
     fetchProfile();
     fetchLocation();
+    fetchTrips();
   }, []);
+
+  async function fetchTrips() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data, error } = await supabase
+      .from('trips')
+      .select('id, destination, start_date')
+      .eq('user_id', user.id)
+      .order('start_date', { ascending: false });
+
+    if (data) {
+      setUpcomingTrips(data.map((trip: any) => ({
+        id: trip.id,
+        name: trip.destination,
+        date: new Date(trip.start_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+        status: 'Planning',
+        image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=150&q=80'
+      })));
+    }
+  }
 
   async function fetchLocation() {
     setLocLoading(true);
@@ -89,18 +108,41 @@ export default function HomeScreen() {
     }
   }
 
-  const handleAddTrip = () => {
+  const handleAddTrip = async () => {
     if (newTripProps.name && newTripProps.date) {
-      setUpcomingTrips([
-        ...upcomingTrips,
-        {
-          id: Date.now().toString(),
-          name: newTripProps.name,
-          date: newTripProps.date,
-          status: 'Planning',
-          image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=150&q=80' // default travel plane image
-        }
-      ]);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      let parsedDate = new Date();
+      try {
+        const datePart = newTripProps.date.split('-')[0];
+        const d = new Date(datePart + " " + new Date().getFullYear());
+        if (!isNaN(d.getTime())) parsedDate = d;
+      } catch (e) {}
+
+      const newTrip = {
+        user_id: user.id,
+        destination: newTripProps.name,
+        start_date: parsedDate.toISOString(),
+      };
+
+      const { data, error } = await supabase.from('trips').insert([newTrip]).select().single();
+
+      if (!error && data) {
+        setUpcomingTrips([
+          {
+            id: data.id,
+            name: data.destination,
+            date: newTripProps.date,
+            status: 'Planning',
+            image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=150&q=80'
+          },
+          ...upcomingTrips
+        ]);
+      } else {
+        console.error('Error adding trip to database:', error);
+      }
+
       setNewTripProps({ name: '', date: '' });
       setShowAddTrip(false);
     }

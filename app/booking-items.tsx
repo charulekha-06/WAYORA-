@@ -4,6 +4,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { supabase } from '@/lib/supabase';
+import { fetchBookingItems } from '@/lib/places';
+import { geocodeCityNominatim } from '@/lib/location';
+import { ActivityIndicator } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -50,9 +54,13 @@ const BOOKING_DATA = {
 
 export default function BookingItemsScreen() {
   const router = useRouter();
-  const { categoryId, categoryName } = useLocalSearchParams<{ categoryId: keyof typeof BOOKING_DATA; categoryName: string }>();
+  const { categoryId, categoryName } = useLocalSearchParams<{ categoryId: string; categoryName: string }>();
   const [searchQuery, setSearchQuery] = useState('');
   const [cart, setCart] = useState<Record<string, number>>({});
+  
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [destination, setDestination] = useState<string>('');
 
   const cartCount = useMemo(() => Object.values(cart).reduce((sum, count) => sum + count, 0), [cart]);
 
@@ -63,44 +71,111 @@ export default function BookingItemsScreen() {
     }));
   };
 
-  const items = useMemo(() => {
-    const categoryItems = BOOKING_DATA[categoryId] || [];
-    if (!searchQuery) return categoryItems;
-    return categoryItems.filter(item => 
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      item.location.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [categoryId, searchQuery]);
+  // Fetch destination from latest trip, then fetch items
+  React.useEffect(() => {
+    const initData = async () => {
+      let dest = 'Paris, France'; // fallback
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+          const { data } = await supabase
+            .from('trips')
+            .select('destination')
+            .eq('user_id', session.user.id)
+            .order('created_at', { ascending: false })
+            .limit(1);
+          if (data && data.length > 0 && data[0].destination) {
+            dest = data[0].destination;
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching trip config:', e);
+      }
+      setDestination(dest);
+      fetchLiveItems(dest);
+    };
+    initData();
+  }, [categoryId]);
+
+  const fetchLiveItems = async (locContext: string) => {
+    setLoading(true);
+    try {
+      const geocoded = await geocodeCityNominatim(locContext);
+      if (!geocoded) {
+        throw new Error('Location not found');
+      }
+      const { latitude, longitude } = geocoded;
+
+      const liveData = await fetchBookingItems(latitude, longitude, categoryId || 'hotel');
+      
+      const imageMap: Record<string, string> = {
+        hotel: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80',
+        flight: 'https://images.unsplash.com/photo-1436491865332-7a61a109c0f3?w=600&q=80',
+        transport: 'https://images.unsplash.com/photo-1474487056207-5d7d76e535cd?w=600&q=80',
+        car: 'https://images.unsplash.com/photo-1560958089-b8a1929cea89?w=600&q=80',
+        activities: 'https://images.unsplash.com/photo-1548544149-4835e62ee5b3?w=600&q=80',
+        food: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?w=600&q=80'
+      };
+      
+      const fallbackImg = imageMap[categoryId as string] || imageMap.hotel;
+      const formattedItems = liveData.map((item, index) => ({ 
+        ...item, 
+        // Force the fallback image since the AI sometimes hallucinates broken URL strings.
+        // Append a unique random param to bypass aggressive browser image caching/duplication blocking.
+        image: `${fallbackImg}&random=${index}`
+      }));
+      setItems(formattedItems);
+    } catch (e) {
+      console.error(e);
+      setItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Allow forcing a new search
+  const handleManualSearch = () => {
+    if (searchQuery.trim()) {
+      setDestination(searchQuery.trim());
+      fetchLiveItems(searchQuery.trim());
+    }
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/booking')} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={WayoraColors.black} />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>{categoryName || 'Search'}</Text>
-          <TouchableOpacity style={styles.filterButton}>
-            <Ionicons name="options-outline" size={22} color={WayoraColors.black} />
-          </TouchableOpacity>
+          <View style={{ width: 44 }} />
         </View>
 
-        {/* Search Bar */}
         <View style={styles.searchSection}>
+          <Text style={{fontSize: 13, color: WayoraColors.gray, marginBottom: 8}}>Showing results for: {destination}</Text>
           <View style={styles.searchBar}>
             <Ionicons name="search" size={20} color={WayoraColors.gray} />
             <TextInput 
               style={styles.searchInput}
-              placeholder={`Search ${categoryName?.toLowerCase() || 'items'}...`}
+              placeholder={`Search ${categoryName?.toLowerCase() || 'items'} elsewhere...`}
               placeholderTextColor="#94A3B8"
               value={searchQuery}
               onChangeText={setSearchQuery}
+              onSubmitEditing={handleManualSearch}
             />
           </View>
         </View>
+
+        {loading ? (
+          <View style={{ marginTop: 50, alignItems: 'center' }}>
+            <ActivityIndicator size="large" color={WayoraColors.taviPurple} />
+            <Text style={{ marginTop: 15, color: WayoraColors.gray }}>Finding the best real options...</Text>
+          </View>
+        ) : (
+          <>
 
         {items.map((item) => (
           <TouchableOpacity 
@@ -150,11 +225,11 @@ export default function BookingItemsScreen() {
                     >
                       <Ionicons name="add" size={18} color="white" />
                       <Text style={styles.addButtonText}>Add</Text>
-                      {cart[item.id] > 0 && (
+                      {cart[item.id] > 0 ? (
                         <View style={styles.itemBadge}>
                           <Text style={styles.itemBadgeText}>{cart[item.id]}</Text>
                         </View>
-                      )}
+                      ) : null}
                     </TouchableOpacity>
                   )}
                 </View>
@@ -163,28 +238,29 @@ export default function BookingItemsScreen() {
           </TouchableOpacity>
         ))}
 
-        {items.length === 0 && (
+        {!loading && items.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="search-outline" size={64} color={WayoraColors.taviBg} />
-            <Text style={styles.emptyText}>No results found for your search.</Text>
+            <Text style={styles.emptyText}>No live results found.</Text>
           </View>
+        ) : null}
+          </>
         )}
       </ScrollView>
 
-      {/* Floating Cart for Food Category */}
-      {categoryId === 'food' && (
+      {categoryId === 'food' ? (
         <TouchableOpacity 
           style={styles.floatingCart}
           onPress={() => router.push('/payment' as any)}
         >
           <Ionicons name="bag-handle" size={28} color="white" />
-          {cartCount > 0 && (
+          {cartCount > 0 ? (
             <View style={styles.floatingBadge}>
               <Text style={styles.floatingBadgeText}>{cartCount}</Text>
             </View>
-          )}
+          ) : null}
         </TouchableOpacity>
-      )}
+      ) : null}
     </View>
   );
 }

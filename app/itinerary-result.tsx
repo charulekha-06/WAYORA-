@@ -5,6 +5,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '@/lib/supabase';
+import { generateItineraryData } from '@/lib/gemini';
 
 export default function ItineraryResultScreen() {
   const router = useRouter();
@@ -12,41 +13,37 @@ export default function ItineraryResultScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    // Simulate generation delay
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
+  const [itineraryData, setItineraryData] = useState<any[]>([]);
 
   const interestList = (interests as string || '').split(',');
   const dayCount = parseInt(days as string) || 3;
 
-  const getDayPlan = (day: number) => {
-    const plans: Record<string, any[]> = {
-      'culture': [
-        { time: '09:00 AM', activity: 'Historical Museum Visit', desc: 'Dive into the local heritage and artifacts.' },
-        { time: '02:00 PM', activity: 'Old Town Walking Tour', desc: 'Explore ancient architecture and stories.' }
-      ],
-      'food': [
-        { time: '12:00 PM', activity: 'Street Food Discovery', desc: 'Taste the most authentic local flavors.' },
-        { time: '07:30 PM', activity: 'Traditional Dinner Experience', desc: 'A curated multicourse meal.' }
-      ],
-      'adventure': [
-        { time: '10:00 AM', activity: 'Outdoor Expedition', desc: 'A thrilling morning hike or activity.' },
-        { time: '03:00 PM', activity: 'Zipline Adventure', desc: 'Get a bird\'s eye view of the landscape.' }
-      ]
-    };
-
-    // Default plan if no interests match
-    const basePlan = [
-      { time: '10:00 AM', activity: `${dest} Main Landmark`, desc: 'The most iconic spot in the city.' },
-      { time: '01:00 PM', activity: 'Local Market Exploration', desc: 'Browse unique souvenirs and crafts.' },
-      { time: '04:00 PM', activity: 'Scenic Park Relax', desc: 'Enjoy the atmosphere like a local.' }
-    ];
-
-    const selectedPlan = plans[interestList[0]] || basePlan;
-    return selectedPlan;
-  };
+  useEffect(() => {
+    async function fetchItinerary() {
+      try {
+        const data = await generateItineraryData(
+          dest as string, 
+          dayCount, 
+          budget as string, 
+          group as string, 
+          interestList
+        );
+        setItineraryData(data);
+      } catch (error: any) {
+        if (error.message === 'API_KEY_MISSING') {
+            Alert.alert(
+              'API Key Required',
+              'To generate real itineraries, please open `.env` and paste your actual Google Gemini API Key where it says YOUR_API_KEY_HERE, then restart the server.'
+            );
+        } else {
+            Alert.alert('Error', error.message || 'Failed to generate itinerary. Please try again.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchItinerary();
+  }, [dest, days, budget, group, interests]);
 
   const handleSaveTrip = async () => {
     setSaving(true);
@@ -61,10 +58,8 @@ export default function ItineraryResultScreen() {
       return;
     }
 
-    const fullItinerary = Array.from({ length: dayCount }).map((_, i) => ({
-      day: i + 1,
-      activities: getDayPlan(i + 1)
-    }));
+    // the dynamic itinerary object is already saved in state
+    const fullItinerary = itineraryData;
 
     const { error } = await supabase
       .from('trips')
@@ -149,17 +144,17 @@ export default function ItineraryResultScreen() {
 
         {/* Day-by-Day */}
         <View style={styles.itinerarySection}>
-          {Array.from({ length: dayCount }).map((_, i) => (
+          {itineraryData.map((dayData, i) => (
             <View key={i} style={styles.dayBlock}>
               <View style={styles.dayHeader}>
                 <View style={styles.dayCircle}>
-                  <Text style={styles.dayCircleText}>{i + 1}</Text>
+                  <Text style={styles.dayCircleText}>{dayData.day}</Text>
                 </View>
-                <Text style={styles.dayTitle}>Day {i + 1}</Text>
+                <Text style={styles.dayTitle}>Day {dayData.day}</Text>
               </View>
 
-              <View style={[styles.dayContent, i === dayCount - 1 && { borderLeftColor: 'transparent' }]}>
-                {getDayPlan(i + 1).map((item, idx) => (
+              <View style={[styles.dayContent, i === itineraryData.length - 1 && { borderLeftColor: 'transparent' }]}>
+                {(dayData.activities || []).map((item: any, idx: number) => (
                   <View key={idx} style={styles.activityCard}>
                     <View style={styles.timeLabel}>
                       <Text style={styles.timeText}>{item.time}</Text>

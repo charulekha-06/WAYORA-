@@ -8,6 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { generatePostContent } from '@/lib/gemini';
 
 const { width } = Dimensions.get('window');
 
@@ -38,29 +39,25 @@ export default function PostGeneratorScreen() {
   const [generatedPost, setGeneratedPost] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const generatePost = () => {
+  const generatePost = async () => {
     if (!dest) return;
     setIsGenerating(true);
     
-    // Simulation delay
-    setTimeout(() => {
-      let post = '';
-      const place = dest.charAt(0).toUpperCase() + dest.slice(1);
-      const items = highlights ? highlights.toLowerCase() : 'the beautiful architecture and local vibes';
-
-      if (tone === 'adventurous') {
-        post = `Beyond excited to finally experience ${place}! 🌍\n\nSpent the day exploring ${items} and pushing my boundaries. There's nothing quite like the thrill of discovering hidden gems in a new city. Every corner here tells a story. 🏔️✨\n\n#Adventure #Wanderlust #${place.replace(/\s/g, '')} #Wayora`;
-      } else if (tone === 'whimsical') {
-        post = `Lost in a dream at ${place}... 🕊️\n\nIt feels like stepping into a storybook here. Magic was everywhere, especially while taking in ${items}. My soul is so full of wonder right now. Pure enchantment! ✨🎠💫\n\n#TravelMagic #DreamDestination #${place.replace(/\s/g, '')} #ParisVibes`;
-      } else if (tone === 'relaxed') {
-        post = `Slowing down and soaking in every second at ${place}. 🌿\n\nSometimes the best way to travel is to just *be*. Enjoying ${items} was exactly the reset I needed. Peace and quiet found in the heart of the city. 🌊🧘‍♀️\n\n#SlowTravel #MindfulMoments #${place.replace(/\s/g, '')} #Serenity`;
-      } else {
-        post = `Highly impressed by the cultural richness and infrastructure of ${place}. 🏙️\n\nThe experience at ${items} provided unique insights into the region's heritage and modern lifestyle. A must-visit for anyone looking for a balanced and enriching travel itinerary. 💼🖋️\n\n#TravelPro #GlobalInsights #Wayora #${place.replace(/\s/g, '')}`;
-      }
-      
+    try {
+      const post = await generatePostContent(dest, highlights, tone);
       setGeneratedPost(post);
+    } catch (error: any) {
+      if (error.message === 'API_KEY_MISSING') {
+        Alert.alert(
+          'API Key Required',
+          'To generate real posts, please open the `.env` file in the project directory and paste your actual Google Gemini API Key where it says YOUR_API_KEY_HERE, then restart the server.'
+        );
+      } else {
+        Alert.alert('Error', error.message || 'Failed to generate post. Please try again.');
+      }
+    } finally {
       setIsGenerating(false);
-    }, 1200);
+    }
   };
 
   const copyToClipboard = () => {

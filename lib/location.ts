@@ -58,3 +58,27 @@ export async function getCurrentLocation(): Promise<UserLocation | null> {
     return null;
   }
 }
+
+export async function geocodeCityNominatim(city: string): Promise<{latitude: number, longitude: number} | null> {
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`, {
+      headers: {
+        'User-Agent': 'WayoraApp/1.0'
+      }
+    });
+    
+    if (!response.ok) return null;
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      return {
+        latitude: parseFloat(data[0].lat),
+        longitude: parseFloat(data[0].lon)
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Nominatim geocode error:', error);
+    return null;
+  }
+}

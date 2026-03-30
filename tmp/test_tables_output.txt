@@ -1,0 +1,3 @@
+--- Checking Database Setup ---
+Profiles Table: OK (Exists)
+Todos Table: OK (Exists)

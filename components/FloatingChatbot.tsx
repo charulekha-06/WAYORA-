@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, ScrollView 
 import { Ionicons } from '@expo/vector-icons';
 import { WayoraColors } from '@/constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import { generateChatResponse } from '@/lib/gemini';
 
 const POPULAR_TOPICS = [
   { id: 't1', title: 'Destinations', desc: 'Get recommendations', icon: 'location' },
@@ -24,24 +25,30 @@ export default function FloatingChatbot() {
     { id: 1, text: "Hi! I'm Tavi, your AI travel assistant! 🌏 How can I help you plan your perfect trip today?", isUser: false, time: '03:27 PM' }
   ]);
   const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const sendMessage = (text = input) => {
+  const sendMessage = async (text = input) => {
     const msgText = typeof text === 'string' ? text : input;
     if (!msgText.trim()) return;
     
     const userMsg = { id: Date.now(), text: msgText, isUser: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
     setMessages(prev => [...prev, userMsg]);
     setInput('');
+    setLoading(true);
     
-    setTimeout(() => {
-      const responses = [
-        "That's a great request! I can find some amazing spots for you. Would you like me to filter by price range?",
-        "Paris has some incredible hidden cafes. I recommend checking out the Marais district for the best local vibes.",
-        "I've updated your budget tips for Tokyo. It's generally very safe, but watch your belongings in Shinjuku.",
-      ];
-      const botMsg = { id: Date.now() + 1, text: responses[Math.floor(Math.random() * responses.length)], isUser: false, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+    try {
+      const rawReply = await generateChatResponse(msgText, messages);
+      // Clean up any rogue markdown bold and list asterisks if the AI still returns them
+      const cleanReply = rawReply.replace(/\*\*(.*?)\*\*/g, '$1').replace(/^\* /gm, '• ');
+      
+      const botMsg = { id: Date.now() + 1, text: cleanReply, isUser: false, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
       setMessages(prev => [...prev, botMsg]);
-    }, 1000);
+    } catch (error) {
+      const botMsg = { id: Date.now() + 1, text: "I'm having a little trouble connecting to the AI. Did you add your API key?", isUser: false, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+      setMessages(prev => [...prev, botMsg]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,6 +84,14 @@ export default function FloatingChatbot() {
                     <Text style={styles.timeText}>{msg.time}</Text>
                   </View>
                 ))}
+
+                {loading && (
+                  <View style={[styles.messageRow, styles.aiRow]}>
+                    <View style={[styles.messageBubble, styles.aiBubble]}>
+                      <Text style={[styles.messageText, styles.aiText, { fontStyle: 'italic', color: '#9CA3AF' }]}>Thinking...</Text>
+                    </View>
+                  </View>
+                )}
 
                 {/* Integrated Suggestions Section */}
                 <View style={styles.integratedSuggestions}>

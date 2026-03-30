@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image, StatusBar, Dimensions, Linking, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { WayoraColors } from '@/constants/Colors';
@@ -15,6 +15,23 @@ export default function BookingDetailsScreen() {
   const isHotel = params.category === 'hotel';
   const isFlight = params.category === 'flight';
 
+  const handleBooking = () => {
+    try {
+      if (params.category === 'hotel') {
+        // Direct redirect to Booking.com
+        Linking.openURL(`https://www.booking.com/searchresults.html?ss=${encodeURIComponent(params.name + ' ' + params.location)}`);
+      } else if (params.category === 'flight') {
+        Linking.openURL(`https://www.google.com/travel/flights?q=${encodeURIComponent('Flights to ' + params.location + ' ' + params.name)}`);
+      } else if (params.category === 'food') {
+        Alert.alert('Added to cart! Tap the cart icon to checkout.');
+      } else {
+        Linking.openURL(`https://www.google.com/search?q=${encodeURIComponent('Book ' + params.name + ' in ' + params.location)}`);
+      }
+    } catch(err) {
+      console.error(err);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
@@ -28,7 +45,7 @@ export default function BookingDetailsScreen() {
             style={StyleSheet.absoluteFill}
           />
           <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.circleButton}>
+            <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace('/booking')} style={styles.circleButton}>
               <Ionicons name="chevron-back" size={24} color="#FFF" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.circleButton}>
@@ -112,7 +129,7 @@ export default function BookingDetailsScreen() {
         </View>
         <TouchableOpacity 
           style={styles.bookButton}
-          onPress={() => alert('Added to cart! Tap the cart icon to checkout.')}
+          onPress={handleBooking}
         >
           <Text style={styles.bookButtonText}>{params.category === 'food' ? 'Add to Cart' : 'Book Now'}</Text>
           <Ionicons name={params.category === 'food' ? 'cart' : 'arrow-forward'} size={18} color="#FFF" />
