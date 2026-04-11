@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
   StatusBar, Image, Dimensions, FlatList, useWindowDimensions,
-  ActivityIndicator, Alert
+  ActivityIndicator, Alert, Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -84,17 +84,80 @@ export default function SouvenirAlbumScreen() {
   }
 
   const handleImageError = (id: string) => {
-    setImageError(prev => ({ ...prev, [id]: true }));
+    setImageError((prev) => {
+      if (prev[id]) return prev;
+      return { ...prev, [id]: true };
+    });
+  };
+
+  const confirmDelete = () => {
+    if (Platform.OS === 'web') {
+      return Promise.resolve(
+        globalThis.confirm('Are you sure you want to delete this memory? This action cannot be undone.')
+      );
+    }
+
+    return new Promise<boolean>((resolve) => {
+      Alert.alert(
+        'Delete Memory',
+        'Are you sure you want to delete this memory? This action cannot be undone.',
+        [
+          { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
+          { text: 'Delete', style: 'destructive', onPress: () => resolve(true) },
+        ]
+      );
+    });
+  };
+
+  const handleDeleteMemory = async (memoryId: string) => {
+    if (saving) return;
+
+    const shouldDelete = await confirmDelete();
+    if (!shouldDelete) return;
+
+    setSaving(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/auth');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('memories')
+        .delete()
+        .eq('id', memoryId)
+        .eq('user_id', user.id)
+        .select('id');
+
+      if (error) {
+        Alert.alert('Error', `Failed to delete: ${error.message}`);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        Alert.alert('Delete Failed', 'Could not delete this memory. Please check database policies and try again.');
+        return;
+      }
+
+      await fetchData();
+      Alert.alert('Deleted', 'Memory removed successfully.');
+    } catch (err: any) {
+      Alert.alert('Error', err.message || 'Failed to delete memory');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const renderMemory = ({ item }: { item: any }) => (
     <View key={item.id} style={[styles.memoryCard, { width: (width - 52) / 2 }]}>
-      <Image 
-        source={{ uri: item.image_url }} 
-        style={styles.memoryImage}
-        onError={() => handleImageError(item.id)}
-      />
-      {imageError[item.id] && (
+      {!imageError[item.id] ? (
+        <Image
+          source={{ uri: item.image_url }}
+          style={styles.memoryImage}
+          onError={() => handleImageError(item.id)}
+        />
+      ) : (
         <View style={[styles.imageLoader, { backgroundColor: '#F1F5F9' }]}>
           <Ionicons name="image-outline" size={24} color="#CBD5E1" />
         </View>
@@ -109,6 +172,14 @@ export default function SouvenirAlbumScreen() {
           <Text style={styles.memoryDate}>{item.location} • {item.date}</Text>
         </View>
       </LinearGradient>
+      {/* Delete Button - Rendered Last So It's On Top */}
+      <TouchableOpacity 
+        style={styles.deleteBtn}
+        onPress={() => handleDeleteMemory(item.id)}
+        activeOpacity={0.7}
+      >
+        <Ionicons name="trash-outline" size={18} color="#EF4444" />
+      </TouchableOpacity>
     </View>
   );
 
@@ -158,32 +229,57 @@ export default function SouvenirAlbumScreen() {
 
     if (!result.canceled && result.assets[0]) {
       setSaving(true);
-      const imageUri = result.assets[0].uri;
-      
-      // In a real app, we'd upload imageUri to Supabase Storage here.
-      // For this implementation, we'll use a high-quality placeholder or the local URI 
-      // (noting that local URIs aren't truly persistent in the cloud, but valid for the UI demo)
-      // or we can simulate an upload to a public image service.
-      
-      const { error } = await supabase
-        .from('memories')
-        .insert([
-          {
-            user_id: user.id,
-            title: 'New Memory', // User would normally input this via a modal
-            location: 'Nearby',   // User would normally input this
-            image_url: imageUri,
-            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-          }
-        ]);
+      try {
+        const imageUri = result.assets[0].uri;
+        const fileName = `${user.id}_${Date.now()}.jpg`;
+        
+        // Convert image URI to blob for upload
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
 
-      if (error) {
-        Alert.alert('Error', error.message);
-      } else {
-        fetchData(); // Refresh list
-        Alert.alert('Success', 'Moment captured in your Souvenir Album!');
+        // Upload image to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('memories')
+          .upload(`${user.id}/${fileName}`, blob, {
+            cacheControl: '3600',
+            upsert: false,
+          });
+
+        if (uploadError) {
+          Alert.alert('Upload Error', uploadError.message);
+          setSaving(false);
+          return;
+        }
+
+        // Get public URL of uploaded image
+        const { data: urlData } = supabase.storage
+          .from('memories')
+          .getPublicUrl(`${user.id}/${fileName}`);
+
+        // Store memory record in database with image URL
+        const { error: insertError } = await supabase
+          .from('memories')
+          .insert([
+            {
+              user_id: user.id,
+              title: 'New Memory',
+              location: 'Nearby',
+              image_url: urlData.publicUrl,
+              date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+            }
+          ]);
+
+        if (insertError) {
+          Alert.alert('Error', insertError.message);
+        } else {
+          fetchData(); // Refresh list
+          Alert.alert('Success', 'Moment captured in your Souvenir Album!');
+        }
+      } catch (error: any) {
+        Alert.alert('Error', error.message || 'Failed to save memory');
+      } finally {
+        setSaving(false);
       }
-      setSaving(false);
     }
   };
 
@@ -290,6 +386,23 @@ const styles = StyleSheet.create({
   memoryCard: { height: 210, borderRadius: 24, overflow: 'hidden', backgroundColor: '#E5E7EB', elevation: 4 },
   memoryImage: { width: '100%', height: '100%', resizeMode: 'cover' },
   imageLoader: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F1F5F9' },
+  deleteBtn: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3,
+    elevation: 8
+  },
   memoryOverlay: { ...StyleSheet.absoluteFillObject, justifyContent: 'flex-end', padding: 16 },
   memoryTitle: { color: 'white', fontSize: 15, fontWeight: '800' },
   memoryInfo: { flexDirection: 'row', alignItems: 'center', marginTop: 6, gap: 5 },

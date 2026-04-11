@@ -44,24 +44,6 @@ export default function RootLayout() {
 }
 
 
-import { Asset } from 'expo-asset';
-
-function IconFontFix() {
-  if (Platform.OS !== 'web') return null;
-  const fontFile = require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf');
-  const uri = Asset.fromModule(fontFile).uri;
-  return (
-    <style dangerouslySetInnerHTML={{
-      __html: `
-        @font-face {
-          font-family: 'Ionicons';
-          src: url('${uri}') format('truetype');
-        }
-      `
-    }} />
-  );
-}
-
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const segments = useSegments();
@@ -69,7 +51,6 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <IconFontFix />
       {!isAuthPage && <GlobalHeader />}
       <View style={{ flex: 1, marginTop: isAuthPage ? 0 : 60 }}>
         <Stack>
