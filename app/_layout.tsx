@@ -11,6 +11,24 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useSegments } from 'expo-router';
 import FloatingChatbot from '@/components/FloatingChatbot';
 import GlobalHeader from '@/components/GlobalHeader';
+import { Platform } from 'react-native';
+
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  const iconFont = require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf');
+  const style = document.createElement('style');
+  style.type = 'text/css';
+  style.appendChild(document.createTextNode(`
+    @font-face {
+      font-family: 'Ionicons';
+      src: url(${typeof iconFont === 'string' ? iconFont : (iconFont.default || iconFont)}) format('truetype');
+    }
+    @font-face {
+      font-family: 'ionicons';
+      src: url(${typeof iconFont === 'string' ? iconFont : (iconFont.default || iconFont)}) format('truetype');
+    }
+  `));
+  document.head.appendChild(style);
+}
 
 export {
   ErrorBoundary,
