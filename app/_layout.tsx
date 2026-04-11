@@ -1,7 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
@@ -11,24 +11,6 @@ import { useColorScheme } from '@/components/useColorScheme';
 import { useSegments } from 'expo-router';
 import FloatingChatbot from '@/components/FloatingChatbot';
 import GlobalHeader from '@/components/GlobalHeader';
-import { Platform } from 'react-native';
-
-if (Platform.OS === 'web' && typeof document !== 'undefined') {
-  const iconFont = require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf');
-  const style = document.createElement('style');
-  style.type = 'text/css';
-  style.appendChild(document.createTextNode(`
-    @font-face {
-      font-family: 'Ionicons';
-      src: url(${typeof iconFont === 'string' ? iconFont : (iconFont.default || iconFont)}) format('truetype');
-    }
-    @font-face {
-      font-family: 'ionicons';
-      src: url(${typeof iconFont === 'string' ? iconFont : (iconFont.default || iconFont)}) format('truetype');
-    }
-  `));
-  document.head.appendChild(style);
-}
 
 export {
   ErrorBoundary,
@@ -62,6 +44,24 @@ export default function RootLayout() {
 }
 
 
+import { Asset } from 'expo-asset';
+
+function IconFontFix() {
+  if (Platform.OS !== 'web') return null;
+  const fontFile = require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf');
+  const uri = Asset.fromModule(fontFile).uri;
+  return (
+    <style dangerouslySetInnerHTML={{
+      __html: `
+        @font-face {
+          font-family: 'Ionicons';
+          src: url('${uri}') format('truetype');
+        }
+      `
+    }} />
+  );
+}
+
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
   const segments = useSegments();
@@ -69,6 +69,7 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <IconFontFix />
       {!isAuthPage && <GlobalHeader />}
       <View style={{ flex: 1, marginTop: isAuthPage ? 0 : 60 }}>
         <Stack>
